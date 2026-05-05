@@ -28,7 +28,7 @@ export default {
   async afterRender(config) {
     const container = document.getElementById('scheduleContainer');
     try {
-      const csvUrl = `https://drive.google.com/uc?export=download&id=${config.drive.scheduleCsvId}`;
+const csvUrl = `${config.agent.endpoint}?action=getCsv&fileId=${config.drive.scheduleCsvId}`;
       const res  = await fetch(csvUrl);
       const text = await res.text();
 
