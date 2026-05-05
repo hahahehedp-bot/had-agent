@@ -5,122 +5,71 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>HAD-Agent</title>
 
-
-
-
   <!-- PWA -->
   <link rel="manifest" href="manifest.json">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="theme-color" content="#ffffff">
-    <meta name="apple-mobile-web-app-title" content="HAD-Agent">
+  <meta name="apple-mobile-web-app-title" content="HAD-Agent">
   <link rel="apple-touch-icon" href="client/assets/icon-512.png">
   <link rel="icon" type="image/png" href="client/assets/icon-192.png">
 
-
-
-
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
-
-
-
 
   <!-- Core Styles -->
   <link rel="stylesheet" href="core/styles/layout.css">
   <link rel="stylesheet" href="core/styles/components.css">
   <link rel="stylesheet" href="core/styles/responsive.css">
 
-
-
-
   <!-- Markdown -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
 
-
-
-
   <!-- 사이드바 오버레이 -->
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-
-
-
-  <!-- 사이드바 -->
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <img src="client/assets/logo.png" alt="로고" class="sidebar-logo" id="sidebarLogo">
-      <span class="sidebar-brand" id="sidebarBrand"></span>
-    </div>
-    <nav class="sidebar-nav" id="sidebarNav"></nav>
-    <div class="sidebar-footer">
-      <div class="sidebar-footer-item" id="sidebarSettings">⚙️ 설정</div>
-      <div class="sidebar-footer-item" id="sidebarInfo">ℹ️ 앱 정보</div>
-    </div>
-  </aside>
-
-
-
-
-  <!-- 메인 레이아웃 -->
   <div class="app-layout">
-
-
-
-
-    <!-- 헤더 -->
-    <header class="app-header" id="appHeader">
-      <button class="btn-hamburger" id="btnHamburger" aria-label="메뉴">
-        <span></span><span></span><span></span>
-      </button>
-      <div class="header-logo-wrap" id="headerLogoWrap">
-        <img src="client/assets/logo.png" alt="로고" class="header-logo" id="headerLogo">
-        <img src="client/assets/logo-text.png" alt="브랜드" class="header-logo-text" id="headerLogoText">
+    <!-- 사이드바 -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <img src="client/assets/logo.png" alt="로고" class="sidebar-logo" id="sidebarLogo">
+        <span class="sidebar-brand" id="sidebarBrand">HAD-Agent</span>
       </div>
-      <button class="btn-settings" id="btnSettings" aria-label="설정">⚙️</button>
-    </header>
-
-
-
-
-    <!-- 콘텐츠 영역 -->
-    <main class="app-main" id="appMain">
-      <div class="loading-screen" id="loadingScreen">
-        <div class="loading-spinner"></div>
-        <p>로딩 중...</p>
+      <nav class="sidebar-nav" id="sidebarNav"></nav>
+      <div class="sidebar-footer">
+        <div class="sidebar-footer-item" id="sidebarSettings">⚙️ 설정</div>
+        <div class="sidebar-footer-item" id="sidebarInfo">ℹ️ 앱 정보</div>
       </div>
-    </main>
+    </aside>
 
+    <!-- 메인 영역 (헤더 + 콘텐츠 + 탭바) -->
+    <div class="app-viewport">
+      <header class="app-header" id="appHeader">
+        <button class="btn-hamburger" id="btnHamburger" aria-label="메뉴">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="header-logo-wrap" id="headerLogoWrap">
+          <img src="client/assets/logo.png" alt="로고" class="header-logo" id="headerLogo">
+          <img src="client/assets/logo-text.png" alt="브랜드" class="header-logo-text" id="headerLogoText">
+        </div>
+        <button class="btn-settings" id="btnSettings" aria-label="설정">⚙️</button>
+      </header>
 
+      <main class="app-main" id="appMain">
+        <div class="loading-screen" id="loadingScreen">
+          <div class="loading-spinner"></div>
+          <p>로딩 중...</p>
+        </div>
+      </main>
 
-
-    <!-- 하단 탭바 (모바일) -->
-    <nav class="tab-bar" id="tabBar"></nav>
-
-
-
-
-  </div>
-
-
-
-
-  <!-- 설정 패널 -->
-  <div class="settings-panel" id="settingsPanel">
-    <div class="settings-header">
-      <h3>설정</h3>
-      <button id="closeSettings">✕</button>
+      <nav class="tab-bar" id="tabBar"></nav>
     </div>
-    <div class="settings-body" id="settingsBody"></div>
   </div>
 
-
-
-
-  <!-- 앱 진입점 -->
+  <!-- 앱 설정 & 로직 -->
   <script type="module" src="core/app.js"></script>
 </body>
 </html>
