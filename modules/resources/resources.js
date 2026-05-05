@@ -6,11 +6,17 @@
 export default {
   id: 'resources',
 
-  async init(config) {},
+  async init(config) {
+    if (!document.querySelector('link[href="modules/resources/resources.css"]')) {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = 'modules/resources/resources.css';
+      document.head.appendChild(link);
+    }
+  },
 
   async render(config) {
     return `
-      <link rel="stylesheet" href="modules/resources/resources.css">
       <div class="module-root" style="padding: 20px; padding-bottom: 80px;">
         <div class="section-header">
           <div class="section-title">📂 ${config.modules.find(m=>m.id==='resources')?.label || '자료실'}</div>

@@ -6,11 +6,17 @@
 export default {
   id: 'schedule',
 
-  async init(config) {},
+  async init(config) {
+    if (!document.querySelector('link[href="modules/schedule/schedule.css"]')) {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = 'modules/schedule/schedule.css';
+      document.head.appendChild(link);
+    }
+  },
 
   async render(config) {
     return `
-      <link rel="stylesheet" href="modules/schedule/schedule.css">
       <div class="module-root" style="padding: 20px; padding-bottom: 80px;">
         <div class="section-header">
           <div class="section-title">📅 ${config.modules.find(m=>m.id==='schedule')?.label || '일정'}</div>

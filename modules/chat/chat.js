@@ -7,15 +7,19 @@ export default {
   id: 'chat',
 
   async init(config) {
+    if (!document.querySelector('link[href="modules/chat/chat.css"]')) {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = 'modules/chat/chat.css';
+      document.head.appendChild(link);
+    }
     this._endpoint = config.agent.endpoint;
     this._avatar   = config.agent.avatar;
     this._name     = config.agent.name;
-    this._history  = []; // 세션 내 대화 기억
   },
 
   async render(config) {
     return `
-      <link rel="stylesheet" href="modules/chat/chat.css">
       <div class="module-root chat-layout">
 
         <!-- 채팅 메시지 영역 -->

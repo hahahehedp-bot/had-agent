@@ -7,7 +7,12 @@ export default {
   id: 'home',
 
   async init(config) {
-    // 홈 모듈은 별도 초기화 없음
+    if (!document.querySelector('link[href="modules/home/home.css"]')) {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = 'modules/home/home.css';
+      document.head.appendChild(link);
+    }
   },
 
   async render(config) {
