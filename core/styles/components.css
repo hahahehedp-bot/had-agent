@@ -1,0 +1,273 @@
+/* =============================================
+   HAD-Agent — Components (Core)
+   카드, 버튼, 아이템 등 공통 컴포넌트
+   ============================================= */
+
+/* ── 카드 ── */
+.card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+
+/* ── 섹션 헤더 ── */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--dark);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-action {
+  font-size: 12px;
+  color: var(--primary);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* ── 파일 아이템 ── */
+.file-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: opacity var(--transition);
+}
+.file-item:last-child { border-bottom: none; }
+.file-item:active { opacity: 0.6; }
+
+.file-type-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+  flex-shrink: 0;
+  color: white;
+}
+.badge-pdf  { background: #ff5252; }
+.badge-ppt  { background: #ff9800; }
+.badge-doc  { background: #2196f3; }
+.badge-xls  { background: #4caf50; }
+.badge-vid  { background: #9c27b0; }
+.badge-aud  { background: #00bcd4; }
+.badge-img  { background: #795548; }
+.badge-file { background: #607d8b; }
+
+.file-info { flex: 1; overflow: hidden; }
+.file-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.file-meta {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+
+.file-action {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+  text-decoration: none;
+  color: var(--primary);
+  border: 1px solid var(--border);
+}
+
+/* ── 일정 아이템 ── */
+.event-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  background: var(--bg);
+  border-radius: 14px;
+  border-left: 4px solid var(--primary);
+  margin-bottom: 10px;
+}
+.event-date {
+  text-align: center;
+  min-width: 40px;
+}
+.event-date .day {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--dark);
+  line-height: 1;
+}
+.event-date .mon {
+  font-size: 10px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+.event-info { flex: 1; }
+.event-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  word-break: keep-all;
+  margin-bottom: 3px;
+}
+.event-detail {
+  font-size: 11px;
+  color: var(--text-dim);
+}
+.btn-cal {
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* ── 채팅 ── */
+.chat-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  min-height: 100%;
+}
+
+.msg-ai-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-self: stretch;
+}
+.msg-ai-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.msg-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--border);
+}
+.msg-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--dark);
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+  padding: 2px 10px;
+  border-radius: 8px;
+}
+
+.msg {
+  padding: 14px 18px;
+  border-radius: 18px;
+  font-size: 14px;
+  line-height: 1.7;
+  max-width: 85%;
+}
+.msg-ai {
+  background: var(--card-bg);
+  color: var(--text);
+  border-top-left-radius: 4px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  max-width: 100%;
+  width: 100%;
+}
+/* Markdown 안 스타일링 */
+.msg-ai h3 { font-size: 15px; color: var(--dark); margin: 12px 0 6px; border-left: 3px solid var(--primary); padding-left: 8px; }
+.msg-ai p { margin-bottom: 8px; }
+.msg-ai ul, .msg-ai ol { margin-left: 16px; margin-bottom: 8px; }
+.msg-ai li { margin-bottom: 4px; }
+.msg-ai strong { color: var(--primary); }
+.msg-ai code { background: var(--bg); padding: 2px 5px; border-radius: 4px; font-size: 12px; }
+.msg-ai table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.msg-ai th, .msg-ai td { border: 1px solid var(--border); padding: 6px 8px; }
+.msg-ai th { background: var(--bg); }
+
+.msg-user {
+  align-self: flex-end;
+  background: var(--primary);
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+/* ── 빈 상태 ── */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-dim);
+}
+.empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
+.empty-state p { font-size: 14px; line-height: 1.6; }
+
+/* ── 태그 배지 ── */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  color: var(--primary);
+}
+
+/* ── 버튼 ── */
+.btn-primary {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity var(--transition);
+}
+.btn-primary:active { opacity: 0.8; }
+
+/* ── 카테고리 헤더 ── */
+.category-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0 8px;
+}
+.category-name {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--dark);
+  background: var(--bg);
+  padding: 4px 12px;
+  border-radius: 8px;
+}

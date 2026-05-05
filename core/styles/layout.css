@@ -1,0 +1,313 @@
+/* =============================================
+   HAD-Agent — Layout (Core)
+   헤더 / 사이드바 / 탭바 / 메인 영역
+   ============================================= */
+
+:root {
+  /* 고객사 config에서 JS로 덮어씀 */
+  --primary: #6c63ff;
+  --primary-light: #a89cff;
+  --dark: #1a1a2e;
+  --bg: #f8f9fc;
+  --card-bg: #ffffff;
+  --text: #333344;
+  --text-dim: #888899;
+  --border: rgba(0,0,0,0.08);
+  --shadow: 0 4px 20px rgba(0,0,0,0.08);
+  --radius: 16px;
+  --header-h: 60px;
+  --tabbar-h: 64px;
+  --sidebar-w: 260px;
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Outfit', 'Noto Sans KR', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow: hidden;
+}
+
+/* ── 앱 레이아웃 ── */
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+/* ── 헤더 ── */
+.app-header {
+  height: var(--header-h);
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  flex-shrink: 0;
+}
+
+.btn-hamburger {
+  width: 40px;
+  height: 40px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  padding: 8px;
+  border-radius: 10px;
+  transition: background var(--transition);
+}
+.btn-hamburger:hover { background: var(--bg); }
+.btn-hamburger span {
+  display: block;
+  height: 2px;
+  background: var(--dark);
+  border-radius: 2px;
+  transition: all var(--transition);
+}
+
+.header-logo-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.header-logo {
+  height: 36px;
+  width: auto;
+  object-fit: contain;
+  border-radius: 50%;
+}
+.header-logo-text {
+  height: 28px;
+  width: auto;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+
+.btn-settings {
+  width: 40px;
+  height: 40px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  border-radius: 10px;
+  transition: background var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-settings:hover { background: var(--bg); }
+
+/* ── 메인 콘텐츠 ── */
+.app-main {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  background: var(--bg);
+}
+
+/* ── 하단 탭바 ── */
+.tab-bar {
+  height: var(--tabbar-h);
+  background: var(--card-bg);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: stretch;
+  flex-shrink: 0;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.tab-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 10px;
+  color: var(--text-dim);
+  transition: color var(--transition);
+  padding: 8px 4px;
+}
+.tab-item.active {
+  color: var(--primary);
+}
+.tab-item .tab-icon {
+  font-size: 22px;
+  line-height: 1;
+}
+.tab-item .tab-label {
+  font-size: 10px;
+  font-weight: 600;
+}
+
+/* ── 사이드바 ── */
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition);
+}
+.sidebar-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100%;
+  background: var(--card-bg);
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(-100%);
+  transition: transform var(--transition);
+  box-shadow: 4px 0 30px rgba(0,0,0,0.12);
+}
+.sidebar.open {
+  transform: translateX(0);
+}
+
+.sidebar-header {
+  padding: 50px 20px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.sidebar-brand {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--dark);
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 12px 0;
+  overflow-y: auto;
+}
+.sidebar-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 24px;
+  cursor: pointer;
+  font-size: 15px;
+  color: var(--text);
+  transition: background var(--transition), color var(--transition);
+  border-radius: 0;
+}
+.sidebar-nav-item:hover { background: var(--bg); }
+.sidebar-nav-item.active {
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+  color: var(--primary);
+  font-weight: 600;
+}
+.sidebar-nav-item .nav-icon { font-size: 20px; }
+
+.sidebar-footer {
+  padding: 12px 0;
+  border-top: 1px solid var(--border);
+}
+.sidebar-footer-item {
+  padding: 12px 24px;
+  font-size: 14px;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: background var(--transition);
+}
+.sidebar-footer-item:hover { background: var(--bg); }
+
+/* ── 설정 패널 ── */
+.settings-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 300px;
+  height: 100%;
+  background: var(--card-bg);
+  z-index: 300;
+  transform: translateX(100%);
+  transition: transform var(--transition);
+  display: flex;
+  flex-direction: column;
+  box-shadow: -4px 0 30px rgba(0,0,0,0.12);
+}
+.settings-panel.open { transform: translateX(0); }
+
+.settings-header {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  padding-top: calc(20px + env(safe-area-inset-top));
+}
+.settings-header h3 { font-size: 18px; color: var(--dark); }
+.settings-header button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--text-dim);
+}
+.settings-body {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+/* ── 로딩 화면 ── */
+.loading-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 16px;
+  color: var(--text-dim);
+}
+.loading-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
