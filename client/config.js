@@ -20,8 +20,9 @@ export default {
   // ── Drive 설정 ─────────────────────────────────
   // 고객사 드라이브 폴더 ID (공개 공유 필요)
   drive: {
-    rootFolderId:  "1zguMbzCqTrJQmD9SNEiic1OXwKEhzA_U",  // 오순이 루트 폴더 ID
-    scheduleCsvId: "1HNXY_pdzcS0XJfwn4AIeexc1ELmcuBbg",  // 일정/schedule.csv 파일 ID
+    rootFolderId:      "1zguMbzCqTrJQmD9SNEiic1OXwKEhzA_U",  // 오순이 루트 폴더 ID
+    scheduleCsvId:     "1HNXY_pdzcS0XJfwn4AIeexc1ELmcuBbg",  // 일정/schedule.csv 파일 ID
+    resourcesFolderId: "1K5XlEOLdXOgiEehTcQPMOWUHmcjYv-Ws",  // 자료실 폴더 ID
   },
 
   // ── AI 에이전트 ────────────────────────────────

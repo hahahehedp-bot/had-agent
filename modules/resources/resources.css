@@ -1,0 +1,17 @@
+/* modules/resources/resources.css */
+.resource-category { margin-bottom: 20px; }
+
+.category-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.category-name {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--dark);
+  background: var(--bg);
+  padding: 5px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
