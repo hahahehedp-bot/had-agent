@@ -1,0 +1,55 @@
+.schedule-container {
+    padding: 1rem;
+}
+
+.schedule-week {
+    margin-bottom: 2rem;
+}
+
+.week-label {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+}
+
+.event-item {
+    background: white;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    display: flex;
+    gap: 1rem;
+}
+
+.event-date {
+    font-weight: 700;
+    color: var(--secondary-color);
+    min-width: 60px;
+}
+
+.event-info {
+    flex: 1;
+}
+
+.event-title {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.event-detail {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.btn-cal {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    margin-top: 0.5rem;
+}
