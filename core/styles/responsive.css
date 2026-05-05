@@ -1,7 +1,20 @@
+/* =============================================
+   HAD-Agent — Responsive
+   PC/태블릿/모바일 반응형
+   ============================================= */
+
 /* ── 모바일 기본 (< 768px) ── */
 @media (max-width: 767px) {
   .sidebar {
     width: min(var(--sidebar-w), 85vw);
+  }
+  .app-viewport {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    height: 100vh;
+    height: 100dvh;
   }
   .settings-panel {
     width: 100%;
@@ -9,81 +22,80 @@
   .tab-bar {
     display: flex;
   }
-  .app-main {
-    padding-bottom: 0;
-  }
 }
 
-/* PC/Tablet: Side-by-side Layout Fix */
+/* ── PC / 태블릿 (>= 768px) ── */
 @media (min-width: 768px) {
   body {
-    display: flex !important;
-    overflow: hidden !important;
+    overflow: hidden;
   }
+
+  .app-layout {
+    flex-direction: row !important;
+    display: flex !important;
+    height: 100vh;
+  }
+
+  /* PC: 사이드바 항상 펼침 */
   .sidebar {
-    position: sticky !important;
+    position: relative !important;
     transform: translateX(0) !important;
-    height: 100vh !important;
-    top: 0 !important;
     box-shadow: none;
     border-right: 1px solid var(--border);
-  }
-  .sidebar-overlay {
-    display: none !important;
-  }
-  .app-layout {
-    flex: 1 !important;
-    display: flex !important;
-    flex-direction: column !important;
     height: 100vh !important;
-    min-width: 0 !important;
+    flex-shrink: 0;
   }
-  .tab-bar {
-    display: none;
-  }
-  .btn-hamburger {
-    display: none;
-  }
-  .app-main {
-    max-width: 800px;
-    margin: 0 auto;
-    width: 100%;
-    padding: 0 20px;
-  }
-  .settings-panel {
-    width: 360px;
-  }
-}
 
-@media (min-width: 1200px) {
-  :root {
-    --sidebar-w: 280px;
+  /* PC: 오버레이 없음 */
+  .sidebar-overlay { display: none !important; }
+
+  /* PC: 오른쪽 영역 */
+  .app-viewport {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    height: 100vh;
+    background: var(--bg);
   }
+
+  /* PC: 하단 탭바 숨김 */
+  .tab-bar { display: none !important; }
+
+  /* PC: 햄버거 버튼 숨김 */
+  .btn-hamburger { display: none !important; }
+
+  /* PC: 메인 콘텐츠 중앙 정렬 */
   .app-main {
     max-width: 900px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 0 24px;
+  }
+
+  /* PC: 설정 패널 너비 고정 */
+  .settings-panel { width: 360px; }
+}
+
+/* ── 큰 화면 (>= 1200px) ── */
+@media (min-width: 1200px) {
+  :root { --sidebar-w: 280px; }
+  .app-main {
+    max-width: 1000px;
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  /* 다크모드 대응 필요시 추가 */
-}
-
+/* ── 애니메이션 ── */
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .animate-in {
   animation: fadeInUp 0.4s ease forwards;
 }
 
-::-webkit-scrollbar {
-  width: 4px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 4px;
-}
+/* ── 스크롤바 ── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
