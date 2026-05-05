@@ -1,7 +1,163 @@
 /* =============================================
-   HAD-Agent — Responsive
-   PC/태블릿/모바일 반응형
-   ============================================= */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* ── 모바일 기본 (< 768px) ── */
 @media (max-width: 767px) {
@@ -19,82 +175,60 @@
   }
 }
 
-/* ── PC / 태블릿 (>= 768px) ── */
-@media (min-width: 768px) {
-  body {
-    overflow: auto;
-  }
 
-  /* PC: 사이드바 항상 펼침 */
-  .sidebar {
-    position: sticky;
-    transform: translateX(0) !important;
-    box-shadow: none;
-    border-right: 1px solid var(--border);
-    height: 100vh;
-    top: 0;
-  }
 
-  /* PC: 오버레이 없음 */
-  .sidebar-overlay { display: none !important; }
 
-  /* PC: 전체 레이아웃 가로 배치 */
-  .app-layout {
-    flex-direction: row;
-    height: 100vh;
-  }
 
-  /* PC: 오른쪽 영역 세로 배치 */
-  .app-layout > :not(.sidebar) {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-  }
 
-  /* PC: 하단 탭바 숨김 */
-  .tab-bar { display: none; }
 
-  /* PC: 햄버거 버튼 숨김 */
-  .btn-hamburger { display: none; }
 
-  /* PC: 메인 콘텐츠 최대 너비 */
-  .app-main {
-    max-width: 800px;
-    margin: 0 auto;
-    width: 100%;
-    padding: 0 20px;
-  }
 
-  /* PC: 설정 패널 너비 고정 */
-  .settings-panel { width: 360px; }
-}
 
-/* ── 큰 화면 (>= 1200px) ── */
-@media (min-width: 1200px) {
-  :root { --sidebar-w: 280px; }
 
-  .app-main {
-    max-width: 900px;
-  }
-}
 
-/* ── 다크모드 대응 (향후 확장) ── */
-@media (prefers-color-scheme: dark) {
-  /* 현재는 config에서 명시적으로 지정 */
-}
 
-/* ── 애니메이션 ── */
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
 
-.animate-in {
-  animation: fadeInUp 0.4s ease forwards;
-}
 
-/* ── 스크롤바 ── */
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\n\n/* PC/Tablet: Side-by-side Layout Fix */\n@media (min-width: 768px) {\n  body {\n    display: flex !important;\n    overflow: hidden !important;\n  }\n  .sidebar {\n    position: sticky !important;\n    transform: translateX(0) !important;\n    height: 100vh !important;\n    top: 0 !important;\n  }\n  .app-layout {\n    flex: 1 !important;\n    display: flex !important;\n    flex-direction: column !important;\n    height: 100vh !important;\n    min-width: 0 !important;\n  }\n}
