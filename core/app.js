@@ -42,16 +42,20 @@ function applyBranding(cfg) {
   }
 
   // 헤더 로고
-  document.getElementById('headerLogo').src      = cfg.brand.logo;
-  document.getElementById('headerLogoText').src  = cfg.brand.logoText;
+  const hLogo = document.getElementById('headerLogo');
+  if (hLogo) hLogo.src = cfg.brand.logo;
+  const hLogoText = document.getElementById('headerLogoText');
+  if (hLogoText) hLogoText.src = cfg.brand.logoText;
 
   // 사이드바 브랜드
-  document.getElementById('sidebarLogo').src     = cfg.brand.logo;
-  document.getElementById('sidebarBrand').textContent = cfg.brand.name;
+  const sLogo = document.getElementById('sidebarLogo');
+  if (sLogo) sLogo.src = cfg.brand.logo;
+  const sBrand = document.getElementById('sidebarBrand');
+  if (sBrand) sBrand.textContent = cfg.brand.name;
 
   // theme-color 메타
-  document.querySelector('meta[name="theme-color"]').content = cfg.pwa.themeColor;
-  document.querySelector('meta[name="apple-mobile-web-app-title"]').content = cfg.pwa.shortName || cfg.brand.name;
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', cfg.pwa.themeColor);
+  document.querySelector('meta[name="apple-mobile-web-app-title"]')?.setAttribute('content', cfg.pwa.shortName || cfg.brand.name);
 }
 
 // ── 활성 모듈 목록 ───────────────────────────
@@ -72,61 +76,77 @@ async function loadModule(moduleId) {
 
 // ── 앱 초기화 ────────────────────────────────
 async function init() {
-  // 1. 테마 + 브랜딩
-  applyTheme(config);
-  applyBranding(config);
+  try {
+    // 1. 테마 + 브랜딩
+    applyTheme(config);
+    applyBranding(config);
 
-  // 2. 활성 모듈 로드
-  const activeModules = getActiveModules(config);
-  const loadedModules = {};
+    // 2. 활성 모듈 로드
+    const activeModules = getActiveModules(config);
+    const loadedModules = {};
 
-  await Promise.all(activeModules.map(async (modCfg) => {
-    const mod = await loadModule(modCfg.id);
-    if (mod) {
-      loadedModules[modCfg.id] = { ...mod, ...modCfg };
-      if (mod.init) await mod.init(config);
+    await Promise.all(activeModules.map(async (modCfg) => {
+      const mod = await loadModule(modCfg.id);
+      if (mod) {
+        loadedModules[modCfg.id] = { ...mod, ...modCfg };
+        if (mod.init) await mod.init(config);
+      }
+    }));
+
+    // 3. 사이드바 + 탭바 초기화
+    initSidebar(activeModules, loadedModules, config);
+    initTabBar(activeModules, loadedModules);
+
+    // 4. 라우터 초기화
+    initRouter(loadedModules, config);
+
+    // 5. 첫 화면으로
+    const hash = window.location.hash.replace('#', '') || 'home';
+    navigateTo(hash);
+
+    // 6. 로딩 화면 제거
+    document.getElementById('loadingScreen')?.remove();
+
+    // 7. Service Worker 등록
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
     }
-  }));
-
-  // 3. 사이드바 + 탭바 초기화
-  initSidebar(activeModules, loadedModules, config);
-  initTabBar(activeModules, loadedModules);
-
-  // 4. 라우터 초기화
-  initRouter(loadedModules, config);
-
-  // 5. 첫 화면으로
-  const hash = window.location.hash.replace('#', '') || 'home';
-  navigateTo(hash);
-
-  // 6. 로딩 화면 제거
-  document.getElementById('loadingScreen')?.remove();
-
-  // 7. Service Worker 등록
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  } catch (e) {
+    console.error('[HAD] 앱 초기화 실패:', e);
+    const ls = document.getElementById('loadingScreen');
+    if (ls) {
+      ls.innerHTML = `
+        <div style="color:white; text-align:center; padding:20px;">
+          <p>앱을 불러오는 중 오류가 발생했습니다.</p>
+          <p style="font-size:12px; opacity:0.8;">${e.message}</p>
+        </div>
+      `;
+    }
   }
 }
 
 // ── 설정 패널 ────────────────────────────────
-document.getElementById('btnSettings').addEventListener('click', () => {
-  document.getElementById('settingsPanel').classList.add('open');
+document.getElementById('btnSettings')?.addEventListener('click', () => {
+  document.getElementById('settingsPanel')?.classList.add('open');
 });
-document.getElementById('closeSettings').addEventListener('click', () => {
-  document.getElementById('settingsPanel').classList.remove('open');
+document.getElementById('closeSettings')?.addEventListener('click', () => {
+  document.getElementById('settingsPanel')?.classList.remove('open');
 });
 
 // 설정 패널 내용 채우기
-document.getElementById('settingsBody').innerHTML = `
-  <div style="color: var(--text-dim); font-size: 13px; line-height: 1.8;">
-    <p style="margin-bottom: 16px;">⚙️ 앱 정보</p>
-    <p>HAD-Agent v2.0</p>
-    <p>by AI Thinking Lab</p>
-    <p style="margin-top: 16px; font-size: 11px; color: var(--text-dim);">
-      © 2026 AI Thinking Lab. All rights reserved.
-    </p>
-  </div>
-`;
+const settingsBody = document.getElementById('settingsBody');
+if (settingsBody) {
+  settingsBody.innerHTML = `
+    <div style="color: var(--text-dim); font-size: 13px; line-height: 1.8;">
+      <p style="margin-bottom: 16px;">⚙️ 앱 정보</p>
+      <p>HAD-Agent v2.0</p>
+      <p>by AI Thinking Lab</p>
+      <p style="margin-top: 16px; font-size: 11px; color: var(--text-dim);">
+        © 2026 AI Thinking Lab. All rights reserved.
+      </p>
+    </div>
+  `;
+}
 
 // ── 실행 ─────────────────────────────────────
 init().catch(console.error);
