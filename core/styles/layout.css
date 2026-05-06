@@ -58,8 +58,7 @@ html, body {
 
 /* ── 앱 레이아웃 ── */
 .app-layout {
-  display: flex;
-  flex-direction: column;
+  display: block; /* 모바일에서는 기본 블록 흐름(순정 스크롤 지원) */
   min-height: 100vh;
   overflow-x: hidden;
 }
@@ -149,7 +148,6 @@ html, body {
 
 /* ── 메인 콘텐츠 ── */
 .app-main {
-  flex: 1;
   background: var(--bg);
   padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom));
 }

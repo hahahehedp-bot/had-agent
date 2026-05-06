@@ -9,9 +9,7 @@
     width: min(var(--sidebar-w), 85vw);
   }
   .app-viewport {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+    display: block; /* 순정 스크롤을 위해 Flex 해제 */
     min-width: 0;
   }
   .settings-panel {
