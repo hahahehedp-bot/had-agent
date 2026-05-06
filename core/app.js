@@ -8,55 +8,102 @@ import { initSidebar } from './sidebar.js';
 import { initTabBar } from './tabbar.js';
 import { initRouter, navigateTo } from './router.js';
 
-// ── 테마 CSS 변수 적용 ──────────────────────
+// ── 테마 모듈 로드 및 브랜딩 컬러 주입 ───────────
 function applyTheme(cfg) {
   const root = document.documentElement;
-  root.style.setProperty('--primary',       cfg.brand.themeColor);
-  root.style.setProperty('--primary-light', cfg.brand.themeColorLight || cfg.brand.themeColor + '99');
-  root.style.setProperty('--dark',          cfg.brand.darkColor);
-  root.style.setProperty('--bg',            cfg.brand.bgColor);
+  
+  // 1. localStorage에서 사용자 설정 테마 확인 (없으면 config 기본값)
+  const savedTheme = localStorage.getItem('had-theme');
+  const themeMode = savedTheme || cfg.theme?.default || 'modern-light';
+  
+  // 2. 테마 CSS 모듈 파일 동적 로드
+  const themeLink = document.getElementById('themeStylesheet');
+  if (themeLink) {
+    themeLink.href = `core/themes/${themeMode}.css`;
+  }
+
+  // 3. 브랜딩 컬러 주입 (테마 위에 오버레이)
+  if (cfg.brand?.primaryColor) {
+    root.style.setProperty('--brand-color', cfg.brand.primaryColor);
+  }
 }
 
-// ── 브랜딩 적용 ─────────────────────────────
+// ── 브랜딩 주입 (HTML 동적 생성) ────────────────
 function applyBranding(cfg) {
-  // 페이지 타이틀
+  // 1. 문서 메타데이터
   document.title = cfg.brand.name;
+  document.getElementById('metaThemeColor')?.setAttribute('content', cfg.pwa?.themeColor || cfg.brand.primaryColor);
+  document.getElementById('metaAppTitle')?.setAttribute('content', cfg.pwa?.shortName || cfg.brand.name);
 
-  // manifest 동적 업데이트
-  const manifestLink = document.querySelector('link[rel="manifest"]');
-  if (manifestLink) {
+  // 2. 파비콘 및 앱 아이콘 (Head에 주입)
+  if (cfg.brand.icon192) {
+    const linkIcon = document.createElement('link');
+    linkIcon.rel = 'icon';
+    linkIcon.type = 'image/png';
+    linkIcon.href = cfg.brand.icon192;
+    document.head.appendChild(linkIcon);
+  }
+  if (cfg.brand.icon512) {
+    const linkTouch = document.createElement('link');
+    linkTouch.rel = 'apple-touch-icon';
+    linkTouch.href = cfg.brand.icon512;
+    document.head.appendChild(linkTouch);
+  }
+
+  // 3. 헤더 및 로그인 화면 로고 주입
+  const hWrap = document.getElementById('headerLogoWrap');
+  const lWrap = document.getElementById('loginLogoWrap');
+  if (cfg.brand.logo) {
+    if (hWrap) hWrap.innerHTML += `<img src="\${cfg.brand.logo}" alt="로고" class="header-logo">`;
+    if (lWrap) lWrap.innerHTML += `<img src="\${cfg.brand.logo}" alt="로고" style="width:80px; height:80px; margin-bottom:10px;">`;
+  }
+  if (cfg.brand.logoText) {
+    if (hWrap) hWrap.innerHTML += `<img src="\${cfg.brand.logoText}" alt="브랜드" class="header-logo-text">`;
+    if (lWrap) lWrap.innerHTML += `<br><img src="\${cfg.brand.logoText}" alt="브랜드" style="height:30px;">`;
+  }
+
+  // 4. 사이드바 헤더 주입
+  const sHeader = document.getElementById('sidebarHeader');
+  if (sHeader) {
+    if (cfg.brand.logo) {
+      sHeader.innerHTML += `<img src="\${cfg.brand.logo}" alt="로고" class="sidebar-logo">`;
+    }
+    sHeader.innerHTML += `<span class="sidebar-brand">\${cfg.brand.name}</span>`;
+  }
+
+  // 5. manifest 동적 업데이트
+  const manifestLink = document.getElementById('manifestLink');
+  if (manifestLink && cfg.pwa) {
     const manifest = {
       name: cfg.brand.name,
-      short_name: cfg.pwa.shortName,
-      theme_color: cfg.pwa.themeColor,
-      background_color: cfg.pwa.backgroundColor,
+      short_name: cfg.pwa.shortName || cfg.brand.name,
+      theme_color: cfg.pwa.themeColor || cfg.brand.primaryColor,
+      background_color: cfg.pwa.backgroundColor || cfg.brand.primaryColor,
       display: 'standalone',
       start_url: './',
       icons: [
-        { src: 'client/assets/icon-192.png', sizes: '192x192', type: 'image/png' },
-        { src: 'client/assets/icon-512.png', sizes: '512x512', type: 'image/png' }
+        { src: cfg.brand.icon192 || 'client/assets/icon-192.png', sizes: '192x192', type: 'image/png' },
+        { src: cfg.brand.icon512 || 'client/assets/icon-512.png', sizes: '512x512', type: 'image/png' }
       ]
     };
     const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
     manifestLink.href = URL.createObjectURL(blob);
   }
-
-  // 헤더 로고
-  const hLogo = document.getElementById('headerLogo');
-  if (hLogo) hLogo.src = cfg.brand.logo;
-  const hLogoText = document.getElementById('headerLogoText');
-  if (hLogoText) hLogoText.src = cfg.brand.logoText;
-
-  // 사이드바 브랜드
-  const sLogo = document.getElementById('sidebarLogo');
-  if (sLogo) sLogo.src = cfg.brand.logo;
-  const sBrand = document.getElementById('sidebarBrand');
-  if (sBrand) sBrand.textContent = cfg.brand.name;
-
-  // theme-color 메타
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', cfg.pwa.themeColor);
-  document.querySelector('meta[name="apple-mobile-web-app-title"]')?.setAttribute('content', cfg.pwa.shortName || cfg.brand.name);
 }
+
+// ── 🔐 구글 로그인 및 인증 로직 ────────────────
+// 전역 공간에 콜백 함수 노출 (Google SDK가 호출함)
+window.handleCredentialResponse = (response) => {
+  console.log("Encoded JWT ID token: " + response.credential);
+  // 원래는 여기서 토큰을 백엔드로 보내 오너 ID와 매핑/검증해야 합니다.
+  // 성공 시 오버레이 숨김
+  document.getElementById('loginOverlay')?.classList.add('hidden');
+};
+
+// 개발자 테스트용 우회 버튼
+document.getElementById('btnDevBypass')?.addEventListener('click', () => {
+  document.getElementById('loginOverlay')?.classList.add('hidden');
+});
 
 // ── 활성 모듈 목록 ───────────────────────────
 function getActiveModules(cfg) {
@@ -86,10 +133,21 @@ async function init() {
     const loadedModules = {};
 
     await Promise.all(activeModules.map(async (modCfg) => {
-      const mod = await loadModule(modCfg.id);
-      if (mod) {
-        loadedModules[modCfg.id] = { ...mod, ...modCfg };
-        if (mod.init) await mod.init(config);
+      // 1. Iframe 기반 타사 서비스 연동 모듈
+      if (modCfg.type === 'iframe') {
+        const iframeMod = {
+          render: () => \`<iframe src="\${modCfg.url}" style="width:100%; height:100%; border:none; display:block; background:#fff;"></iframe>\`,
+          afterRender: () => {}
+        };
+        loadedModules[modCfg.id] = { ...iframeMod, ...modCfg };
+      } 
+      // 2. 내부 네이티브 모듈
+      else {
+        const mod = await loadModule(modCfg.id);
+        if (mod) {
+          loadedModules[modCfg.id] = { ...mod, ...modCfg };
+          if (mod.init) await mod.init(config);
+        }
       }
     }));
 
@@ -125,27 +183,115 @@ async function init() {
   }
 }
 
-// ── 설정 패널 ────────────────────────────────
-document.getElementById('btnSettings')?.addEventListener('click', () => {
+// ── 프로필 및 설정 메뉴 (우측 팝업) ───────────────
+document.getElementById('btnProfile')?.addEventListener('click', () => {
   document.getElementById('settingsPanel')?.classList.add('open');
 });
 document.getElementById('closeSettings')?.addEventListener('click', () => {
   document.getElementById('settingsPanel')?.classList.remove('open');
 });
 
-// 설정 패널 내용 채우기
+// 프로필 메뉴 내용 채우기
 const settingsBody = document.getElementById('settingsBody');
 if (settingsBody) {
+  // 알림 상세 설정 상태 불러오기
+  const optSound = localStorage.getItem('noti-sound') !== 'off';
+  const optVibe  = localStorage.getItem('noti-vibe') !== 'off';
+  const optBadge = localStorage.getItem('noti-badge') !== 'off';
+
   settingsBody.innerHTML = `
-    <div style="color: var(--text-dim); font-size: 13px; line-height: 1.8;">
-      <p style="margin-bottom: 16px;">⚙️ 앱 정보</p>
+    <div style="display:flex; align-items:center; gap:12px; padding-bottom:20px; border-bottom:1px solid var(--border-color); margin-bottom:20px;">
+      <div style="width:48px; height:48px; border-radius:50%; background:var(--bg); display:flex; align-items:center; justify-content:center; font-size:24px;">👤</div>
+      <div>
+        <div style="font-weight:600; color:var(--text-primary);">유여름 리더님</div>
+        <div style="font-size:12px; color:var(--text-secondary);">admin@owner.com</div>
+      </div>
+    </div>
+    
+    <div style="display:flex; flex-direction:column; gap:16px;">
+      <div style="cursor:pointer; color:var(--text-primary);">👤 내 프로필 수정</div>
+      <div id="btnToggleTheme" style="cursor:pointer; color:var(--text-primary);">🎨 테마 전환 (Dark/Light)</div>
+      
+      <!-- 세분화된 알림 설정 -->
+      <div style="color:var(--text-primary); margin-top:10px; border-top:1px dashed var(--border-color); padding-top:10px;">
+        <div style="font-size:12px; font-weight:600; margin-bottom:10px; color:var(--text-secondary);">🔔 알림 상세 설정</div>
+        <div id="btnOptSound" style="cursor:pointer; padding:4px 0; font-size:14px;">\${optSound ? '🔊 소리 (ON)' : '🔈 소리 (OFF)'}</div>
+        <div id="btnOptVibe" style="cursor:pointer; padding:4px 0; font-size:14px;">\${optVibe ? '📳 진동 (ON)' : '📴 진동 (OFF)'}</div>
+        <div id="btnOptBadge" style="cursor:pointer; padding:4px 0; font-size:14px;">\${optBadge ? '🔴 앱 배지 숫자 (ON)' : '⭕ 앱 배지 숫자 (OFF)'}</div>
+      </div>
+
+      <div style="cursor:pointer; color:red; margin-top:20px; border-top:1px solid var(--border-color); padding-top:16px;">🚪 로그아웃</div>
+    </div>
+
+    <div style="margin-top: 40px; font-size: 12px; color: var(--text-secondary);">
       <p>HAD-Agent v2.0</p>
-      <p>by AI Thinking Lab</p>
-      <p style="margin-top: 16px; font-size: 11px; color: var(--text-dim);">
-        © 2026 AI Thinking Lab. All rights reserved.
-      </p>
+      <p>Powered by AI Thinking Lab</p>
     </div>
   `;
+
+  // 테마 토글 버튼 동작
+  document.getElementById('btnToggleTheme')?.addEventListener('click', () => {
+    const currentTheme = document.getElementById('themeStylesheet').href;
+    const isDark = currentTheme.includes('glass-dark');
+    const newTheme = isDark ? 'modern-light' : 'glass-dark';
+    document.getElementById('themeStylesheet').href = \`core/themes/\${newTheme}.css\`;
+    localStorage.setItem('had-theme', newTheme);
+  });
+
+  // 알림 상세 옵션 토글 로직
+  const bindToggle = (id, key, textOn, textOff) => {
+    document.getElementById(id)?.addEventListener('click', (e) => {
+      const isOn = localStorage.getItem(key) !== 'off';
+      if (isOn) {
+        localStorage.setItem(key, 'off');
+        e.target.textContent = textOff;
+        if (key === 'noti-badge') updateAppBadge(0);
+      } else {
+        localStorage.setItem(key, 'on');
+        e.target.textContent = textOn;
+        if ('Notification' in window && Notification.permission !== 'granted') {
+          Notification.requestPermission();
+        }
+      }
+    });
+  };
+
+  bindToggle('btnOptSound', 'noti-sound', '🔊 소리 (ON)', '🔈 소리 (OFF)');
+  bindToggle('btnOptVibe',  'noti-vibe',  '📳 진동 (ON)', '📴 진동 (OFF)');
+  bindToggle('btnOptBadge', 'noti-badge', '🔴 앱 배지 숫자 (ON)', '⭕ 앱 배지 숫자 (OFF)');
+}
+
+// ── App Badging API (앱 아이콘 숫자 표시) ───────
+export function updateAppBadge(count) {
+  if (localStorage.getItem('noti-badge') === 'off') return;
+  if ('setAppBadge' in navigator) {
+    if (count > 0) navigator.setAppBadge(count).catch(console.error);
+    else navigator.clearAppBadge().catch(console.error);
+  }
+}
+
+// ── 통합 알림 실행 함수 (소리, 진동, 배지 제어) ────
+export function triggerNotification(title, options = {}) {
+  // 1. 소리
+  if (localStorage.getItem('noti-sound') !== 'off') {
+    const audio = new Audio('client/assets/alert.mp3'); // 알림음 파일 필요
+    audio.play().catch(e => console.log('Audio play ignored by browser', e));
+  }
+  
+  // 2. 진동 (짧게 두 번 징- 징-)
+  if (localStorage.getItem('noti-vibe') !== 'off') {
+    if ('vibrate' in navigator) navigator.vibrate([200, 100, 200]);
+  }
+  
+  // 3. 브라우저/푸시 알림 팝업
+  if ('Notification' in window && Notification.permission === 'granted') {
+    new Notification(title, {
+      body: options.body || '',
+      icon: 'client/assets/icon-192.png',
+      badge: 'client/assets/icon-192.png',
+      vibrate: localStorage.getItem('noti-vibe') !== 'off' ? [200, 100, 200] : []
+    });
+  }
 }
 
 // ── 실행 ─────────────────────────────────────

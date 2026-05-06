@@ -1,0 +1,29 @@
+/* ── 프리미엄 테마 (Glass Dark) ── */
+:root {
+  /* 🎨 기초 팔레트 */
+  --bg: #0f1016; /* 딥 네이비 배경 */
+  --surface: rgba(255, 255, 255, 0.05); /* 유리 질감 카드 */
+  --surface-header: rgba(15, 16, 22, 0.7);
+  
+  /* 🔤 텍스트 */
+  --text-primary: #fdfaf9;
+  --text-secondary: #a0a0b0;
+  
+  /* 🧩 UI 요소 */
+  --border-color: rgba(255, 255, 255, 0.1);
+  --shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.5);
+  
+  /* ✨ 이펙트 (Glassmorphism 강화) */
+  --backdrop-blur: blur(20px);
+  
+  /* 🏢 브랜딩 기본값 (JS가 덮어씌움) */
+  --brand-color: #e5b2a4; 
+  --brand-color-dim: color-mix(in srgb, var(--brand-color) 20%, transparent);
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text-primary);
+  color-scheme: dark;
+}

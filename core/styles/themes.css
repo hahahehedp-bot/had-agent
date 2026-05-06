@@ -1,0 +1,59 @@
+/* =============================================
+   HAD-Agent — Themes Engine (Core)
+   ============================================= */
+
+/* ── 1. 기본 테마 (Modern Light) ── */
+:root, [data-theme="modern-light"] {
+  /* 🎨 기초 팔레트 */
+  --bg: #f8f9fc;
+  --surface: #ffffff;
+  --surface-header: rgba(255, 255, 255, 0.85);
+  
+  /* 🔤 텍스트 */
+  --text-primary: #1a1a2e;
+  --text-secondary: #6e6e80;
+  
+  /* 🧩 UI 요소 */
+  --border-color: rgba(0, 0, 0, 0.08);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.06);
+  
+  /* ✨ 이펙트 */
+  --backdrop-blur: blur(12px);
+  
+  /* 🏢 고객사 브랜딩 (config.js에서 주입됨) */
+  --brand-color: #6c63ff; /* 기본값 (Fallback) */
+  --brand-color-dim: color-mix(in srgb, var(--brand-color) 15%, transparent);
+}
+
+/* ── 2. 프리미엄 테마 (Glass Dark) ── */
+[data-theme="glass-dark"] {
+  /* 🎨 기초 팔레트 */
+  --bg: #0f1016; /* 딥 네이비 배경 */
+  --surface: rgba(255, 255, 255, 0.05); /* 유리 질감 카드 */
+  --surface-header: rgba(15, 16, 22, 0.7);
+  
+  /* 🔤 텍스트 */
+  --text-primary: #fdfaf9;
+  --text-secondary: #a0a0b0;
+  
+  /* 🧩 UI 요소 */
+  --border-color: rgba(255, 255, 255, 0.1);
+  --shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.5);
+  
+  /* ✨ 이펙트 (Glassmorphism 강화) */
+  --backdrop-blur: blur(20px);
+  
+  /* 🏢 고객사 브랜딩 */
+  --brand-color: #e5b2a4; /* 오너 기본 컬러 (Fallback) */
+  --brand-color-dim: color-mix(in srgb, var(--brand-color) 20%, transparent);
+}
+
+/* ── 앱 전체 적용 ── */
+body {
+  background-color: var(--bg);
+  color: var(--text-primary);
+  /* 다크 테마 시 스크롤바 등 브라우저 기본 UI 다크화 */
+  color-scheme: light dark;
+}

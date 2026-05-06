@@ -1,0 +1,29 @@
+/* ── 기본 테마 (Modern Light) ── */
+:root {
+  /* 🎨 기초 팔레트 */
+  --bg: #f8f9fc;
+  --surface: #ffffff;
+  --surface-header: rgba(255, 255, 255, 0.85);
+  
+  /* 🔤 텍스트 */
+  --text-primary: #1a1a2e;
+  --text-secondary: #6e6e80;
+  
+  /* 🧩 UI 요소 */
+  --border-color: rgba(0, 0, 0, 0.08);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.06);
+  
+  /* ✨ 이펙트 */
+  --backdrop-blur: blur(12px);
+  
+  /* 🏢 브랜딩 기본값 (JS가 덮어씌움) */
+  --brand-color: #6c63ff; 
+  --brand-color-dim: color-mix(in srgb, var(--brand-color) 15%, transparent);
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text-primary);
+  color-scheme: light;
+}
