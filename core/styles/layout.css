@@ -155,7 +155,9 @@ html, body {
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
   background: var(--bg);
+  position: relative;
 }
 
 /* ── 하단 탭바 ── */

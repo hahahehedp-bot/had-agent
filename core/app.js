@@ -283,7 +283,8 @@ function setupPullToRefresh() {
   let ptrEl = null;
 
   main.addEventListener('touchstart', (e) => {
-    if (main.scrollTop <= 0) {
+    // 스크롤이 맨 위일 때만 작동 (여유값 5px)
+    if (main.scrollTop <= 5) {
       startY = e.touches[0].clientY;
       isPulling = true;
     }
@@ -294,21 +295,22 @@ function setupPullToRefresh() {
     const y = e.touches[0].clientY;
     const diff = y - startY;
 
-    if (diff > 0 && main.scrollTop <= 0) {
+    // 아래로 당길 때만 작동
+    if (diff > 0 && main.scrollTop <= 5) {
       if (!ptrEl) {
         ptrEl = document.createElement('div');
-        ptrEl.style.cssText = 'position:absolute; top:-60px; left:0; width:100%; height:60px; display:flex; align-items:center; justify-content:center; font-size:14px; color:var(--text-secondary); font-weight:600; transition:none;';
-        main.style.position = 'relative';
-        main.appendChild(ptrEl);
+        ptrEl.style.cssText = 'position:absolute; top:0; left:0; width:100%; height:60px; display:flex; align-items:center; justify-content:center; font-size:14px; color:var(--text-secondary); font-weight:600; z-index:99; background:transparent; pointer-events:none;';
+        main.insertBefore(ptrEl, main.firstChild);
       }
-      ptrEl.innerHTML = diff > 120 ? '🔄 손을 놓으면 새로고침' : '⬇️ 당겨서 새로고침...';
-      const moveY = Math.min(diff / 2.5, 80);
-      main.style.transform = `translateY(\${moveY}px)`;
-      // 터치 이벤트 기본 동작 차단 (필요 시)
-      // e.preventDefault(); 
+      
+      const pullDistance = Math.min(diff / 2.5, 80);
+      ptrEl.innerHTML = diff > 150 ? '🔄 손을 놓으면 새로고침' : '⬇️ 당겨서 새로고침...';
+      ptrEl.style.transform = `translateY(\${pullDistance}px)`;
+      
+      // 모바일 기본 스크롤 동작 방지 (Pull-to-refresh 전용)
+      if (e.cancelable) e.preventDefault();
     } else {
       isPulling = false;
-      main.style.transform = '';
       if (ptrEl) { ptrEl.remove(); ptrEl = null; }
     }
   }, { passive: false });
@@ -316,13 +318,10 @@ function setupPullToRefresh() {
   main.addEventListener('touchend', () => {
     if (!isPulling) return;
     isPulling = false;
-    main.style.transition = 'transform 0.3s ease';
-    main.style.transform = '';
     
     if (ptrEl) {
       if (ptrEl.innerHTML.includes('손을 놓으면')) {
-        ptrEl.innerHTML = '⏳ 새로고침 중...';
-        main.style.transform = 'translateY(60px)'; // 새로고침 중 멈춤
+        ptrEl.innerHTML = '⏳ 1초 뒤 새로고침...';
         // 캐시 우회를 위해 URL에 타임스탬프를 강제로 붙여서 이동
         setTimeout(() => {
           const url = new URL(window.location.href);
@@ -334,7 +333,6 @@ function setupPullToRefresh() {
         ptrEl = null;
       }
     }
-    setTimeout(() => { main.style.transition = 'none'; }, 300);
   });
 }
 
