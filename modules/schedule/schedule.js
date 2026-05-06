@@ -10,7 +10,7 @@ export default {
     if (!document.querySelector('link[href="modules/schedule/schedule.css"]')) {
       const link = document.createElement('link');
       link.rel = 'stylesheet';
-      link.href = 'modules/schedule/schedule.css';
+      link.href = 'modules/schedule/schedule.css?v=5';
       document.head.appendChild(link);
     }
   },

@@ -10,7 +10,7 @@ export default {
     if (!document.querySelector('link[href="modules/resources/resources.css"]')) {
       const link = document.createElement('link');
       link.rel = 'stylesheet';
-      link.href = 'modules/resources/resources.css';
+      link.href = 'modules/resources/resources.css?v=5';
       document.head.appendChild(link);
     }
   },

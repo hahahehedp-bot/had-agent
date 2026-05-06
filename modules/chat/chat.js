@@ -10,7 +10,7 @@ export default {
     if (!document.querySelector('link[href="modules/chat/chat.css"]')) {
       const link = document.createElement('link');
       link.rel = 'stylesheet';
-      link.href = 'modules/chat/chat.css';
+      link.href = 'modules/chat/chat.css?v=5';
       document.head.appendChild(link);
     }
     this._endpoint = config.agent.endpoint;
