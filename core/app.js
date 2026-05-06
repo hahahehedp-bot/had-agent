@@ -55,21 +55,21 @@ function applyBranding(cfg) {
   const hWrap = document.getElementById('headerLogoWrap');
   const lWrap = document.getElementById('loginLogoWrap');
   if (cfg.brand.logo) {
-    if (hWrap) hWrap.innerHTML += `<img src="\${cfg.brand.logo}" alt="로고" class="header-logo">`;
-    if (lWrap) lWrap.innerHTML += `<img src="\${cfg.brand.logo}" alt="로고" style="width:80px; height:80px; margin-bottom:10px;">`;
+    if (hWrap) hWrap.innerHTML += `<img src="${cfg.brand.logo}" alt="로고" class="header-logo">`;
+    if (lWrap) lWrap.innerHTML += `<img src="${cfg.brand.logo}" alt="로고" style="width:80px; height:80px; margin-bottom:10px;">`;
   }
   if (cfg.brand.logoText) {
-    if (hWrap) hWrap.innerHTML += `<img src="\${cfg.brand.logoText}" alt="브랜드" class="header-logo-text">`;
-    if (lWrap) lWrap.innerHTML += `<br><img src="\${cfg.brand.logoText}" alt="브랜드" style="height:30px;">`;
+    if (hWrap) hWrap.innerHTML += `<img src="${cfg.brand.logoText}" alt="브랜드" class="header-logo-text">`;
+    if (lWrap) lWrap.innerHTML += `<br><img src="${cfg.brand.logoText}" alt="브랜드" style="height:30px;">`;
   }
 
   // 4. 사이드바 헤더 주입
   const sHeader = document.getElementById('sidebarHeader');
   if (sHeader) {
     if (cfg.brand.logo) {
-      sHeader.innerHTML += `<img src="\${cfg.brand.logo}" alt="로고" class="sidebar-logo">`;
+      sHeader.innerHTML += `<img src="${cfg.brand.logo}" alt="로고" class="sidebar-logo">`;
     }
-    sHeader.innerHTML += `<span class="sidebar-brand">\${cfg.brand.name}</span>`;
+    sHeader.innerHTML += `<span class="sidebar-brand">${cfg.brand.name}</span>`;
   }
 
   // 5. manifest 동적 업데이트
@@ -128,7 +128,7 @@ async function init() {
       // 1. Iframe 기반 타사 서비스 연동 모듈
       if (modCfg.type === 'iframe') {
         const iframeMod = {
-          render: () => \`<iframe src="\${modCfg.url}" style="width:100%; height:100%; border:none; display:block; background:#fff;"></iframe>\`,
+          render: () => `<iframe src="${modCfg.url}" style="width:100%; height:100%; border:none; display:block; background:#fff;"></iframe>`,
           afterRender: () => {}
         };
         loadedModules[modCfg.id] = { ...iframeMod, ...modCfg };
