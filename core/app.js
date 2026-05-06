@@ -3,7 +3,7 @@
 // config 읽기 → 테마 적용 → 모듈 로드 → 라우팅
 // =============================================
 
-import config from '../client/config.js';
+import { Registry } from './services/registry.js';
 import { initSidebar } from './sidebar.js';
 import { initTabBar } from './tabbar.js';
 import { initRouter, navigateTo } from './router.js';
@@ -11,6 +11,8 @@ import { initAuth } from './auth.js';
 import { initTheme, toggleTheme } from './services/theme.js';
 import { applyBranding } from './services/branding.js';
 import { updateAppBadge } from './services/notification.js';
+
+let config = Registry.getConfig();
 
 // ── 활성 모듈 목록 ───────────────────────────
 function getActiveModules(cfg) {
@@ -38,7 +40,11 @@ async function init() {
   }
 
   try {
-    // 1. 테마 + 브랜딩
+    // 1. 레지스트리 초기화 (동적 설정 로드)
+    await Registry.init();
+    config = Registry.getConfig();
+
+    // 2. 테마 + 브랜딩
     initTheme(config);
     applyBranding(config);
 

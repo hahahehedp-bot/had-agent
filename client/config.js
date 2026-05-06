@@ -20,6 +20,7 @@ export default {
     type: "google",
     clientId: "473448066886-7kjj7jhvliclqgdpa30et6t2m1shgbdt.apps.googleusercontent.com",
     required: true,
+    adminEmails: ["summ1@naver.com", "admin@owner.com"], // 마스터 관리자 이메일
   },
 
   // ── 테마 (사용자 선택 및 기본 테마 지정) ──────────────

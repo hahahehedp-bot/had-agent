@@ -19,7 +19,11 @@ export async function initAuth() {
       // 이미 로그인 상태인지 확인 (토큰 유무)
       const token = localStorage.getItem('had_agent_token');
       if (token) {
-        return resolve(true); // 이미 로그인됨 -> 앱 실행 계속
+        const userEmail = localStorage.getItem('had_agent_email');
+        const isAdmin = authCfg.adminEmails?.includes(userEmail);
+        window.hadState = window.hadState || {};
+        window.hadState.isAdmin = isAdmin;
+        return resolve(true);
       }
 
       // 로그인 오버레이 UI 동적 생성
@@ -62,10 +66,19 @@ export async function initAuth() {
       // 구글 SDK 콜백 함수 전역 등록
       window.handleCredentialResponse = (response) => {
         console.log("[Auth] Google Login Success");
-        // 토큰 저장 (이후 새로고침 시 이 토큰을 읽고 자동 통과)
+        const payload = JSON.parse(atob(response.credential.split('.')[1]));
+        const userEmail = payload.email;
+
+        // 관리자 권한 체크
+        const isAdmin = authCfg.adminEmails?.includes(userEmail);
+        window.hadState = window.hadState || {};
+        window.hadState.isAdmin = isAdmin;
+        if (isAdmin) console.log("[Auth] Master Admin Account Detected:", userEmail);
+
         localStorage.setItem('had_agent_token', response.credential);
-        overlay.remove(); // UI에서 오버레이 제거
-        resolve(true); // 앱 초기화 로직으로 복귀
+        localStorage.setItem('had_agent_email', userEmail);
+        overlay.remove();
+        resolve(true);
       };
 
       // 우회 버튼 이벤트
