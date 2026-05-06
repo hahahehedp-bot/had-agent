@@ -7,6 +7,7 @@ import config from '../client/config.js';
 import { initSidebar } from './sidebar.js';
 import { initTabBar } from './tabbar.js';
 import { initRouter, navigateTo } from './router.js';
+import { initAuth } from './auth.js';
 
 // ── 테마 모듈 로드 및 브랜딩 컬러 주입 ───────────
 function applyTheme(cfg) {
@@ -91,19 +92,7 @@ function applyBranding(cfg) {
   }
 }
 
-// ── 🔐 구글 로그인 및 인증 로직 ────────────────
-// 전역 공간에 콜백 함수 노출 (Google SDK가 호출함)
-window.handleCredentialResponse = (response) => {
-  console.log("Encoded JWT ID token: " + response.credential);
-  // 원래는 여기서 토큰을 백엔드로 보내 오너 ID와 매핑/검증해야 합니다.
-  // 성공 시 오버레이 숨김
-  document.getElementById('loginOverlay')?.classList.add('hidden');
-};
 
-// 개발자 테스트용 우회 버튼
-document.getElementById('btnDevBypass')?.addEventListener('click', () => {
-  document.getElementById('loginOverlay')?.classList.add('hidden');
-});
 
 // ── 활성 모듈 목록 ───────────────────────────
 function getActiveModules(cfg) {
@@ -128,7 +117,10 @@ async function init() {
     applyTheme(config);
     applyBranding(config);
 
-    // 2. 활성 모듈 로드
+    // 2. 인증 로직 실행 (필요한 경우 로그인 화면이 뜨고 사용자가 로그인할 때까지 대기)
+    await initAuth();
+
+    // 3. 활성 모듈 로드
     const activeModules = getActiveModules(config);
     const loadedModules = {};
 

@@ -27,42 +27,8 @@
 
   <!-- Markdown -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-
-  <!-- Google Identity Services (OAuth) -->
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
-
-  <!-- 🔐 로그인 오버레이 -->
-  <div class="login-overlay" id="loginOverlay">
-    <div class="login-box">
-      <div id="loginLogoWrap" style="margin-bottom: 20px;"></div>
-      <h2 style="margin-bottom: 10px; color: var(--text-primary); font-family: 'Outfit', sans-serif;">Welcome to HAD-Agent</h2>
-      <p style="margin-bottom: 30px; font-size: 14px; color: var(--text-secondary);">서비스를 이용하려면 구글 계정으로 로그인하세요.</p>
-      
-      <!-- 구글 표준 로그인 버튼 컨테이너 -->
-      <div id="g_id_onload"
-           data-client_id="473448066886-7kjj7jhvliclqgdpa30et6t2m1shgbdt.apps.googleusercontent.com"
-           data-context="signin"
-           data-ux_mode="popup"
-           data-callback="handleCredentialResponse"
-           data-auto_prompt="false">
-      </div>
-      <div class="g_id_signin"
-           data-type="standard"
-           data-shape="rectangular"
-           data-theme="outline"
-           data-text="signin_with"
-           data-size="large"
-           data-logo_alignment="left">
-      </div>
-
-      <!-- 테스트용 우회 버튼 (나중에 삭제) -->
-      <button id="btnDevBypass" style="margin-top:20px; padding:10px 20px; border-radius:8px; border:1px solid #ddd; background:#f9f9f9; color:#666; font-size:12px; cursor:pointer;">
-        [개발자 전용] 로그인 없이 앱 들어가기
-      </button>
-    </div>
-  </div>
 
   <!-- 사이드바 오버레이 -->
   <div class="sidebar-overlay" id="sidebarOverlay"></div>

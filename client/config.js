@@ -14,6 +14,14 @@ export default {
     primaryColor:    "#4f46e5", // 세련된 인디고 블루
   },
 
+  // ── 인증 설정 (로그인 방식) ───────────────────────
+  // type: "google" (구글 인증), "none" (마케팅/퍼블릭용), 등
+  auth: {
+    type: "google",
+    clientId: "473448066886-7kjj7jhvliclqgdpa30et6t2m1shgbdt.apps.googleusercontent.com",
+    required: true,
+  },
+
   // ── 테마 (사용자 선택 및 기본 테마 지정) ──────────────
   theme: {
     default: "modern-light", // "modern-light", "glass-dark" 등
