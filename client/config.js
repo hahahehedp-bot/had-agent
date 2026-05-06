@@ -1,38 +1,38 @@
 // =============================================
 // HAD-Agent — client/config.js
-// 오순이 (샌드박스 테스트용) 설정
+// 화이트라벨 코어 엔진 테스트용 범용 설정
 // =============================================
 
 export default {
 
   // ── 브랜딩 (고객사 고유값) ──────────────────────
   brand: {
-    name:            "(주)오너",
-    tagline:         "리더님의 빛나는 성공을 위하여",
-    logo:            "client/assets/logo.png",
-    logoText:        "client/assets/logo-text.png",
-    primaryColor:    "#e5b2a4", // 브랜드를 상징하는 메인 컬러
+    name:            "AI Thinking Lab",
+    tagline:         "미래를 앞당기는 지적 협업",
+    logo:            "client/assets/icon-192.png", // 테스트용 기본 로고
+    logoText:        "",
+    primaryColor:    "#4f46e5", // 세련된 인디고 블루
   },
 
   // ── 테마 (사용자 선택 및 기본 테마 지정) ──────────────
   theme: {
-    default: "glass-dark", // "modern-light", "glass-dark" 등
+    default: "modern-light", // "modern-light", "glass-dark" 등
   },
 
   // ── Drive 설정 ─────────────────────────────────
   // 고객사 드라이브 폴더 ID (공개 공유 필요)
   drive: {
-    rootFolderId:      "1zguMbzCqTrJQmD9SNEiic1OXwKEhzA_U",  // 오순이 루트 폴더 ID
-    scheduleCsvId:     "1HNXY_pdzcS0XJfwn4AIeexc1ELmcuBbg",  // 일정/schedule.csv 파일 ID
-    resourcesFolderId: "1K5XlEOLdXOgiEehTcQPMOWUHmcjYv-Ws",  // 자료실 폴더 ID
+    rootFolderId:      "TEST_FOLDER_ID", 
+    scheduleCsvId:     "TEST_CSV_ID",
+    resourcesFolderId: "TEST_RESOURCES_ID",
   },
 
   // ── AI 에이전트 ────────────────────────────────
   agent: {
-    name:         "오순이",
-    avatar:       "client/assets/logo.png",
+    name:         "HAD 봇",
+    avatar:       "client/assets/icon-192.png",
     endpoint:     "https://asia-northeast3-triple-brain.cloudfunctions.net/osunyi-chat",
-    systemPrompt: "당신은 (주)오너의 AI 비서 오순이입니다. 리버스12, 세노이드 등 제품과 사업에 대해 친근하고 전문적으로 상담합니다. 리더님이라고 호칭하세요.",
+    systemPrompt: "당신은 AI Thinking Lab의 테스트 에이전트 HAD 봇입니다. 기술적이고 명확하게 답변하세요.",
   },
 
   // ── 모듈 on/off 및 타입 정의 ───────────────────────
