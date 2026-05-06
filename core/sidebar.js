@@ -89,6 +89,24 @@ export function initSidebar(activeModules, loadedModules, config) {
     alert(`${config.brand.name} v2.0\nPowered by AI Thinking Lab`);
   });
 
+  // ── 마스터 운영실 (관리자 전용) ──────────────────
+  if (window.hadState?.isAdmin) {
+    const footer = document.querySelector('.sidebar-footer');
+    if (footer) {
+      const adminItem = document.createElement('div');
+      adminItem.className = 'sidebar-footer-item master-admin';
+      adminItem.id = 'sidebarAdmin';
+      adminItem.innerHTML = '🛡️ 마스터 운영실';
+      footer.prepend(adminItem);
+
+      adminItem.addEventListener('click', () => {
+        closeSidebar();
+        alert('마스터 운영실을 준비 중입니다. (v7.2.0에서 구현 예정)');
+        // TODO: 관리자 패널 컴포넌트 호출
+      });
+    }
+  }
+
   // 활성 항목 표시 함수 (router에서 호출)
   window._hadSetActiveSidebarItem = (moduleId) => {
     nav.querySelectorAll('.sidebar-nav-item').forEach(el => {

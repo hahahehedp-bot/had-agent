@@ -271,3 +271,16 @@
   padding: 4px 12px;
   border-radius: 8px;
 }
+
+/* ── 마스터 운영실 전용 ── */
+.sidebar-footer-item.master-admin {
+  color: #d4a017; /* 마스터 골드 컬러 */
+  font-weight: 800;
+  border-left: 3px solid #d4a017;
+  padding-left: 12px;
+  background: color-mix(in srgb, #d4a017 8%, transparent);
+  margin-bottom: 8px;
+}
+.sidebar-footer-item.master-admin:hover {
+  background: color-mix(in srgb, #d4a017 15%, transparent);
+}
