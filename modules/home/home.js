@@ -18,33 +18,46 @@ export default {
   async render(config) {
     const activeModules = config.modules.filter(m => m.enabled && m.id !== 'home');
 
-    const menuCards = activeModules.map(mod => `
-      <a href="#${mod.id}" class="home-menu-card" data-module="${mod.id}">
-        <div class="home-menu-icon">${mod.icon}</div>
-        <div class="home-menu-info">
-          <div class="home-menu-title">${mod.label}</div>
-          <div class="home-menu-desc">${mod.description || ''}</div>
-        </div>
-        <div class="home-menu-arrow">›</div>
-      </a>
-    `).join('');
+    // 모듈별로 벤토 카드의 크기 지정 (chat은 가로로 길게, 나머지는 정사각형)
+    const bentoCards = activeModules.map(mod => {
+      const isWide = mod.id === 'chat' || mod.id === 'translate'; // 주요 기능은 와이드로
+      
+      if (isWide) {
+        return `
+          <a href="#${mod.id}" class="bento-card wide" data-module="${mod.id}">
+            <div class="bento-info">
+              <div class="bento-title">${mod.label}</div>
+              <div class="bento-desc">${mod.description || ''}</div>
+            </div>
+            <div class="bento-icon">${mod.icon}</div>
+          </a>
+        `;
+      } else {
+        return `
+          <a href="#${mod.id}" class="bento-card" data-module="${mod.id}">
+            <div class="bento-icon">${mod.icon}</div>
+            <div class="bento-info">
+              <div class="bento-title">${mod.label}</div>
+              <div class="bento-desc">${mod.description || ''}</div>
+            </div>
+          </a>
+        `;
+      }
+    }).join('');
 
     return `
-      <div class="module-root" style="padding: 20px; padding-bottom: 80px;">
+      <div class="home-container">
         
-        <!-- 웰컴 배너 -->
-        <div class="home-welcome card" style="margin-bottom: 20px; text-align: center; padding: 30px 20px;">
-          <img src="${config.brand.logo}" alt="${config.brand.name}" 
-               style="width: 72px; height: 72px; border-radius: 50%; object-fit: cover; margin-bottom: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.1);">
-          <h1 style="font-size: 20px; color: var(--dark); margin-bottom: 6px; font-weight: 700;">
-            ${config.brand.tagline || '환영합니다'}
-          </h1>
-          <p style="font-size: 13px; color: var(--text-dim);">${config.brand.name}</p>
+        <!-- 웰컴 배너 (Hero Section) -->
+        <div class="home-hero">
+          <img src="${config.brand.logo}" alt="${config.brand.name}" class="home-hero-logo">
+          <h1 class="home-hero-title">${config.brand.tagline || '환영합니다'}</h1>
+          <p class="home-hero-subtitle">${config.brand.name}</p>
         </div>
 
-        <!-- 메뉴 그리드 -->
-        <div class="home-menu-grid">
-          ${menuCards}
+        <!-- 벤토 그리드 메뉴 -->
+        <div class="bento-grid">
+          ${bentoCards}
         </div>
 
       </div>

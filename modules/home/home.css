@@ -1,34 +1,94 @@
 /* modules/home/home.css */
-.home-menu-grid {
+
+.home-container {
+  padding: 24px 20px 100px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 20px;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
-.home-menu-card {
+/* 웰컴 배너 (Hero Section) */
+.home-hero {
   display: flex;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  gap: 16px;
+  text-align: center;
   background: var(--card-bg);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 16px 18px;
-  cursor: pointer;
-  text-decoration: none;
-  color: inherit;
+  border-radius: 24px;
+  padding: 32px 20px;
   box-shadow: var(--shadow);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
-.home-menu-card:active {
-  transform: scale(0.98);
+
+.home-hero-logo {
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
+  object-fit: cover;
+  margin-bottom: 16px;
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--primary) 30%, transparent);
+}
+
+.home-hero-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--dark);
+  margin-bottom: 6px;
+  letter-spacing: -0.5px;
+}
+
+.home-hero-subtitle {
+  font-size: 14px;
+  color: var(--text-dim);
+  font-weight: 500;
+}
+
+/* 벤토 그리드 (Bento Grid) */
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+/* 벤토 아이템 (기본: 1칸 정사각형 느낌) */
+.bento-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-decoration: none;
+  box-shadow: var(--shadow);
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.bento-card:active {
+  transform: scale(0.96);
   box-shadow: none;
 }
 
-.home-menu-icon {
-  width: 46px;
-  height: 46px;
-  border-radius: 14px;
+/* 와이드 카드 (2칸 차지) */
+.bento-card.wide {
+  grid-column: span 2;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 아이콘 컨테이너 */
+.bento-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
   background: color-mix(in srgb, var(--primary) 12%, transparent);
+  color: var(--primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -36,20 +96,42 @@
   flex-shrink: 0;
 }
 
-.home-menu-info { flex: 1; }
-.home-menu-title {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--dark);
-  margin-bottom: 3px;
-}
-.home-menu-desc {
-  font-size: 12px;
-  color: var(--text-dim);
+.bento-card.wide .bento-icon {
+  width: 56px;
+  height: 56px;
+  font-size: 28px;
 }
 
-.home-menu-arrow {
-  font-size: 22px;
+/* 텍스트 영역 */
+.bento-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.bento-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 4px;
+}
+
+.bento-desc {
+  font-size: 12px;
   color: var(--text-dim);
-  font-weight: 300;
+  line-height: 1.4;
+}
+
+.bento-card.wide .bento-title {
+  font-size: 18px;
+}
+.bento-card.wide .bento-desc {
+  font-size: 13px;
+}
+
+/* 우측 화살표 (와이드 카드용) */
+.bento-arrow {
+  font-size: 20px;
+  color: color-mix(in srgb, var(--primary) 40%, transparent);
+  font-weight: bold;
 }
