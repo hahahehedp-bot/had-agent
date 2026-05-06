@@ -20,7 +20,7 @@ function applyTheme(cfg) {
   // 2. 테마 CSS 모듈 파일 동적 로드
   const themeLink = document.getElementById('themeStylesheet');
   if (themeLink) {
-    themeLink.href = `core/themes/${themeMode}.css`;
+    themeLink.href = `core/themes/${themeMode}.css?v=5`;
   }
 
   // 3. 브랜딩 컬러 주입 (테마 위에 오버레이)
@@ -102,7 +102,7 @@ function getActiveModules(cfg) {
 // ── 모듈 동적 import ─────────────────────────
 async function loadModule(moduleId) {
   try {
-    const mod = await import(`../modules/${moduleId}/${moduleId}.js`);
+    const mod = await import(`../modules/${moduleId}/${moduleId}.js?v=5`);
     return mod.default;
   } catch (e) {
     console.warn(`[HAD] 모듈 로드 실패: ${moduleId}`, e);

@@ -61,7 +61,7 @@ html, body {
   min-height: 100vh;
   font-family: 'Outfit', 'Noto Sans KR', sans-serif;
   background: var(--bg);
-  color: var(--text);
+  color: var(--text-primary);
 }
 
 /* ── 앱 레이아웃 ── */

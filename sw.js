@@ -1,5 +1,5 @@
 // HAD-Agent — Service Worker (PWA 오프라인 지원)
-const CACHE = 'had-agent-v4';
+const CACHE = 'had-agent-v5';
 const CORE_FILES = [
   './',
   './index.html',
