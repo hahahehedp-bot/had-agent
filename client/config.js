@@ -36,25 +36,20 @@ export default {
   },
 
   // ── 모듈 on/off 및 타입 정의 ───────────────────────
-  // type 생략 시 기본 모듈(내부 JS 로드). type: "iframe"이면 외부 URL 인앱 렌더링.
   modules: [
     { id: "home",      enabled: true,  icon: "🏠",  label: "홈",       description: "메인 대시보드" },
-    { id: "schedule",  enabled: true,  icon: "📅",  label: "일정",     description: "5월 세미나 및 행사 일정" },
+    { id: "schedule",  enabled: true,  icon: "📅",  label: "일정",     description: "세미나 및 행사 일정" },
     { id: "resources", enabled: true,  icon: "📂",  label: "자료실",   description: "제품 자료 및 영상" },
-    { id: "chat",      enabled: true,  icon: "💬",  label: "AI 상담",  description: "오순이와 1:1 상담" },
+    { id: "chat",      enabled: true,  icon: "💬",  label: "AI 상담",  description: "HAD 봇과 1:1 상담" },
     
-    // 타사 솔루션 인앱 연동 (Iframe)
-    { id: "shop",      enabled: true,  icon: "🛒",  label: "쇼핑몰",   description: "공식 쇼핑몰", type: "iframe", url: "https://example.com/shop" },
-    { id: "myoffice",  enabled: true,  icon: "🏢",  label: "마이오피스", description: "사업자 관리 시스템", type: "iframe", url: "https://example.com/myoffice" },
-
-    { id: "notice",    enabled: false, icon: "📢",  label: "공지",     description: "공지 및 팝업" },
-    { id: "translate", enabled: false, icon: "🌐",  label: "번역",     description: "문서 번역" },
+    // 외부 Iframe 모듈 예시 (마이오피스, 쇼핑몰 등)
+    { id: "myoffice",  enabled: true,  type: "iframe", url: "https://example.com/myoffice", icon: "🏢", label: "마이오피스", description: "나의 비즈니스 현황" },
   ],
 
-  // ── PWA 설정 ──────────────────────────────────
+  // ── PWA 설정 (설치형 앱 메타데이터) ──────────────────
   pwa: {
-    shortName:       "오순이",
-    themeColor:      "#fdfaf9",
-    backgroundColor: "#fdfaf9",
+    shortName:       "HAD-Agent",
+    themeColor:      "#4f46e5",
+    backgroundColor: "#ffffff",
   }
 }
