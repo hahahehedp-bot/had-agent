@@ -1,5 +1,5 @@
 // HAD-Agent — Service Worker (PWA 오프라인 지원)
-const CACHE = 'had-agent-v2';
+const CACHE = 'had-agent-v3';
 const CORE_FILES = [
   './',
   './index.html',
@@ -39,13 +39,15 @@ self.addEventListener('fetch', e => {
   if (!e.request.url.startsWith(self.location.origin)) return;
 
   e.respondWith(
-    caches.match(e.request).then(cached => {
-      if (cached) return cached;
-      return fetch(e.request).then(res => {
-        const clone = res.clone();
-        caches.open(CACHE).then(c => c.put(e.request, clone));
-        return res;
-      }).catch(() => cached);
+    // [해결의 핵심] 네트워크를 먼저 시도 (Network-First)
+    fetch(e.request).then(res => {
+      // 네트워크 성공 시: 캐시에 최신 버전 복사 후 반환
+      const clone = res.clone();
+      caches.open(CACHE).then(c => c.put(e.request, clone));
+      return res;
+    }).catch(() => {
+      // 오프라인이거나 네트워크 실패 시: 캐시된 구버전 반환
+      return caches.match(e.request);
     })
   );
 });
