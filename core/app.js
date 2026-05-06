@@ -20,7 +20,7 @@ function getActiveModules(cfg) {
 // ── 모듈 동적 import ─────────────────────────
 async function loadModule(moduleId) {
   try {
-    const mod = await import(`../modules/${moduleId}/${moduleId}.js?v=5`);
+    const mod = await import(`../modules/${moduleId}/${moduleId}.js?v=6`);
     return mod.default;
   } catch (e) {
     console.warn(`[HAD] 모듈 로드 실패: ${moduleId}`, e);
@@ -32,6 +32,11 @@ import { initSettings } from './components/settings.js';
 
 // ── 앱 초기화 ────────────────────────────────
 async function init() {
+  // 0. Service Worker 즉시 등록 (PWA 최적화)
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js').catch(err => console.warn('[SW] 등록 실패:', err));
+  }
+
   try {
     // 1. 테마 + 브랜딩
     initTheme(config);
@@ -78,10 +83,6 @@ async function init() {
     // 8. 로딩 화면 제거
     document.getElementById('loadingScreen')?.remove();
 
-    // 9. Service Worker 등록
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js').catch(() => {});
-    }
   } catch (e) {
     console.error('[HAD] 앱 초기화 실패:', e);
     const ls = document.getElementById('loadingScreen');

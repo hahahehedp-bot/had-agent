@@ -26,8 +26,8 @@ export function applyBranding(cfg) {
     sHeader.innerHTML += `<span class="sidebar-brand">${cfg.brand.name}</span>`;
   }
 
-  // 5. manifest 동적 업데이트
-  updateManifest(cfg);
+  // 5. manifest 업데이트 (PWA 설치 안정성을 위해 정적 manifest.json 사용 권장)
+  // updateManifest(cfg);
 }
 
 function injectIcons(cfg) {
@@ -77,10 +77,10 @@ function updateManifest(cfg) {
       theme_color: cfg.pwa.themeColor || cfg.brand.primaryColor,
       background_color: cfg.pwa.backgroundColor || cfg.brand.primaryColor,
       display: 'standalone',
-      start_url: './',
+      start_url: new URL('./', window.location.href).href,
       icons: [
-        { src: cfg.brand.icon192 || 'client/assets/icon-192.png', sizes: '192x192', type: 'image/png' },
-        { src: cfg.brand.icon512 || 'client/assets/icon-512.png', sizes: '512x512', type: 'image/png' }
+        { src: new URL(cfg.brand.icon192 || 'client/assets/icon-192.png', window.location.href).href, sizes: '192x192', type: 'image/png' },
+        { src: new URL(cfg.brand.icon512 || 'client/assets/icon-512.png', window.location.href).href, sizes: '512x512', type: 'image/png' }
       ]
     };
     const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });

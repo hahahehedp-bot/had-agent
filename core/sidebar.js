@@ -40,6 +40,18 @@ export function initSidebar(activeModules, loadedModules, config) {
     overlay.classList.remove('active');
   }
 
+  // 설정 메뉴
+  document.getElementById('sidebarSettings')?.addEventListener('click', () => {
+    closeSidebar();
+    document.getElementById('settingsPanel')?.classList.add('open');
+  });
+
+  // 앱 정보 메뉴
+  document.getElementById('sidebarInfo')?.addEventListener('click', () => {
+    closeSidebar();
+    alert(`${config.brand.name} v2.0\nPowered by AI Thinking Lab`);
+  });
+
   // 활성 항목 표시 함수 (router에서 호출)
   window._hadSetActiveSidebarItem = (moduleId) => {
     nav.querySelectorAll('.sidebar-nav-item').forEach(el => {

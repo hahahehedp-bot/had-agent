@@ -1,5 +1,5 @@
 // HAD-Agent — Service Worker (PWA 오프라인 지원)
-const CACHE = 'had-agent-v5';
+const CACHE = 'had-agent-v6';
 const CORE_FILES = [
   './',
   './index.html',
@@ -47,8 +47,8 @@ self.addEventListener('fetch', e => {
       caches.open(CACHE).then(c => c.put(e.request, clone));
       return res;
     }).catch(() => {
-      // 오프라인이거나 네트워크 실패 시: 캐시된 구버전 반환
-      return caches.match(e.request);
+      // 오프라인이거나 네트워크 실패 시: 캐시된 구버전 반환 (쿼리 스트링 무시)
+      return caches.match(e.request, { ignoreSearch: true });
     })
   );
 });
