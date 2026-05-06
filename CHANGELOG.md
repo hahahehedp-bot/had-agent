@@ -54,4 +54,18 @@
 - **PWA 기본 설정**: 오프라인 지원을 위한 Service Worker 기초 작업.
 
 ---
+
+## 🚀 향후 개발 과제 (Next Steps)
+
+- **[v7.3.0 예정] 마스터 운영실 UI 및 제어 로직 실체화**
+    - `core/components/admin.js` 생성 및 동적 폼 생성기(Form Generator) 구현.
+    - 구글 드라이브 `system_config.json`과 연동하여 실시간 설정 읽기/쓰기 구현.
+- **[v8.0.0 예정] 하이브리드 자동화 모듈 확장**
+    - `modules/memo/` (HAD-Memo) 모듈 신설 및 에이전트(HAD 봇) 연동.
+    - 관리자 공지 배너(Emergency Notice) 컴포넌트 core 주입.
+- **[최적화]**
+    - 제스처 감도 미세 조정 및 애니메이션 보강.
+    - 관리자 권한 보안 강화 (Backend 검증 로직 추가).
+
+---
 *기록자: 안티그래비티 (AI Agent)*
