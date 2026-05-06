@@ -61,6 +61,7 @@ export default {
     const endpoint = config.agent.endpoint;
     const avatar   = config.agent.avatar;
     const agentName = config.agent.name;
+    const history   = []; // 대화 기록 저장용
 
     // 마크다운 환영 메시지 적용
     const welcomeMsg = document.getElementById('welcomeMsg');
@@ -102,7 +103,7 @@ export default {
         const res  = await fetch(endpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: text })
+          body: JSON.stringify({ message: text, history: history })
         });
         const data = await res.json();
 
@@ -111,6 +112,13 @@ export default {
           bubble.innerHTML = typeof marked !== 'undefined'
             ? marked.parse(data.reply)
             : data.reply;
+            
+          // 기록 업데이트 (현재 발화 + AI 응답)
+          history.push({ role: 'user', parts: [{ text: text }] });
+          history.push({ role: 'model', parts: [{ text: data.reply }] });
+          
+          // 최대 10턴까지만 유지 (성능 및 토큰 관리)
+          if (history.length > 20) history.splice(0, 2);
         } else {
           bubble.className = 'msg msg-ai msg-error';
           bubble.textContent = '응답을 가져오는 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.';
