@@ -169,9 +169,6 @@ async function init() {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./sw.js').catch(() => {});
     }
-
-    // 8. 당겨서 새로고침(Pull-to-Refresh) 초기화
-    setupPullToRefresh();
   } catch (e) {
     console.error('[HAD] 앱 초기화 실패:', e);
     const ls = document.getElementById('loadingScreen');
@@ -214,6 +211,7 @@ if (settingsBody) {
     <div style="display:flex; flex-direction:column; gap:16px;">
       <div style="cursor:pointer; color:var(--text-primary);">👤 내 프로필 수정</div>
       <div id="btnToggleTheme" style="cursor:pointer; color:var(--text-primary);">🎨 테마 전환 (Dark/Light)</div>
+      <div id="btnHardRefresh" style="cursor:pointer; color:var(--brand-color); font-weight:600;">🔄 최신 업데이트 받기 (캐시 비우기)</div>
       
       <!-- 세분화된 알림 설정 -->
       <div style="color:var(--text-primary); margin-top:10px; border-top:1px dashed var(--border-color); padding-top:10px;">
@@ -239,6 +237,13 @@ if (settingsBody) {
     const newTheme = isDark ? 'modern-light' : 'glass-dark';
     document.getElementById('themeStylesheet').href = \`core/themes/\${newTheme}.css\`;
     localStorage.setItem('had-theme', newTheme);
+  });
+
+  // 강제 새로고침(캐시 우회) 버튼 동작
+  document.getElementById('btnHardRefresh')?.addEventListener('click', () => {
+    const url = new URL(window.location.href);
+    url.searchParams.set('cb', Date.now());
+    window.location.replace(url.toString());
   });
 
   // 알림 상세 옵션 토글 로직
