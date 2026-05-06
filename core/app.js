@@ -208,9 +208,9 @@ if (settingsBody) {
       <!-- 세분화된 알림 설정 -->
       <div style="color:var(--text-primary); margin-top:10px; border-top:1px dashed var(--border-color); padding-top:10px;">
         <div style="font-size:12px; font-weight:600; margin-bottom:10px; color:var(--text-secondary);">🔔 알림 상세 설정</div>
-        <div id="btnOptSound" style="cursor:pointer; padding:4px 0; font-size:14px;">\${optSound ? '🔊 소리 (ON)' : '🔈 소리 (OFF)'}</div>
-        <div id="btnOptVibe" style="cursor:pointer; padding:4px 0; font-size:14px;">\${optVibe ? '📳 진동 (ON)' : '📴 진동 (OFF)'}</div>
-        <div id="btnOptBadge" style="cursor:pointer; padding:4px 0; font-size:14px;">\${optBadge ? '🔴 앱 배지 숫자 (ON)' : '⭕ 앱 배지 숫자 (OFF)'}</div>
+        <div id="btnOptSound" style="cursor:pointer; padding:4px 0; font-size:14px;">${optSound ? '🔊 소리 (ON)' : '🔈 소리 (OFF)'}</div>
+        <div id="btnOptVibe" style="cursor:pointer; padding:4px 0; font-size:14px;">${optVibe ? '📳 진동 (ON)' : '📴 진동 (OFF)'}</div>
+        <div id="btnOptBadge" style="cursor:pointer; padding:4px 0; font-size:14px;">${optBadge ? '🔴 앱 배지 숫자 (ON)' : '⭕ 앱 배지 숫자 (OFF)'}</div>
       </div>
 
       <div style="cursor:pointer; color:red; margin-top:20px; border-top:1px solid var(--border-color); padding-top:16px;">🚪 로그아웃</div>
@@ -227,7 +227,7 @@ if (settingsBody) {
     const currentTheme = document.getElementById('themeStylesheet').href;
     const isDark = currentTheme.includes('glass-dark');
     const newTheme = isDark ? 'modern-light' : 'glass-dark';
-    document.getElementById('themeStylesheet').href = \`core/themes/\${newTheme}.css\`;
+    document.getElementById('themeStylesheet').href = `core/themes/${newTheme}.css`;
     localStorage.setItem('had-theme', newTheme);
   });
 

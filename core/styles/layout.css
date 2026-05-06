@@ -40,6 +40,14 @@
   --tabbar-h: 64px;
   --sidebar-w: 260px;
   --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* 🎨 컴포넌트 토큰 (테마 변수 맵핑) */
+  --card-bg: var(--surface);
+  --border: var(--border-color);
+  --shadow: var(--shadow-md);
+  --primary: var(--brand-color);
+  --dark: var(--text-primary);
+  --text-dim: var(--text-secondary);
 }
 
 *, *::before, *::after {

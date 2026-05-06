@@ -20,7 +20,7 @@ export default {
 
     // 모듈별로 벤토 카드의 크기 지정 (chat은 가로로 길게, 나머지는 정사각형)
     const bentoCards = activeModules.map(mod => {
-      const isWide = mod.id === 'chat' || mod.id === 'translate'; // 주요 기능은 와이드로
+      const isWide = mod.id === 'chat' || mod.id === 'myoffice'; // 주요 기능 및 외부 연동은 와이드로
       
       if (isWide) {
         return `
@@ -66,7 +66,7 @@ export default {
 
   afterRender(config) {
     // 메뉴 카드 클릭 이벤트
-    document.querySelectorAll('.home-menu-card').forEach(card => {
+    document.querySelectorAll('.bento-card').forEach(card => {
       card.addEventListener('click', (e) => {
         e.preventDefault();
         import('../../core/router.js').then(({ navigateTo }) => {
