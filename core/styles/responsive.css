@@ -15,8 +15,10 @@
   .settings-panel {
     width: 100%;
   }
-  .tab-bar {
-    display: flex;
+  
+  /* [긴급 디버깅 모드] 가운데 몸통만 남기고 모든 플러그인 끄기 */
+  .app-header, .sidebar, .tab-bar, .sidebar-overlay, .login-overlay {
+    display: none !important;
   }
 }
 
