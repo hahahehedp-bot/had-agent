@@ -50,20 +50,18 @@
 }
 
 html, body {
-  height: 100%;
+  min-height: 100vh;
   font-family: 'Outfit', 'Noto Sans KR', sans-serif;
   background: var(--bg);
   color: var(--text);
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 /* ── 앱 레이아웃 ── */
 .app-layout {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  height: 100dvh;
-  overflow: hidden;
+  min-height: 100vh;
 }
 
 /* ── 헤더 ── */
@@ -152,12 +150,8 @@ html, body {
 /* ── 메인 콘텐츠 ── */
 .app-main {
   flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior-y: contain;
   background: var(--bg);
-  position: relative;
+  padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom));
 }
 
 /* ── 하단 탭바 ── */
@@ -169,7 +163,11 @@ html, body {
   border-top: 1px solid var(--border-color);
   display: flex;
   align-items: stretch;
-  flex-shrink: 0;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
   padding-bottom: env(safe-area-inset-bottom);
 }
 
