@@ -278,68 +278,6 @@ export function updateAppBadge(count) {
   }
 }
 
-// ── 모바일 당겨서 새로고침 (Pull-to-Refresh) ─────────────────
-function setupPullToRefresh() {
-  const main = document.getElementById('appMain');
-  if (!main) return;
-
-  let startY = 0;
-  let isPulling = false;
-  let ptrEl = null;
-
-  main.addEventListener('touchstart', (e) => {
-    // 스크롤이 맨 위일 때만 작동 (여유값 5px)
-    if (main.scrollTop <= 5) {
-      startY = e.touches[0].clientY;
-      isPulling = true;
-    }
-  }, { passive: true });
-
-  main.addEventListener('touchmove', (e) => {
-    if (!isPulling) return;
-    const y = e.touches[0].clientY;
-    const diff = y - startY;
-
-    // 아래로 당길 때만 작동
-    if (diff > 0 && main.scrollTop <= 5) {
-      if (!ptrEl) {
-        ptrEl = document.createElement('div');
-        ptrEl.style.cssText = 'position:absolute; top:0; left:0; width:100%; height:60px; display:flex; align-items:center; justify-content:center; font-size:14px; color:var(--text-secondary); font-weight:600; z-index:99; background:transparent; pointer-events:none;';
-        main.insertBefore(ptrEl, main.firstChild);
-      }
-      
-      const pullDistance = Math.min(diff / 2.5, 80);
-      ptrEl.innerHTML = diff > 150 ? '🔄 손을 놓으면 새로고침' : '⬇️ 당겨서 새로고침...';
-      ptrEl.style.transform = `translateY(\${pullDistance}px)`;
-      
-      // 모바일 기본 스크롤 동작 방지 (Pull-to-refresh 전용)
-      if (e.cancelable) e.preventDefault();
-    } else {
-      isPulling = false;
-      if (ptrEl) { ptrEl.remove(); ptrEl = null; }
-    }
-  }, { passive: false });
-
-  main.addEventListener('touchend', () => {
-    if (!isPulling) return;
-    isPulling = false;
-    
-    if (ptrEl) {
-      if (ptrEl.innerHTML.includes('손을 놓으면')) {
-        ptrEl.innerHTML = '⏳ 1초 뒤 새로고침...';
-        // 캐시 우회를 위해 URL에 타임스탬프를 강제로 붙여서 이동
-        setTimeout(() => {
-          const url = new URL(window.location.href);
-          url.searchParams.set('cb', Date.now());
-          window.location.href = url.toString();
-        }, 500);
-      } else {
-        ptrEl.remove();
-        ptrEl = null;
-      }
-    }
-  });
-}
 
 // ── 통합 알림 실행 함수 (소리, 진동, 배지 제어) ────
 export function triggerNotification(title, options = {}) {
