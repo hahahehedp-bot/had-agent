@@ -169,6 +169,9 @@ async function init() {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./sw.js').catch(() => {});
     }
+
+    // 8. 당겨서 새로고침(Pull-to-Refresh) 초기화
+    setupPullToRefresh();
   } catch (e) {
     console.error('[HAD] 앱 초기화 실패:', e);
     const ls = document.getElementById('loadingScreen');
@@ -268,6 +271,71 @@ export function updateAppBadge(count) {
     if (count > 0) navigator.setAppBadge(count).catch(console.error);
     else navigator.clearAppBadge().catch(console.error);
   }
+}
+
+// ── 모바일 당겨서 새로고침 (Pull-to-Refresh) ─────────────────
+function setupPullToRefresh() {
+  const main = document.getElementById('appMain');
+  if (!main) return;
+
+  let startY = 0;
+  let isPulling = false;
+  let ptrEl = null;
+
+  main.addEventListener('touchstart', (e) => {
+    if (main.scrollTop <= 0) {
+      startY = e.touches[0].clientY;
+      isPulling = true;
+    }
+  }, { passive: true });
+
+  main.addEventListener('touchmove', (e) => {
+    if (!isPulling) return;
+    const y = e.touches[0].clientY;
+    const diff = y - startY;
+
+    if (diff > 0 && main.scrollTop <= 0) {
+      if (!ptrEl) {
+        ptrEl = document.createElement('div');
+        ptrEl.style.cssText = 'position:absolute; top:-60px; left:0; width:100%; height:60px; display:flex; align-items:center; justify-content:center; font-size:14px; color:var(--text-secondary); font-weight:600; transition:none;';
+        main.style.position = 'relative';
+        main.appendChild(ptrEl);
+      }
+      ptrEl.innerHTML = diff > 120 ? '🔄 손을 놓으면 새로고침' : '⬇️ 당겨서 새로고침...';
+      const moveY = Math.min(diff / 2.5, 80);
+      main.style.transform = `translateY(\${moveY}px)`;
+      // 터치 이벤트 기본 동작 차단 (필요 시)
+      // e.preventDefault(); 
+    } else {
+      isPulling = false;
+      main.style.transform = '';
+      if (ptrEl) { ptrEl.remove(); ptrEl = null; }
+    }
+  }, { passive: false });
+
+  main.addEventListener('touchend', () => {
+    if (!isPulling) return;
+    isPulling = false;
+    main.style.transition = 'transform 0.3s ease';
+    main.style.transform = '';
+    
+    if (ptrEl) {
+      if (ptrEl.innerHTML.includes('손을 놓으면')) {
+        ptrEl.innerHTML = '⏳ 새로고침 중...';
+        main.style.transform = 'translateY(60px)'; // 새로고침 중 멈춤
+        // 캐시 우회를 위해 URL에 타임스탬프를 강제로 붙여서 이동
+        setTimeout(() => {
+          const url = new URL(window.location.href);
+          url.searchParams.set('cb', Date.now());
+          window.location.href = url.toString();
+        }, 500);
+      } else {
+        ptrEl.remove();
+        ptrEl = null;
+      }
+    }
+    setTimeout(() => { main.style.transition = 'none'; }, 300);
+  });
 }
 
 // ── 통합 알림 실행 함수 (소리, 진동, 배지 제어) ────
