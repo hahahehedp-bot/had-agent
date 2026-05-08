@@ -22,7 +22,7 @@ function getActiveModules(cfg) {
 // ── 모듈 동적 import ─────────────────────────
 async function loadModule(moduleId) {
   try {
-    const mod = await import(`../modules/${moduleId}/${moduleId}.js?v=10`);
+    const mod = await import(`../modules/${moduleId}/${moduleId}.js?v=11.1`);
     return mod.default;
   } catch (e) {
     console.warn(`[HAD] 모듈 로드 실패: ${moduleId}`, e);
@@ -65,7 +65,7 @@ async function init() {
 
   try {
     await Registry.init();
-    config = Registry.getConfig();
+    const config = Registry.getConfig();
     ServiceContext.config = config; // 즉시 수혈
 
     initTheme(config);
