@@ -1,12 +1,11 @@
 /* modules/chat/chat.css */
-/* [v13.2.9] Flex-Shrink Layout & Bottom Visibility Fix */
+/* [v13.3.0] Final Aesthetic Touch - The Golden Ratio */
 
 .chat-layout {
   display: flex;
   flex-direction: column;
-  /* height: 100% 대신 flex: 1과 min-height: 0으로 부모 크기에 맞춤 */
   flex: 1;
-  min-height: 0; 
+  min-height: 0;
   width: 100%;
   overflow: hidden;
   background: var(--surface);
@@ -14,47 +13,77 @@
 
 .chat-messages {
   flex: 1;
-  min-height: 0; /* flex 자식으로서 줄어들 수 있게 함 */
+  min-height: 0;
   overflow-y: auto;
-  padding: 15px 15px 0;
+  /* [v13.3.0] 상단 숨통 확보 (10px -> 20px) */
+  padding: 20px 15px 0; 
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
   -webkit-overflow-scrolling: touch;
 }
 
+/* 말풍선 스타일 보강 (탈출 방지) */
+.msg {
+  max-width: 85%;
+  padding: 10px 14px;
+  border-radius: 18px;
+  font-size: 14.5px;
+  line-height: 1.5;
+  word-break: break-word; /* 긴 단어 강제 줄바꿈 */
+  white-space: pre-wrap;  /* 공백 및 줄바꿈 유지 */
+  position: relative;
+}
+
+.msg-ai {
+  background: var(--bg-alt, #f0f2f5);
+  color: var(--text-primary);
+  align-self: flex-start;
+  border-top-left-radius: 4px;
+}
+
+.msg-user {
+  background: var(--primary);
+  color: white;
+  align-self: flex-end;
+  border-top-right-radius: 4px;
+}
+
 .chat-bottom-spacer {
-  height: 10px;
+  height: 20px;
   flex-shrink: 0;
 }
 
 .chat-input-bar {
   flex-shrink: 0;
   display: flex;
+  align-items: center; /* 아이콘 중앙 정렬 */
   gap: 10px;
-  padding: 10px 15px;
+  padding: 8px 15px;
   background: var(--surface);
   border-top: 1px solid var(--border);
-  /* [v13.2.9] 하단 가시성 확보를 위해 여백 상향 조정 (10px -> 15px) */
-  padding-bottom: calc(15px + env(safe-area-inset-bottom));
+  /* [v13.3.0] 하단 밀착 (15px -> 8px) */
+  padding-bottom: calc(8px + env(safe-area-inset-bottom));
   z-index: 10;
 }
 
 .chat-input {
   flex: 1;
+  min-width: 0; /* flex 컨테이너에서 input 찌그러짐 방지 */
   border: 1.5px solid var(--border);
   border-radius: 24px;
   padding: 8px 16px;
   font-size: 14px;
-  font-family: inherit;
   outline: none;
   background: var(--bg);
   color: var(--text-primary);
 }
 
 .chat-send-btn {
-  width: 38px;
-  height: 38px;
+  /* [v13.3.0] 절대 찌그러지지 않는 버튼 (flex-shrink: 0) */
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0; 
   border-radius: 50%;
   background: var(--primary);
   color: white;
@@ -62,11 +91,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+  padding: 0;
 }
 
-/* ── 서랍(Drawer) 내 최적화 ── */
-.agent-drawer-body .chat-layout {
-  flex: 1;
-  height: auto; /* 고정 높이 제거 */
-  min-height: 0;
+.chat-send-btn svg {
+  width: 20px;
+  height: 20px;
 }
