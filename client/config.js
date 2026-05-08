@@ -50,7 +50,7 @@ export default {
     { id: "home",      enabled: true,  icon: "🏠",  label: "홈",       description: "메인 대시보드" },
     { id: "schedule",  enabled: true,  icon: "📅",  label: "일정",     description: "세미나 및 행사 일정" },
     { id: "resources", enabled: true,  icon: "📂",  label: "자료실",   description: "제품 자료 및 영상" },
-    { id: "board",     enabled: true,  icon: "📋",  label: "피드",     description: "사내 소식 및 피드" },
+    { id: "feed",      enabled: true,  icon: "📋",  label: "피드",     description: "사내 소식 및 피드" },
     { id: "chat",      enabled: true,  icon: "💬",  label: "AI 상담",  description: "HAD 봇과 1:1 상담" },
     
     // 외부 Iframe 모듈 예시 (마이오피스, 쇼핑몰 등)

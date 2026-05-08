@@ -1,9 +1,9 @@
 /* =============================================
-   HAD-Agent — Board Module (HAD-Feed)
+   HAD-Agent — Feed Module (HAD-Feed)
    페이스북 스타일의 소셜 피드 레이아웃
    ============================================= */
 
-.board-container {
+.feed-container {
     padding: 16px;
     display: flex;
     flex-direction: column;

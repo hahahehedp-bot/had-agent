@@ -56,8 +56,8 @@ export function initSidebar(activeModules, loadedModules, config) {
     const deltaX = touchEndX - touchStartX;
     const deltaY = Math.abs(touchEndY - touchStartY);
 
-    // 조건: 화면 왼쪽 끝(30px)에서 시작 + 오른쪽으로 50px 이상 이동 + 수직 이동 적음
-    if (touchStartX < 30 && deltaX > 50 && deltaY < 30) {
+    // 조건: 화면 왼쪽 끝(50px)에서 시작 + 오른쪽으로 80px 이상 이동 + 수직 이동이 수평보다 적음
+    if (touchStartX < 50 && deltaX > 80 && deltaY < 60) {
       openSidebar();
     }
   }, { passive: true });

@@ -4,6 +4,16 @@
 
 ---
 
+## [v11.2.0] - 2026-05-08
+### Added
+- **Zero-Drive UX Strategy**: Established the principle of 100% UI-driven data interaction, hiding the backend Drive from end-users.
+- **Lean Folder Structure**: Renamed root folders to `Schedule`, `Resources`, `Feed`, and `System` for better clarity and less visual noise.
+- **Agent System Isolation**: Strictly partitioned the `System` folder for Master accounts only, ensuring data integrity and security.
+
+### Changed
+- **Terminology Sync**: Renamed `Board` module to `Feed` module across the entire project (folder, files, code, and sandbox).
+- **Architecture Master Plan**: Updated `1_architecture.md` and `3_modules.md` with new governance and security rules.
+
 ## [v11.1.0] - 2026-05-08
 ### Fixed
 - **UI Flashing & Disappearance**: 렌더링 후 화면이 사라지던 현상(Undeclared Variable 및 Async Race Condition) 해결.

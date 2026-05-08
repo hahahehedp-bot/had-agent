@@ -19,8 +19,8 @@ const CORE_FILES = [
   './modules/chat/chat.css',
   './modules/schedule/schedule.js',
   './modules/resources/resources.js',
-  './modules/board/board.js',
-  './modules/board/board.css',
+  './modules/feed/feed.js',
+  './modules/feed/feed.css',
 ];
 
 self.addEventListener('install', e => {

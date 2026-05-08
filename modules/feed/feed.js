@@ -1,19 +1,19 @@
 /**
- * HAD-Agent — Board Module (HAD-Feed)
+ * HAD-Agent — Feed Module (HAD-Feed)
  * 페이스북/인스타그램 스타일의 소셜 피드 게시판
  */
 
 export default {
-    id: 'board',
+    id: 'feed',
 
     async init(config) {
-        console.log('[HAD-Board] 모듈 초기화 중...');
+        console.log('[HAD-Feed] 모듈 초기화 중...');
         // 동적으로 스타일 시트 로드
-        if (!document.getElementById('board-style')) {
+        if (!document.getElementById('feed-style')) {
             const link = document.createElement('link');
-            link.id = 'board-style';
+            link.id = 'feed-style';
             link.rel = 'stylesheet';
-            link.href = 'modules/board/board.css?v=1';
+            link.href = 'modules/feed/feed.css?v=1';
             document.head.appendChild(link);
         }
     },
@@ -93,7 +93,7 @@ export default {
         `).join('');
 
         return `
-            <div class="board-container">
+            <div class="feed-container">
                 <div class="section-header">
                     <h2 class="section-title">최신 피드</h2>
                     <div class="section-action">모두 읽음</div>
@@ -105,7 +105,7 @@ export default {
     },
 
     async afterRender(config) {
-        console.log('[HAD-Board] 렌더링 완료');
+        console.log('[HAD-Feed] 렌더링 완료');
         
         // 이벤트 바인딩 예시
         const fab = document.querySelector('.fab-write');
@@ -124,6 +124,6 @@ export default {
     },
 
     destroy() {
-        console.log('[HAD-Board] 모듈 제거');
+        console.log('[HAD-Feed] 모듈 제거');
     }
 };
