@@ -1,12 +1,11 @@
 /* modules/chat/chat.css */
-/* [v14.5.0] Perfect Bottom Anchor & Fluid Scroll */
+/* [v14.6.0] Ultimate Layout Fix - Absolute Anchored */
 
 .chat-layout {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
   display: flex;
   flex-direction: column;
-  flex: 1;
-  min-height: 0; /* 부모 flex 컨테이너 안에서 넘치지 않게 */
-  width: 100%;
   overflow: hidden;
   background: var(--surface);
 }

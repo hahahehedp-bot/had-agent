@@ -315,12 +315,13 @@ body.no-scroll {
   position: fixed;
   top: 0;
   right: 0;
-  width: 380px; /* [v14.1.0] 몰입감을 위해 너비 확장 */
-  max-width: 90vw; /* 모바일 대응 */
-  height: 100%; /* [v13.2.8] 호환성을 위해 100%로 복귀 */
+  width: 380px; 
+  max-width: 90vw;
+  height: 100%;
+  height: 100dvh; /* [v14.6.0] 모바일 브라우저 대응 고정 높이 */
   background: var(--surface);
   border-left: 1px solid var(--border-color);
-  z-index: 1100; /* 사이드바와 동급 */
+  z-index: 1100; 
   display: flex;
   flex-direction: column;
   transform: translateX(105%);
@@ -407,7 +408,8 @@ body.no-scroll {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  min-height: 0; /* [v13.2.9] 자식(채팅창)이 넘치지 않고 줄어들 수 있게 */
+  position: relative; /* [v14.6.0] 자식 모듈의 absolute 배치를 위한 기준점 */
+  min-height: 0;
   padding: 0;
 }
 

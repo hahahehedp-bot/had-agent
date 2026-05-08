@@ -2,6 +2,12 @@
 
 이 문서는 HAD-Agent 프로젝트의 버전별 작업 내역과 주요 변경 사항을 기록합니다.
 
+## [v14.6.0] - 2026-05-08
+### Fixed
+- **Absolute Anchored Layout**: 모바일 브라우저의 가변적인 높이 계산 오류를 원천 차단하기 위해 절대 좌표계(Absolute) 기반의 앵커링 시스템 도입.
+- **Dynamic Viewport Height (dvh)**: 최신 모바일 브라우저 표준인 `dvh` 단위를 적용하여 키보드나 URL 바 변화에도 비서창 높이가 일정하게 유지되도록 보정.
+- **Root Cause Fix**: 레이아웃 체인의 모든 요소를 전수조사하여 스크롤 간섭을 일으키던 flex-grow 논리를 absolute-fill 방식으로 개편.
+
 ## [v14.5.0] - 2026-05-08
 ### Fixed
 - **Stable Bottom Anchor**: 장문의 답변 중에도 입력창이 항상 화면 하단에 고정되도록 플렉스박스 계층 구조 최적화.

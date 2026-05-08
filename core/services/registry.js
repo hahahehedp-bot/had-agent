@@ -7,7 +7,7 @@ import staticConfig from '../../client/config.js';
 
 class RegistryService {
   constructor() {
-    this.VERSION = '14.5.0'; // [v14.5.0] Perfect Bottom Fixed
+    this.VERSION = '14.6.0'; // [v14.6.0] Absolute Anchored Layout
     this.config = { ...staticConfig };
     this.dynamicConfig = {};
     this.listeners = [];
