@@ -11,6 +11,7 @@ import { initAuth } from './auth.js';
 import { initTheme, toggleTheme } from './services/theme.js';
 import { applyBranding } from './services/branding.js';
 import { updateAppBadge } from './services/notification.js';
+import { initSettings } from './components/settings.js';
 
 let config = Registry.getConfig();
 
@@ -29,8 +30,6 @@ async function loadModule(moduleId) {
     return null;
   }
 }
-
-import { initSettings } from './components/settings.js';
 
 // ── 전역 이벤트 버스 및 서비스 컨텍스트 초기화 ──────────────────
 window.hadEvents = {
