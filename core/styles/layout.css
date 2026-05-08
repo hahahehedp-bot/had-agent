@@ -59,9 +59,11 @@
 
 html, body {
   min-height: 100vh;
-  font-family: 'Outfit', 'Noto Sans KR', sans-serif;
+  font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
   background: var(--bg);
   color: var(--text-primary);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* ── 앱 레이아웃 ── */
@@ -310,7 +312,7 @@ body.no-scroll {
 }
 .sidebar-footer-item:hover { background: var(--bg); }
 
-/* ── 에이전트 드로어 (우측 슬롯) ── */
+/* ── 에이전트 드로어 (우측 슬롯 -> PC 상시 노출) ── */
 .agent-drawer {
   position: fixed;
   top: 0;
@@ -318,7 +320,7 @@ body.no-scroll {
   width: 380px; 
   max-width: 90vw;
   height: 100%;
-  height: 100dvh; /* [v14.6.0] 모바일 브라우저 대응 고정 높이 */
+  height: 100dvh;
   background: var(--surface);
   border-left: 1px solid var(--border-color);
   z-index: 1100; 
@@ -330,6 +332,39 @@ body.no-scroll {
   transition: transform var(--transition), visibility 0.2s ease;
   box-shadow: var(--shadow-md);
 }
+
+/* [v15.0.0] PC 환경: 좌측 사이드바 옆 상시 노출 고정 */
+@media (min-width: 1024px) {
+  .agent-drawer {
+    transform: translateX(0) !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    left: var(--sidebar-w); /* 사이드바 바로 옆 */
+    right: auto;
+    border-left: none;
+    border-right: 1px solid var(--border-color);
+    box-shadow: none;
+    z-index: 90; /* 사이드바보다는 아래 */
+  }
+  
+  /* 비서가 차지하는 공간만큼 메인 뷰포트 밀기 */
+  .app-viewport {
+    margin-left: calc(var(--sidebar-w) + 380px);
+    transition: margin-left var(--transition);
+  }
+
+  /* PC에서는 닫기 버튼 숨김 */
+  .btn-close-agent {
+    display: none;
+  }
+  
+  /* PC 헤더 조정 */
+  .app-header {
+    left: calc(var(--sidebar-w) + 380px);
+    width: auto;
+  }
+}
+
 .agent-drawer.open {
   transform: translateX(0);
   visibility: visible;

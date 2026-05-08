@@ -114,8 +114,8 @@ export default {
 
           const chunk = decoder.decode(value, { stream: true });
           
-          // [v15.0.0] 백엔드에서 이미 텍스트만 추출해서 보내므로 그대로 누적
-          fullReply += chunk;
+          // [v15.2.8] 공백 킥스타트 및 불필요한 초기 공백 제거
+          fullReply = (fullReply + chunk).trimStart();
 
           // 실시간 마크다운 렌더링 (속도 최적화를 위해 requestAnimationFrame 고려 가능)
           bubble.innerHTML = typeof marked !== 'undefined'

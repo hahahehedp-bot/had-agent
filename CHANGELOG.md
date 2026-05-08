@@ -2,6 +2,34 @@
 
 이 문서는 HAD-Agent 프로젝트의 버전별 작업 내역과 주요 변경 사항을 기록합니다.
 
+## [v15.2.8] - 2026-05-09
+### Fixed
+- **Markdown Rendering Safety**: 백엔드에서 헤더(`###`) 수신 시 앞에 줄바꿈이 없으면 강제로 주입하여 모바일 렌더링 깨짐 현상 완벽 해결.
+- **Repetition Control**: 페르소나 지침 강화로 답변 후반부 무의미한 반복 현상 억제.
+- **Fundamental UI Fix**: 리스트 스타일을 `inside`로 변경하여 마진 설정과 상관없이 점(Marker)이 짤리지 않도록 근본적으로 해결했습니다. 이로 인해 전체 패딩을 `10px`까지 줄여 화면 활용도를 극대화했습니다.
+- **Stream Sanitization**: 프론트엔드에서 스트림 시작 시 발생하는 킥스타트 공백을 `trimStart()`로 자동 제거하도록 보완.
+
+## [v15.2.6] - 2026-05-09
+### Fixed
+- **Anti-Buffering Kickstart**: GFE 및 프록시 버퍼링 해제를 위해 2KB 초기 데이터 전송 로직 적용 완료.
+
+## [v15.2.5] - 2026-05-09
+### Fixed
+- **Streaming Real-time Recovery**: 백엔드에서 줄바꿈(`\n`)이 올 때까지 기다리던 로직을 정규식 기반 실시간 매칭으로 변경하여, 첫 글자부터 지연 없이 화면에 출력되도록 개선.
+- **Connection Reliability**: 버퍼 누적 방지 및 즉각적인 `res.write()` 호출로 타임아웃 문제를 해결하고 스트리밍 연결 안정성 강화.
+
+## [v15.2.1] - 2026-05-09
+### Fixed
+- **Build Error Resolved**: `package.json`의 잠재적 구문 오류(보이지 않는 문자 및 구조 정제)를 수정하여 Cloud Build 실패 문제 해결.
+- **API Tool Alignment**: Gemini 3.1 규격에 맞게 구글 검색 도구 명칭을 `google_search_retrieval`에서 `google_search`로 정정.
+- **Stability**: 스트리밍 파싱 버퍼 로직의 안정성 재검증 및 버전 업그레이드.
+
+## [v15.2.0] - 2026-05-09
+### Changed
+- **Model Upgrade**: 챗봇 엔진을 `gemini-2.0-flash`에서 최신 **Gemini 3.1 Flash-Lite**로 전격 교체. (최고의 가성비 및 성능 확보)
+- **Streaming Stability**: 스트리밍 청크 파싱 로직에 버퍼링 시스템을 도입하여 불완전한 JSON 데이터 수신 시에도 끊김 없는 답변 제공.
+- **Engine Versioning**: 클라우드 함수 엔진 버전을 v15.2.0으로 갱신하여 시스템 무결성 유지.
+
 ## [v14.6.0] - 2026-05-08
 ### Fixed
 - **Absolute Anchored Layout**: 모바일 브라우저의 가변적인 높이 계산 오류를 원천 차단하기 위해 절대 좌표계(Absolute) 기반의 앵커링 시스템 도입.

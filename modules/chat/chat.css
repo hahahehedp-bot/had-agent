@@ -15,8 +15,8 @@
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  /* 좌우 여백 소폭 확장 (가독성 개선) */
-  padding: 0 8px 0 8px; 
+  /* 좌우 여백 최소화 (Inside 리스트 설정으로 짤림 걱정 없음) */
+  padding: 0 10px 0 10px; 
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -25,21 +25,21 @@
 
 .chat-top-shield { display: none; }
 
-/* [v13.5.0] 말풍선 완전 제거 & 전폭 사용 */
+/* [v14.8.0] Core Typography Sync & Cleanup */
 .msg {
-  font-size: 15.5px;
-  line-height: 1.6;
+  font-size: 16.5px; /* 한 단계 상향 */
+  line-height: 1.5;
   overflow-wrap: anywhere; 
   word-break: break-word;
-  white-space: pre-wrap;
   width: 100%;
   max-width: 100%;
   background: transparent !important;
   padding: 0 !important;
   color: var(--text-primary);
-  /* 제미나이 스타일의 가독성 좋은 굵기 */
-  font-weight: 400;
+  font-weight: 450;
 }
+
+/* 마크다운 내부 세부 간격은 core/styles/components.css (.markdown-body)에서 전역 관리 */
 
 .msg-ai { 
   align-self: flex-start; 
@@ -47,20 +47,22 @@
   border: none !important;
   box-shadow: none !important;
   width: 100%;
+  white-space: normal; 
 }
 
 .msg-user { 
-  /* 사용자 메시지 우측 정렬 및 말풍선 */
   align-self: flex-end; 
   width: auto;
   max-width: 88%;
   background: #3c4043 !important;
   color: #e8eaed;
-  padding: 8px 14px !important; /* 패딩 살짝 축소 */
+  padding: 8px 14px !important;
   border-radius: 18px;
-  font-weight: 400;
+  font-weight: 450;
   box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-  margin-bottom: -4px; /* AI 답변과의 간격을 위해 아래 여백 당김 */
+  margin-bottom: -4px;
+  white-space: pre-wrap;
+  font-size: 15px; /* 사용자는 조금 작게 유지하여 시각적 대비 부여 */
 }
 
 .msg-ai-wrap {
