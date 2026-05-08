@@ -60,8 +60,15 @@ export function initSidebar(activeModules, loadedModules, config, ctx) {
       }, 300);
     }
 
+    // 글로벌 오버레이 및 바디 스크롤 잠금 처리
     const anyOpen = sidebar.classList.contains('open') || agentDrawer.classList.contains('open');
-    globalOverlay.classList.toggle('active', anyOpen && (isDrawerMode() || config.ui?.useOverlayOnPC));
+    if (anyOpen && isDrawerMode()) {
+      globalOverlay.classList.add('active');
+      document.body.classList.add('no-scroll');
+    } else {
+      globalOverlay.classList.remove('active');
+      document.body.classList.remove('no-scroll');
+    }
   }
 
   // ── 메뉴 항목 생성 ─────────────────────────────
@@ -132,6 +139,7 @@ export function initSidebar(activeModules, loadedModules, config, ctx) {
   async function renderSlotContent(slot) {
     const drawerBody = document.getElementById('agentDrawerBody');
     if (!drawerBody) return;
+    drawerBody.scrollTop = 0; // [v13.2.2] 스크롤 초기화
     drawerBody.innerHTML = '<div class="loading-spinner-wrap"><div class="loading-spinner"></div></div>';
 
     const slotMap = config.ui?.drawerSlots || { 'agent': 'chat' };

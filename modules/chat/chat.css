@@ -83,17 +83,18 @@
 /* ── 서랍(Drawer) 내 렌더링 시 최적화 ── */
 .agent-drawer-body .chat-layout {
   min-height: auto;
-  height: calc(100vh - 180px); /* 헤더 + 탭바 공간 제외 */
+  height: 100%; /* 서랍 높이에 100% 맞춤 */
 }
 .agent-drawer-body .chat-messages {
   padding: 10px;
+  flex: 1;
 }
 .agent-drawer-body .chat-input-bar {
   padding: 10px 16px;
-  /* 모바일 하단바를 고려한 여유 있는 여백 */
   padding-bottom: calc(15px + env(safe-area-inset-bottom));
   position: sticky;
   bottom: 0;
   background: var(--card-bg);
-  margin-top: auto; /* 내용이 적어도 아래로 밀착 */
+  margin-top: auto;
+  border-top: 1px solid var(--border);
 }
