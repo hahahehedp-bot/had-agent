@@ -2,17 +2,15 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>HAD-Agent</title>
 
-  <!-- PWA & Theme (JS에서 동적으로 주입됨) -->
   <link rel="manifest" id="manifestLink" href="manifest.json">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="theme-color" id="metaThemeColor" content="#ffffff">
   <meta name="apple-mobile-web-app-title" id="metaAppTitle" content="HAD-Agent">
-  <!-- 아이콘 태그는 app.js에서 생성하여 head에 삽입합니다 -->
 
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
@@ -20,40 +18,43 @@
   <!-- Theme Stylesheet (JS에서 동적으로 교체됨) -->
   <link rel="stylesheet" id="themeStylesheet" href="">
 
-  <!-- Core Styles -->
-  <link rel="stylesheet" href="core/styles/layout.css?v=11">
-  <link rel="stylesheet" href="core/styles/components.css?v=11">
-  <link rel="stylesheet" href="core/styles/responsive.css?v=11">
+  <!-- Core Styles (v13.0.0 관리) -->
+  <link rel="stylesheet" href="core/styles/layout.css?v=13.0.0">
+  <link rel="stylesheet" href="core/styles/components.css?v=13.0.0">
+  <link rel="stylesheet" href="core/styles/responsive.css?v=13.0.0">
 
-  <!-- Markdown -->
+  <!-- Markdown Parser -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
 
-  <!-- 사이드바 오버레이 (좌) -->
-  <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-  <!-- 에이전트 드로어 오버레이 (우) -->
-  <div class="agent-overlay" id="agentOverlay"></div>
+  <!-- 글로벌 UI 오버레이 -->
+  <div class="global-overlay" id="globalOverlay"></div>
 
   <!-- 에이전트 비서 드로어 (우) -->
   <aside class="agent-drawer" id="agentDrawer">
     <div class="agent-drawer-header">
       <div class="agent-status-dot"></div>
-      <h3>에이전트 비서</h3>
+      <h3 id="drawerTitle">에이전트</h3>
       <button class="btn-close-agent" id="btnCloseAgent">&times;</button>
     </div>
+    
+    <!-- 서랍용 탭 바 -->
+    <div class="agent-drawer-tabs" id="agentDrawerTabs">
+      <div class="drawer-tab active" data-slot="agent">💬 비서</div>
+      <div class="drawer-tab" data-slot="memos">📝 메모</div>
+      <div class="drawer-tab" data-slot="mcp">🛠️ 도구</div>
+    </div>
+
     <div class="agent-drawer-body" id="agentDrawerBody">
-      <div class="agent-welcome-msg">무엇을 도와드릴까요?</div>
+      <div class="agent-welcome-msg" id="drawerWelcomeMsg">...</div>
     </div>
   </aside>
 
   <div class="app-layout">
     <!-- 사이드바 -->
     <aside class="sidebar" id="sidebar">
-      <div class="sidebar-header" id="sidebarHeader">
-        <!-- 로고 및 브랜드명이 JS에 의해 주입됩니다 -->
-      </div>
+      <div class="sidebar-header" id="sidebarHeader"></div>
       <nav class="sidebar-nav" id="sidebarNav"></nav>
       <div class="sidebar-footer">
         <div class="sidebar-footer-item" id="sidebarSettings">⚙️ 설정</div>
@@ -67,18 +68,17 @@
         <button class="btn-hamburger" id="btnHamburger" aria-label="메뉴">
           <span></span><span></span><span></span>
         </button>
-        <div class="header-logo-wrap" id="headerLogoWrap">
-          <!-- 로고 및 텍스트 로고가 JS에 의해 주입됩니다 -->
-        </div>
+        <div class="header-logo-wrap" id="headerLogoWrap"></div>
         <button class="btn-profile" id="btnProfile" aria-label="프로필 메뉴">
           <div class="avatar-placeholder" id="headerAvatar">👤</div>
         </button>
       </header>
 
       <main class="app-main" id="appMain">
+        <!-- 초기 로딩 스크린 -->
         <div class="loading-screen" id="loadingScreen">
           <div class="loading-spinner"></div>
-          <p>로딩 중...</p>
+          <p id="loadingText">HAD-Agent 로딩 중...</p>
         </div>
       </main>
 
@@ -86,7 +86,7 @@
     </div>
   </div>
 
-  <!-- 설정 패널 (Settings) -->
+  <!-- 설정 패널 -->
   <div class="settings-panel" id="settingsPanel">
     <div class="settings-header">
       <h3>설정</h3>
@@ -95,10 +95,10 @@
     <div class="settings-body" id="settingsBody"></div>
   </div>
 
-  <!-- 인증 레이어 (Auth) -->
+  <!-- 인증 레이어 -->
   <div id="authOverlay" style="display:none;"></div>
 
-  <!-- 앱 설정 & 로직 -->
-  <script type="module" src="core/app.js?v=11.1"></script>
+  <!-- 앱 진입점 -->
+  <script type="module" src="core/app.js?v=13.0.0"></script>
 </body>
 </html>

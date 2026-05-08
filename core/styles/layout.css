@@ -205,21 +205,25 @@ html, body {
   font-weight: 600;
 }
 
-/* ── 사이드바 ── */
-.sidebar-overlay {
+/* ── 글로벌 UI 오버레이 (Core) ── */
+.global-overlay {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.4);
-  z-index: 200;
+  backdrop-filter: blur(4px);
+  z-index: 1000; /* 모든 일반 요소보다 위 */
   opacity: 0;
   pointer-events: none;
-  transition: opacity var(--transition);
+  visibility: hidden;
+  transition: all var(--transition);
 }
-.sidebar-overlay.active {
+.global-overlay.active {
   opacity: 1;
+  visibility: visible;
   pointer-events: all;
 }
 
+/* ── 사이드바 (좌) ── */
 .sidebar {
   position: fixed;
   top: 0;
@@ -227,18 +231,20 @@ html, body {
   width: var(--sidebar-w);
   height: 100%;
   background: var(--surface);
-  backdrop-filter: var(--backdrop-blur);
-  -webkit-backdrop-filter: var(--backdrop-blur);
   border-right: 1px solid var(--border-color);
-  z-index: 300;
+  z-index: 1100; /* 오버레이보다 위 */
   display: flex;
   flex-direction: column;
-  transform: translateX(-100%);
-  transition: transform var(--transition);
+  transform: translateX(-105%); 
+  visibility: hidden;
+  pointer-events: none;
+  transition: transform var(--transition), visibility 0.2s ease;
   box-shadow: var(--shadow-md);
 }
 .sidebar.open {
   transform: translateX(0);
+  visibility: visible;
+  pointer-events: auto;
 }
 
 .sidebar-header {
@@ -297,40 +303,28 @@ html, body {
 }
 .sidebar-footer-item:hover { background: var(--bg); }
 
-/* ── 에이전트 드로어 (우측 서랍) ── */
-.agent-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.4);
-  z-index: 200;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--transition);
-}
-.agent-overlay.active {
-  opacity: 1;
-  pointer-events: all;
-}
-
+/* ── 에이전트 드로어 (우측 슬롯) ── */
 .agent-drawer {
   position: fixed;
   top: 0;
   right: 0;
-  width: 300px;
+  width: 320px;
   height: 100%;
   background: var(--surface);
-  backdrop-filter: var(--backdrop-blur);
-  -webkit-backdrop-filter: var(--backdrop-blur);
   border-left: 1px solid var(--border-color);
-  z-index: 300;
+  z-index: 1100; /* 사이드바와 동급 */
   display: flex;
   flex-direction: column;
-  transform: translateX(100%);
-  transition: transform var(--transition);
+  transform: translateX(105%);
+  visibility: hidden;
+  pointer-events: none;
+  transition: transform var(--transition), visibility 0.2s ease;
   box-shadow: var(--shadow-md);
 }
 .agent-drawer.open {
   transform: translateX(0);
+  visibility: visible;
+  pointer-events: auto;
 }
 
 .agent-drawer-header {
@@ -389,7 +383,7 @@ html, body {
   backdrop-filter: var(--backdrop-blur);
   -webkit-backdrop-filter: var(--backdrop-blur);
   border-left: 1px solid var(--border-color);
-  z-index: 300;
+  z-index: 1001; /* 오버레이보다 위 */
   transform: translateX(100%);
   transition: transform var(--transition);
   display: flex;

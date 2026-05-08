@@ -2,7 +2,7 @@
 // HAD-Agent — tabbar.js (Core)
 // =============================================
 
-export function initTabBar(activeModules, loadedModules) {
+export function initTabBar(activeModules, loadedModules, config, ctx) {
   const tabBar = document.getElementById('tabBar');
 
   tabBar.innerHTML = activeModules.map(mod => `
@@ -15,13 +15,13 @@ export function initTabBar(activeModules, loadedModules) {
   tabBar.addEventListener('click', (e) => {
     const item = e.target.closest('.tab-item');
     if (!item) return;
-    import('./router.js').then(({ navigateTo }) => navigateTo(item.dataset.module));
+    ctx.navigate(item.dataset.module);
   });
 
-  // 활성 탭 표시 함수 (router에서 호출)
-  window._hadSetActiveTab = (moduleId) => {
+  // [v13.0.0] 라우터 변경 감지
+  ctx.events.on('moduleChanged', (moduleId) => {
     tabBar.querySelectorAll('.tab-item').forEach(el => {
       el.classList.toggle('active', el.dataset.module === moduleId);
     });
-  };
+  });
 }

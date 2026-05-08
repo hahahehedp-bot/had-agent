@@ -21,6 +21,7 @@ export default {
     clientId: "473448066886-7kjj7jhvliclqgdpa30et6t2m1shgbdt.apps.googleusercontent.com",
     required: true,
     adminEmails: ["hahahehedp@gmail.com", "admin@owner.com"], // 마스터 관리자 이메일
+    allowBypass: true, // [v13.0.0] 개발용 로그인 우회 허용
   },
 
   // ── 테마 (사용자 선택 및 기본 테마 지정) ──────────────
@@ -38,8 +39,9 @@ export default {
 
   // ── AI 에이전트 ────────────────────────────────
   agent: {
-    name:         "에이전트",
+    name:         "HAD 비서",
     userLabel:    "리더님", // 고객사별 사용자 호칭 (예: 리더님, 사우님, 파트너님)
+    welcomeMsg:   "무엇을 도와드릴까요? 필요한 정보를 말씀해 주세요.", // [v13.0.0] 환영 인사
     avatar:       "client/assets/icon-192.png",
     endpoint:     "https://asia-northeast3-triple-brain.cloudfunctions.net/osunyi-chat",
     systemPrompt: "당신은 HAD-Agent의 범용 AI 에이전트입니다. 기술적이고 명확하게 답변하세요.",
@@ -56,6 +58,16 @@ export default {
     // 외부 Iframe 모듈 예시 (마이오피스, 쇼핑몰 등)
     { id: "myoffice",  enabled: true,  type: "iframe", url: "https://example.com/myoffice", icon: "🏢", label: "마이오피스", description: "나의 비즈니스 현황" },
   ],
+
+  // ── UI 레이아웃 설정 ───────────────────────────
+  ui: {
+    useOverlayOnPC: false,
+    drawerSlots: {
+      'agent': 'chat',
+      'memos': 'home',
+      'mcp': 'schedule'
+    }
+  },
 
   // ── PWA 설정 (설치형 앱 메타데이터) ──────────────────
   pwa: {

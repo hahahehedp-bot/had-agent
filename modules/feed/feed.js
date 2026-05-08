@@ -117,9 +117,54 @@ export default {
 
         const cards = document.querySelectorAll('.feed-card');
         cards.forEach(card => {
+            const postId = parseInt(card.dataset.id);
+            const postData = [
+                { id: 1, author: "여름오빠", content: "드디어 HAD-Agent의 새로운 게시판 모듈 'HAD-Feed'의 프로토타입이 완성되었습니다!" },
+                { id: 2, author: "마케팅팀", content: "리버스12 신제품 현장 반응이 뜨겁습니다. 특히 텍스처와 향에 대한 만족도가 높네요." },
+                { id: 3, author: "HAD 봇", content: "최근 게시판의 키워드를 분석한 결과 #리버스12 #만족도 #현장반응 이 가장 많이 언급되고 있습니다." }
+            ].find(p => p.id === postId);
+
+            // 게시물 클릭 → 컨텍스트 설정
             card.onclick = () => {
-                console.log(`게시물 ${card.dataset.id} 클릭됨`);
+                ctx.setContextData({
+                    type: 'feed_post',
+                    id: postId,
+                    author: postData?.author,
+                    content: postData?.content
+                });
+                ctx.notify(`'${postData?.author}'님의 게시물이 에이전트 컨텍스트에 담겼습니다.`);
             };
+
+            // 공유 버튼
+            const shareBtn = card.querySelector('.action-btn:nth-child(3)');
+            if (shareBtn) {
+                shareBtn.onclick = async (e) => {
+                    e.stopPropagation(); // 카드 클릭 이벤트 방지
+                    
+                    const shareData = {
+                        title: `[${config.brand.name}] ${postData?.author}님의 게시물`,
+                        text: postData?.content,
+                        url: window.location.href
+                    };
+
+                    if (navigator.share) {
+                        try {
+                            await navigator.share(shareData);
+                            console.log('공유 성공');
+                        } catch (err) {
+                            console.log('공유 취소 또는 실패', err);
+                        }
+                    } else {
+                        // Web Share API 미지원 시 클립보드 복사
+                        try {
+                            await navigator.clipboard.writeText(`${shareData.text}\n\n출처: ${shareData.url}`);
+                            ctx.notify('링크가 클립보드에 복사되었습니다.');
+                        } catch (err) {
+                            ctx.notify('공유 기능을 지원하지 않는 브라우저입니다.', 'error');
+                        }
+                    }
+                };
+            }
         });
     },
 

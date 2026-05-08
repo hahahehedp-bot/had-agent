@@ -2,17 +2,61 @@
 
 이 문서는 HAD-Agent 프로젝트의 버전별 작업 내역과 주요 변경 사항을 기록합니다.
 
----
-
-## [v11.2.0] - 2026-05-08
+## [v13.0.0] - 2026-05-08
 ### Added
-- **Zero-Drive UX Strategy**: Established the principle of 100% UI-driven data interaction, hiding the backend Drive from end-users.
-- **Lean Folder Structure**: Renamed root folders to `Schedule`, `Resources`, `Feed`, and `System` for better clarity and less visual noise.
-- **Agent System Isolation**: Strictly partitioned the `System` folder for Master accounts only, ensuring data integrity and security.
+- **Global Cleanup (v13.0.0)**: 전방위적인 코어 리팩토링 및 부채 청산.
+- **단일 진실 공급원 (Single Source of Truth)**: `Registry`에서 버전 및 전역 상태(`window.hadState`)를 중앙 집중 관리.
+- **이벤트 기반 통신 (Event-Driven Bridge)**: 지저분한 전역 함수(`window._had...`)를 제거하고 `ctx.events` 기반의 세련된 모듈 간 통신 체계 구축.
+- **문자열 외부화 (String Externalization)**: HTML/JS 내 하드코딩된 한국어 문구들을 `config` 참조 방식으로 전면 교체.
 
 ### Changed
-- **Terminology Sync**: Renamed `Board` module to `Feed` module across the entire project (folder, files, code, and sandbox).
-- **Architecture Master Plan**: Updated `1_architecture.md` and `3_modules.md` with new governance and security rules.
+- **버전 관리 자동화**: 모든 모듈 임포트 및 자산 로드 시 `Registry.VERSION`을 동적으로 주입하여 캐시 문제 근본적 해결.
+- **Admin 메뉴 반응성**: 로그인 상태와 권한 변화에 따라 마스터 운영실 메뉴가 즉각적으로 반응하도록 개선.
+- **UI 일관성**: 로딩 스피너 및 알림(alert) 로직의 통일성 확보.
+
+## [v12.0.0] - 2026-05-08
+
+### Added
+- **복합 환경 판정 시스템 (Adaptive Context)**: `orientation`, `touch`, `width`를 조합한 3중 체크 로직 도입 (고해상도 모바일 대응).
+- **슬롯 아키텍처 설정화**: 서랍 슬롯 매핑 정보를 `config.js`로 분리하여 코어 무결성 강화.
+- **물리적 상태 격리**: 서랍 전환 시 JS 및 CSS 레벨에서 `visibility`와 `pointer-events`를 제어하여 시각적 충돌 원천 차단.
+
+### Fixed
+- **Router 참조 오류**: `router.js` 내 `Registry` 참조 에러 수정.
+- **Service Worker 강제 갱신**: `skipWaiting` 및 `clients.claim` 로직 최적화로 PWA 업데이트 지연 해결.
+- **코어 정화**: 리팩토링 과정의 잔존 코드 및 하드코딩된 로직 제거.
+
+## [v11.4.0] - 2026-05-08
+### 추가 (Added)
+- **온데만드 컨텍스트 (On-demand Context)**: 사용자가 보고 있는 모듈의 문맥(예: 특정 피드 게시물)을 AI 비서가 즉시 인지하는 지능형 주입 로직 구현.
+- **스마트 공유 (Smart Sharing)**: `HAD-Feed` 모듈에 Web Share API를 연동하여 모바일에서 즉각적인 콘텐츠 확산 기능 추가.
+- **컨텍스트 배지 UI**: 우측 비서 드로어 오픈 시 현재 분석 중인 문맥을 시각적으로 표시하는 상태 바 도입.
+
+### 변경 (Changed)
+- **전역 상태 구조 고도화**: `window.hadState`를 통해 현재 모듈 및 컨텍스트 데이터를 코어-모듈 간에 매끄럽게 공유하도록 개선.
+- **캐시 버스팅 최적화**: 전방위적인 v11.4.0 버전 점프로 안정적인 최신 코드 배포 보장.
+
+---
+
+## [v11.3.0] - 2026-05-08
+### 추가 (Added)
+- **양방향 서랍(Dual-Drawer) 인터페이스**: 모바일 환경에서 좌측(메뉴)과 우측(에이전트 비서)을 동시에 활용할 수 있는 서랍 구조 구현.
+- **지능형 스와이프 제스처**: 좌측 끝에서 우측으로 밀면 '메뉴', 우측 끝에서 좌측으로 밀면 '비서'가 튀어나오는 직관적인 UX 도입.
+- **온데만드 컨텍스트(On-demand Context)**: 챗봇을 여는 순간에만 현재 페이지 정보를 AI에게 전달하여 토큰 비용을 혁신적으로 절감하는 로직 설계.
+- **스마트 공유 및 CRM 전략**: 자료나 일정을 카카오톡 등으로 즉시 전송할 수 있는 공유 시스템을 설계도에 반영.
+
+### 변경 (Changed)
+- **에이전트 비서 레이아웃**: 기존 독립 페이지였던 채팅 모듈을 언제 어디서나 불러올 수 있는 '상주형 드로어' 형태로 아키텍처 변경.
+
+## [v11.2.0] - 2026-05-08
+### 추가 (Added)
+- **제로-드라이브(Zero-Drive) 전략**: 사용자가 구글 드라이브를 열 필요 없이 UI만으로 모든 업무를 처리하는 '블랙박스 데이터 거버넌스' 확립.
+- **린(Lean) 폴더 체계**: 드라이브 내 구조를 `Schedule`, `Resources`, `Feed`, `System` 4대 핵심 키워드로 간소화.
+- **시스템 엔진룸 격리**: 마스터 계정만 접근 가능한 `System` 폴더를 통해 데이터 무결성 및 보안 강화.
+
+### 변경 (Changed)
+- **용어 대통합**: 프로젝트 전체의 `Board` 명칭을 `Feed`로 변경하고, 관련 폴더 및 코드 내 모든 참조를 동기화.
+- **마스터 설계도 최신화**: `1_architecture.md`와 `3_modules.md`에 새로운 보안 및 운영 규약을 전수 기록.
 
 ## [v11.1.0] - 2026-05-08
 ### Fixed

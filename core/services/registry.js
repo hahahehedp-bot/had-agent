@@ -7,22 +7,39 @@ import staticConfig from '../../client/config.js';
 
 class RegistryService {
   constructor() {
+    this.VERSION = '13.0.0'; // [v13.0.0] 단일 진실 공급원
     this.config = { ...staticConfig };
     this.dynamicConfig = {};
     this.listeners = [];
+    
+    // 전역 상태 초기화 (중앙화)
+    window.hadState = {
+      version: this.VERSION,
+      currentModule: null,
+      isAdmin: false,
+      contextData: null
+    };
   }
 
   /**
-   * 초기화: 드라이브에서 동적 설정을 가져와 머지합니다.
+   * 초기화: 드라이브(현 로컬스토리지)에서 동적 설정을 가져와 머지합니다.
    */
   async init() {
-    console.log('[Registry] 초기화 시작...');
+    console.log(`[Registry] v${this.VERSION} 초기화 시작...`);
     try {
       const saved = localStorage.getItem('had_dynamic_config');
       if (saved) {
         this.dynamicConfig = JSON.parse(saved);
         this.mergeConfig();
       }
+      
+      // 사용자 권한 상태 복구 (auth에서 세부 설정)
+      const userEmail = localStorage.getItem('had_agent_email');
+      if (userEmail) {
+        const authCfg = this.config.auth || {};
+        window.hadState.isAdmin = authCfg.adminEmails?.includes(userEmail);
+      }
+
       console.log('[Registry] 최종 활성 모듈:', this.config.modules.filter(m => m.enabled).map(m => m.id));
     } catch (e) {
       console.warn('[Registry] 동적 설정 로드 실패:', e);
@@ -30,10 +47,9 @@ class RegistryService {
   }
 
   /**
-   * 정적 설정과 동적 설정을 합칩니다. (동적이 우선순위 높음)
+   * 정적 설정과 동적 설정을 합칩니다.
    */
   mergeConfig() {
-    // 깊은 복사 혹은 필요한 영역만 업데이트
     // 1. 모듈 온오프 상태 업데이트
     if (this.dynamicConfig.modules) {
       this.config.modules = this.config.modules.map(mod => {
@@ -57,23 +73,20 @@ class RegistryService {
     return this.config;
   }
 
+  getVersion() {
+    return this.VERSION;
+  }
+
   /**
    * 설정을 업데이트하고 저장합니다.
    */
   async updateConfig(delta) {
-    // 델타 값을 dynamicConfig에 머지
     this.dynamicConfig = { ...this.dynamicConfig, ...delta };
-    
-    // 로컬 스토리지 저장 (나중엔 Cloud Function 호출)
     localStorage.setItem('had_dynamic_config', JSON.stringify(this.dynamicConfig));
-    
     this.mergeConfig();
     console.log('[Registry] 설정 업데이트 완료:', delta);
   }
 
-  /**
-   * 설정 변경 감지 리스너 등록
-   */
   subscribe(callback) {
     this.listeners.push(callback);
     return () => {

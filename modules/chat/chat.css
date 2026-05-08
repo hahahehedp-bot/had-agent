@@ -80,3 +80,15 @@
   color: #c0392b !important;
   background: #ffeaea !important;
 }
+/* ── 서랍(Drawer) 내 렌더링 시 최적화 ── */
+.agent-drawer-body .chat-layout {
+  min-height: auto;
+  height: calc(100vh - 180px); /* 헤더 + 탭바 공간 제외 */
+}
+.agent-drawer-body .chat-messages {
+  padding: 10px;
+}
+.agent-drawer-body .chat-input-bar {
+  padding: 10px;
+  position: relative; /* 서랍 내에서는 하단 고정 방식 변경 */
+}

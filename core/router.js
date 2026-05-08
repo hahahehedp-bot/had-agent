@@ -3,6 +3,8 @@
 // 해시 기반 뷰 전환 + 모듈 render() 호출
 // =============================================
 
+import { Registry } from './services/registry.js';
+
 let _modules = {};
 let _config  = {};
 let _current = null;
@@ -13,15 +15,8 @@ export function initRouter(loadedModules, config, context) {
   _config  = config || context.config;
   _ctx     = context;
 
-  if (!_config) console.error('[Router] 경고: config가 주입되지 않았습니다!');
-
+  // [v13.0.0] 중복 리스너 정리: hashchange만 사용 (popstate는 브라우저 네비게이션 시 hashchange를 유발함)
   window.addEventListener('hashchange', () => {
-    const id = window.location.hash.replace('#', '') || 'home';
-    navigateTo(id);
-  });
-
-  // 브라우저 뒤로가기 처리
-  window.addEventListener('popstate', () => {
     const id = window.location.hash.replace('#', '') || 'home';
     renderModule(id);
   });
@@ -30,58 +25,64 @@ export function initRouter(loadedModules, config, context) {
 export async function navigateTo(moduleId) {
   if (!_modules[moduleId]) {
     console.warn(`[Router] 모듈 없음: ${moduleId}`);
-    moduleId = Object.keys(_modules)[0]; // 첫 번째 모듈로 폴백
+    moduleId = Object.keys(_modules)[0] || 'home';
   }
 
-  // URL 해시 업데이트
+  // URL 해시 업데이트 -> hashchange 이벤트 유발
   if (window.location.hash !== `#${moduleId}`) {
-    history.pushState({ module: moduleId }, '', `#${moduleId}`);
+    window.location.hash = moduleId;
+  } else {
+    // 이미 같은 해시인 경우 수동 렌더링
+    renderModule(moduleId);
   }
-
-  await renderModule(moduleId);
 }
 
 async function renderModule(moduleId) {
-  if (!_modules[moduleId]) return;
+  if (!_modules[moduleId] || _current === moduleId) return;
 
-  // 이전 모듈 정리
-  if (_current && _current !== moduleId && _modules[_current]?.destroy) {
+  // 1. 이전 모듈 정리
+  if (_current && _modules[_current]?.destroy) {
     try {
       _modules[_current].destroy(_ctx);
     } catch (e) {
       console.warn(`[Router] 모듈 '${_current}' destroy 실패:`, e);
     }
   }
+  
   _current = moduleId;
 
-  // 탭바 + 사이드바 활성 표시
-  window._hadSetActiveTab?.(moduleId);
-  window._hadSetActiveSidebarItem?.(moduleId);
+  // 2. 전역 상태 업데이트 및 이벤트 발행 (v13.0.0 교체)
+  window.hadState.currentModule = moduleId;
+  window.hadState.contextData = null; 
+  
+  // 사이드바/탭바에게 변경 알림 (전역 함수 대체)
+  _ctx.events.emit('moduleChanged', moduleId);
 
-  // 메인 영역에 렌더링
+  // 3. 메인 영역 렌더링
   const main = document.getElementById('appMain');
-  main.innerHTML = '<div class="loading-screen"><div class="loading-spinner"></div></div>';
+  main.innerHTML = '<div class="module-loading"><div class="loading-spinner"></div></div>';
 
   try {
-    // 자가 치유: _config가 비어있으면 레지스트리에서 즉시 복구
-    const currentConfig = _config || _ctx.config || Registry.getConfig();
+    const currentConfig = _config || Registry.getConfig();
     const html = await _modules[moduleId].render(currentConfig, _ctx);
+    
     main.innerHTML = html;
-    main.querySelector('.module-root')?.classList.add('animate-in');
+    const root = main.querySelector('.module-root');
+    if (root) root.classList.add('animate-in');
 
-    // 모듈 후처리 (이벤트 바인딩 등)
+    // 4. 후처리
     if (_modules[moduleId].afterRender) {
       await _modules[moduleId].afterRender(currentConfig, _ctx);
     }
   } catch (e) {
     console.error(`[Router] 렌더링 실패: ${moduleId}`, e);
     main.innerHTML = `
-      <div class="empty-state" style="margin-top: 60px;">
-        <div class="empty-icon">⚠️</div>
+      <div class="error-state">
+        <div class="error-icon">⚠️</div>
         <p>화면을 불러오는 중 문제가 발생했습니다.</p>
+        <button onclick="location.reload()">새로고침</button>
       </div>`;
   }
 
-  // 스크롤 상단으로
   main.scrollTop = 0;
 }
