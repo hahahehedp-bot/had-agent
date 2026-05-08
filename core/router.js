@@ -70,7 +70,6 @@ async function renderModule(moduleId) {
       await _modules[moduleId].afterRender(_ctx, _config);
     }
   } catch (e) {
-  } catch (e) {
     console.error(`[Router] 렌더링 실패: ${moduleId}`, e);
     main.innerHTML = `
       <div class="empty-state" style="margin-top: 60px;">
