@@ -1,6 +1,6 @@
 // =============================================
 // HAD-Agent — modules/chat/chat.js
-// [v13.8.0] Fixed Empty Layout & Top Gap
+// [v13.9.0] Gemini Full-Width Input & Placeholder
 // =============================================
 
 export default {
@@ -27,7 +27,7 @@ export default {
         <div class="chat-input-container">
           <div class="chat-input-wrapper">
             <input type="search" id="chat-query" class="chat-input" 
-                   placeholder="메시지를 입력하세요..." 
+                   placeholder="비서에게 물어보세요" 
                    autocomplete="off" 
                    autocorrect="off" 
                    autocapitalize="off" 
