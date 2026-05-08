@@ -89,6 +89,11 @@
   padding: 10px;
 }
 .agent-drawer-body .chat-input-bar {
-  padding: 10px;
-  position: relative; /* 서랍 내에서는 하단 고정 방식 변경 */
+  padding: 10px 16px;
+  /* 모바일 하단바를 고려한 여유 있는 여백 */
+  padding-bottom: calc(15px + env(safe-area-inset-bottom));
+  position: sticky;
+  bottom: 0;
+  background: var(--card-bg);
+  margin-top: auto; /* 내용이 적어도 아래로 밀착 */
 }

@@ -358,7 +358,7 @@ html, body {
 .agent-drawer-body {
   flex: 1;
   overflow-y: auto;
-  padding: 20px;
+  padding: 0; /* 모듈이 직접 여백을 통제하도록 변경 */
 }
 
 .agent-welcome-msg {

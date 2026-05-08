@@ -7,7 +7,7 @@ import staticConfig from '../../client/config.js';
 
 class RegistryService {
   constructor() {
-    this.VERSION = '13.0.0'; // [v13.0.0] 단일 진실 공급원
+    this.VERSION = '13.2.1'; // [v13.2.1] 채팅창 여백 패치
     this.config = { ...staticConfig };
     this.dynamicConfig = {};
     this.listeners = [];
