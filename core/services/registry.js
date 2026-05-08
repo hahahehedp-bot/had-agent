@@ -7,7 +7,7 @@ import staticConfig from '../../client/config.js';
 
 class RegistryService {
   constructor() {
-    this.VERSION = '14.1.0'; // [v14.1.0] Immersive Width & Low Blur
+    this.VERSION = '14.2.0'; // [v14.2.0] Relaxed Side Padding
     this.config = { ...staticConfig };
     this.dynamicConfig = {};
     this.listeners = [];

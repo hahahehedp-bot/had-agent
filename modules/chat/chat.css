@@ -1,5 +1,5 @@
 /* modules/chat/chat.css */
-/* [v14.0.0] Ultra-Tight Layout & Pure Full-Width Input */
+/* [v14.2.0] Relaxed Side Padding & Immersive Width */
 
 .chat-layout {
   display: flex;
@@ -16,8 +16,8 @@
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  /* 상단 및 좌우 여백 극소화 */
-  padding: 0 4px 0 4px; 
+  /* 좌우 여백 소폭 확장 (가독성 개선) */
+  padding: 0 8px 0 8px; 
   display: flex;
   flex-direction: column;
   gap: 16px;
