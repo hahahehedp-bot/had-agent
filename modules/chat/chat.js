@@ -1,6 +1,6 @@
 // =============================================
 // HAD-Agent — modules/chat/chat.js
-// [v13.4.1] Real Gemini Look - Integrated Input
+// [v13.4.2] Final Gemini Style - No Greeting, Arrow Icon
 // =============================================
 
 export default {
@@ -22,26 +22,18 @@ export default {
       <div class="module-root chat-layout" id="chatLayout">
         <div class="chat-messages" id="chatMessages">
           <div class="chat-top-shield"></div>
-
-          <div class="msg-ai-wrap">
-            <div class="msg-ai-header">
-              <img src="${agent.avatar}" alt="${agent.name}" class="msg-avatar">
-              <span class="msg-name">${agent.name}</span>
-            </div>
-            <div class="msg msg-ai" id="welcomeMsg"></div>
-          </div>
-          
+          <!-- [v13.4.2] 인사말 생략 -->
           <div class="chat-bottom-spacer" style="height:30px; flex-shrink:0;"></div>
         </div>
 
-        <!-- [v13.4.1] 제미나이 스타일 통합 입력바 -->
         <div class="chat-input-container">
           <div class="chat-input-wrapper">
-            <input type="text" id="chatInput" class="chat-input" placeholder="Gemini에게 물어보기" autocomplete="off">
+            <input type="text" id="chatInput" class="chat-input" placeholder="메시지를 입력하세요..." autocomplete="off">
             <button id="chatSend" class="chat-send-icon-btn" aria-label="전송">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="22" y1="2" x2="11" y2="13"></line>
-                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              <!-- [v13.4.2] 제미나이 스타일 단순 화살표 -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="19" x2="12" y2="5"></line>
+                <polyline points="5 12 12 5 19 12"></polyline>
               </svg>
             </button>
           </div>
@@ -64,13 +56,6 @@ export default {
       }
     };
 
-    // 인사말 렌더링
-    const welcomeMsg = document.getElementById('welcomeMsg');
-    if (welcomeMsg && typeof marked !== 'undefined') {
-      const welcomeText = agent.welcomeMsg || `${agent.userLabel || '리더'}님, 무엇을 도와드릴까요? 😊`;
-      welcomeMsg.innerHTML = marked.parse(welcomeText);
-    }
-    
     scrollToBottom();
 
     const sendMessage = async () => {
@@ -80,14 +65,12 @@ export default {
       input.value = '';
       input.disabled = true;
 
-      // 사용자 메시지
       const userMsg = document.createElement('div');
       userMsg.className = 'msg msg-user';
       userMsg.textContent = text;
       messages.insertBefore(userMsg, messages.querySelector('.chat-bottom-spacer'));
       scrollToBottom();
 
-      // AI 메시지
       const aiWrap = document.createElement('div');
       aiWrap.className = 'msg-ai-wrap';
       aiWrap.innerHTML = `

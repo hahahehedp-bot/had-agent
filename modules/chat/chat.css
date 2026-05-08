@@ -1,5 +1,5 @@
 /* modules/chat/chat.css */
-/* [v13.4.1] Pure Gemini Style - No Bubbles, Integrated Input */
+/* [v13.4.2] Final Gemini - Pill Input & Full Width Text */
 
 .chat-layout {
   display: flex;
@@ -23,11 +23,11 @@
   -webkit-overflow-scrolling: touch;
 }
 
-.chat-top-shield { height: 20px; }
+.chat-top-shield { height: 10px; }
 
-/* [v13.4.1] 말풍선 완전 제거 (AI & User 공통) */
+/* [v13.4.2] 말풍선 완전 제거 & 전폭 사용 */
 .msg {
-  font-size: 15px;
+  font-size: 15.5px;
   line-height: 1.6;
   overflow-wrap: anywhere; 
   word-break: break-word;
@@ -43,11 +43,11 @@
 .msg-user { 
   align-self: flex-start; 
   font-weight: 500;
-  color: var(--primary); /* 사용자 글씨는 색상으로 구분 */
+  color: var(--primary); 
 }
 
 .msg-ai-header {
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -65,10 +65,10 @@
   color: var(--text-secondary);
 }
 
-/* [v13.4.1] 제미나이 스타일 통합 입력창 */
+/* [v13.4.2] 뚜렷한 알약 모양 입력창 */
 .chat-input-container {
   flex-shrink: 0;
-  padding: 10px 16px;
+  padding: 8px 12px;
   background: var(--surface);
   z-index: 10;
 }
@@ -76,10 +76,12 @@
 .chat-input-wrapper {
   display: flex;
   align-items: center;
-  background: var(--bg-alt, #f0f2f5);
+  /* 테두리 더 선명하게 */
+  border: 1.5px solid var(--border-color, #e0e0e0); 
   border-radius: 28px;
   padding: 4px 6px 4px 18px;
-  border: 1px solid rgba(0,0,0,0.05);
+  background: var(--bg);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
 .chat-input {
@@ -98,8 +100,9 @@
   height: 36px;
   flex-shrink: 0;
   border-radius: 50%;
-  background: transparent;
-  color: var(--primary);
+  /* 전송 버튼 색상 복원 (눈에 잘 띄게) */
+  background: var(--primary);
+  color: white;
   border: none;
   display: flex;
   align-items: center;
@@ -112,7 +115,7 @@
   height: 20px;
 }
 
-/* 바닥 밀착 */
+/* 바닥 완전 밀착 */
 .chat-bottom-shield {
   height: env(safe-area-inset-bottom);
   width: 100%;
