@@ -363,8 +363,10 @@ body.no-scroll {
 
 .agent-drawer-body {
   flex: 1;
-  overflow-y: auto;
-  padding: 0; /* 모듈이 직접 여백을 통제하도록 변경 */
+  display: flex; /* [v13.2.5] 내부 모듈이 높이를 100% 채울 수 있게 */
+  flex-direction: column;
+  overflow: hidden; /* 서랍 자체 스크롤 제거 (내부 모듈이 직접 수행) */
+  padding: 0;
 }
 
 .agent-welcome-msg {
