@@ -1,6 +1,6 @@
 // =============================================
 // HAD-Agent — modules/chat/chat.js
-// [v13.4.0] Gemini Look Implementation
+// [v13.4.1] Real Gemini Look - Integrated Input
 // =============================================
 
 export default {
@@ -23,23 +23,23 @@ export default {
         <div class="chat-messages" id="chatMessages">
           <div class="chat-top-shield"></div>
 
-          <div class="msg-ai-wrap" id="welcomeWrap">
+          <div class="msg-ai-wrap">
             <div class="msg-ai-header">
               <img src="${agent.avatar}" alt="${agent.name}" class="msg-avatar">
               <span class="msg-name">${agent.name}</span>
             </div>
-            <!-- [v13.4.0] 제미나이 스타일: 배경 없는 메시지 -->
             <div class="msg msg-ai" id="welcomeMsg"></div>
           </div>
           
-          <div class="chat-bottom-spacer" style="height:20px; flex-shrink:0;"></div>
+          <div class="chat-bottom-spacer" style="height:30px; flex-shrink:0;"></div>
         </div>
 
-        <div class="chat-input-bar">
-          <div class="chat-input-row">
-            <input type="text" id="chatInput" class="chat-input" placeholder="메시지를 입력하세요..." autocomplete="off">
-            <button id="chatSend" class="chat-send-btn" aria-label="전송">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <!-- [v13.4.1] 제미나이 스타일 통합 입력바 -->
+        <div class="chat-input-container">
+          <div class="chat-input-wrapper">
+            <input type="text" id="chatInput" class="chat-input" placeholder="Gemini에게 물어보기" autocomplete="off">
+            <button id="chatSend" class="chat-send-icon-btn" aria-label="전송">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="22" y1="2" x2="11" y2="13"></line>
                 <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
               </svg>
@@ -64,7 +64,7 @@ export default {
       }
     };
 
-    // [v13.4.0] 인사말 마크다운 렌더링 (제미나이 룩)
+    // 인사말 렌더링
     const welcomeMsg = document.getElementById('welcomeMsg');
     if (welcomeMsg && typeof marked !== 'undefined') {
       const welcomeText = agent.welcomeMsg || `${agent.userLabel || '리더'}님, 무엇을 도와드릴까요? 😊`;
@@ -79,16 +79,15 @@ export default {
 
       input.value = '';
       input.disabled = true;
-      sendBtn.disabled = true;
 
-      // 사용자 메시지 (말풍선 유지)
+      // 사용자 메시지
       const userMsg = document.createElement('div');
       userMsg.className = 'msg msg-user';
       userMsg.textContent = text;
       messages.insertBefore(userMsg, messages.querySelector('.chat-bottom-spacer'));
       scrollToBottom();
 
-      // AI 메시지 (말풍선 제거 스타일)
+      // AI 메시지
       const aiWrap = document.createElement('div');
       aiWrap.className = 'msg-ai-wrap';
       aiWrap.innerHTML = `
@@ -122,15 +121,14 @@ export default {
           if (history.length > 20) history.splice(0, 2);
         } else {
           bubble.className = 'msg msg-ai msg-error';
-          bubble.textContent = '응답을 가져올 수 없습니다.';
+          bubble.textContent = '응답 오류';
         }
       } catch (err) {
         bubble.className = 'msg msg-ai msg-error';
-        bubble.textContent = '연결 상태를 확인해 주세요.';
+        bubble.textContent = '연결 오류';
       }
 
       input.disabled = false;
-      sendBtn.disabled = false;
       input.focus();
       scrollToBottom();
     };

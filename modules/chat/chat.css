@@ -1,5 +1,5 @@
 /* modules/chat/chat.css */
-/* [v13.4.0] Gemini-Inspired Minimalist Layout */
+/* [v13.4.1] Pure Gemini Style - No Bubbles, Integrated Input */
 
 .chat-layout {
   display: flex;
@@ -16,61 +16,47 @@
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  /* 좌우 여백을 제미나이처럼 최소화 (15px -> 12px) */
-  padding: 0 12px; 
+  padding: 0 16px; 
   display: flex;
   flex-direction: column;
-  gap: 20px; /* 메시지 간 간격은 조금 더 여유롭게 */
+  gap: 24px;
   -webkit-overflow-scrolling: touch;
 }
 
-/* 천장 보호막 축소 (제미나이는 위쪽 공간을 많이 쓰지 않음) */
-.chat-top-shield {
-  height: 15px;
-  flex-shrink: 0;
-}
+.chat-top-shield { height: 20px; }
 
-/* [v13.4.0] 메시지 스타일 개편 - 제미나이 벤치마킹 */
+/* [v13.4.1] 말풍선 완전 제거 (AI & User 공통) */
 .msg {
   font-size: 15px;
   line-height: 1.6;
   overflow-wrap: anywhere; 
   word-break: break-word;
   white-space: pre-wrap;
-  box-sizing: border-box;
-  position: relative;
-}
-
-/* AI 메시지: 말풍선 제거, 너비 100% 사용 */
-.msg-ai {
-  background: transparent !important; /* 배경 제거 */
-  padding: 0; /* 패딩 제거 */
-  max-width: 100%; 
   width: 100%;
-  align-self: flex-start;
+  max-width: 100%;
+  background: transparent !important;
+  padding: 0 !important;
   color: var(--text-primary);
 }
 
-/* 마크다운 P 태그 여백 */
-.msg-ai p { margin-bottom: 12px; }
-.msg-ai p:last-child { margin-bottom: 0; }
-
-/* 사용자 메시지: 제미나이처럼 작고 깔끔한 말풍선 */
-.msg-user {
-  background: var(--bg-alt, #f0f2f5); /* 더 부드러운 배경색 */
-  color: var(--text-primary);
-  align-self: flex-end;
-  padding: 8px 14px;
-  border-radius: 18px;
-  max-width: 85%;
+.msg-ai { align-self: flex-start; }
+.msg-user { 
+  align-self: flex-start; 
+  font-weight: 500;
+  color: var(--primary); /* 사용자 글씨는 색상으로 구분 */
 }
 
-/* AI 헤더 (이름/아바타) */
 .msg-ai-header {
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+.msg-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
 }
 
 .msg-name {
@@ -79,52 +65,55 @@
   color: var(--text-secondary);
 }
 
-.chat-input-bar {
+/* [v13.4.1] 제미나이 스타일 통합 입력창 */
+.chat-input-container {
   flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
+  padding: 10px 16px;
   background: var(--surface);
-  /* 경계선을 더 흐릿하게 (제미나이 스타일) */
-  border-top: 1px solid rgba(0,0,0,0.05); 
   z-index: 10;
 }
 
-.chat-input-row {
+.chat-input-wrapper {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
+  background: var(--bg-alt, #f0f2f5);
+  border-radius: 28px;
+  padding: 4px 6px 4px 18px;
+  border: 1px solid rgba(0,0,0,0.05);
 }
 
 .chat-input {
   flex: 1;
   min-width: 0;
-  border: 1px solid var(--border); /* 선을 더 얇게 */
-  border-radius: 24px;
-  padding: 10px 18px;
-  font-size: 14px;
+  border: none;
+  background: transparent;
+  padding: 10px 0;
+  font-size: 15px;
   outline: none;
-  background: var(--bg);
   color: var(--text-primary);
 }
 
-.chat-send-btn {
+.chat-send-icon-btn {
   width: 36px;
   height: 36px;
   flex-shrink: 0;
   border-radius: 50%;
-  background: var(--primary);
-  color: white;
+  background: transparent;
+  color: var(--primary);
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  cursor: pointer;
 }
 
-/* [v13.4.0] 바닥 밀착 보호막 (최소화) */
+.chat-send-icon-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* 바닥 밀착 */
 .chat-bottom-shield {
-  height: calc(4px + env(safe-area-inset-bottom));
+  height: env(safe-area-inset-bottom);
   width: 100%;
-  background: transparent;
 }

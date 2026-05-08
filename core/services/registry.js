@@ -7,7 +7,7 @@ import staticConfig from '../../client/config.js';
 
 class RegistryService {
   constructor() {
-    this.VERSION = '13.4.0'; // [v13.4.0] 제미나이 룩 (공간 극대화) 패치
+    this.VERSION = '13.4.1'; // [v13.4.1] 순정 제미나이 스타일 (통합 입력창) 패치
     this.config = { ...staticConfig };
     this.dynamicConfig = {};
     this.listeners = [];
