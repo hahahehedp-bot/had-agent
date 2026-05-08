@@ -22,7 +22,7 @@ function getActiveModules(cfg) {
 // ── 모듈 동적 import ─────────────────────────
 async function loadModule(moduleId) {
   try {
-    const mod = await import(`../modules/${moduleId}/${moduleId}.js?v=7`);
+    const mod = await import(`../modules/${moduleId}/${moduleId}.js?v=8`);
     return mod.default;
   } catch (e) {
     console.warn(`[HAD] 모듈 로드 실패: ${moduleId}`, e);

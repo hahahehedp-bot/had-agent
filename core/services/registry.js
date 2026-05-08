@@ -18,13 +18,12 @@ class RegistryService {
   async init() {
     console.log('[Registry] 초기화 시작...');
     try {
-      // TODO: 실제 구글 드라이브에서 system_config.json을 가져오는 로직 구현 예정
-      // 현재는 로컬 스토리지 혹은 목업 데이터를 사용합니다.
       const saved = localStorage.getItem('had_dynamic_config');
       if (saved) {
         this.dynamicConfig = JSON.parse(saved);
         this.mergeConfig();
       }
+      console.log('[Registry] 최종 활성 모듈:', this.config.modules.filter(m => m.enabled).map(m => m.id));
     } catch (e) {
       console.warn('[Registry] 동적 설정 로드 실패:', e);
     }
