@@ -6,10 +6,12 @@
 let _modules = {};
 let _config  = {};
 let _current = null;
+let _ctx     = {};
 
-export function initRouter(loadedModules, config) {
+export function initRouter(loadedModules, config, context) {
   _modules = loadedModules;
   _config  = config;
+  _ctx     = context;
 
   window.addEventListener('hashchange', () => {
     const id = window.location.hash.replace('#', '') || 'home';
@@ -42,7 +44,11 @@ async function renderModule(moduleId) {
 
   // 이전 모듈 정리
   if (_current && _current !== moduleId && _modules[_current]?.destroy) {
-    _modules[_current].destroy();
+    try {
+      _modules[_current].destroy(_ctx);
+    } catch (e) {
+      console.warn(`[Router] 모듈 '${_current}' destroy 실패:`, e);
+    }
   }
   _current = moduleId;
 
@@ -55,14 +61,15 @@ async function renderModule(moduleId) {
   main.innerHTML = '<div class="loading-screen"><div class="loading-spinner"></div></div>';
 
   try {
-    const html = await _modules[moduleId].render(_config);
+    const html = await _modules[moduleId].render(_ctx, _config);
     main.innerHTML = html;
     main.querySelector('.module-root')?.classList.add('animate-in');
 
     // 모듈 후처리 (이벤트 바인딩 등)
     if (_modules[moduleId].afterRender) {
-      await _modules[moduleId].afterRender(_config);
+      await _modules[moduleId].afterRender(_ctx, _config);
     }
+  } catch (e) {
   } catch (e) {
     console.error(`[Router] 렌더링 실패: ${moduleId}`, e);
     main.innerHTML = `
