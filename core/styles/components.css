@@ -150,75 +150,8 @@
   flex-shrink: 0;
 }
 
-/* ── 채팅 ── */
-.chat-messages {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  padding: 20px;
-  min-height: 100%;
-}
-
-.msg-ai-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  align-self: stretch;
-}
-.msg-ai-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.msg-avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 1px solid var(--border);
-}
-.msg-name {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--dark);
-  background: color-mix(in srgb, var(--primary) 10%, transparent);
-  padding: 2px 10px;
-  border-radius: 8px;
-}
-
-.msg {
-  padding: 14px 18px;
-  border-radius: 18px;
-  font-size: 14px;
-  line-height: 1.7;
-  max-width: 85%;
-}
-.msg-ai {
-  background: var(--card-bg);
-  color: var(--text);
-  border-top-left-radius: 4px;
-  box-shadow: var(--shadow);
-  border: 1px solid var(--border);
-  max-width: 100%;
-  width: 100%;
-}
-/* Markdown 안 스타일링 */
-.msg-ai h3 { font-size: 15px; color: var(--dark); margin: 12px 0 6px; border-left: 3px solid var(--primary); padding-left: 8px; }
-.msg-ai p { margin-bottom: 8px; }
-.msg-ai ul, .msg-ai ol { margin-left: 16px; margin-bottom: 8px; }
-.msg-ai li { margin-bottom: 4px; }
-.msg-ai strong { color: var(--primary); }
-.msg-ai code { background: var(--bg); padding: 2px 5px; border-radius: 4px; font-size: 12px; }
-.msg-ai table { width: 100%; border-collapse: collapse; font-size: 12px; }
-.msg-ai th, .msg-ai td { border: 1px solid var(--border); padding: 6px 8px; }
-.msg-ai th { background: var(--bg); }
-
-.msg-user {
-  align-self: flex-end;
-  background: var(--primary);
-  color: white;
-  border-bottom-right-radius: 4px;
-}
+/* ── 채팅 (모듈에서 개별 관리하므로 코어에서는 제거됨) ── */
+.chat-messages { display: flex; flex-direction: column; }
 
 /* ── 빈 상태 ── */
 .empty-state {

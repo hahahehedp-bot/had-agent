@@ -2,6 +2,26 @@
 
 이 문서는 HAD-Agent 프로젝트의 버전별 작업 내역과 주요 변경 사항을 기록합니다.
 
+## [v13.6.0] - 2026-05-08
+### Added
+- **Chat Unification**: 하단 탭바 및 사이드바에서 'AI 상담' 메뉴를 제거하고, 우측 서랍 비서로 채팅 창구를 단일화하여 인터페이스 간섭 해결.
+- **Global Cache Purge**: 전체 시스템 버전을 v13.6.0으로 업그레이드하고 서비스 워커 캐시를 갱신하여 최신 코드 반영 보장.
+- **Navigation Filtering**: 모듈 설정에 `hidden` 속성을 도입하여 백그라운드에서는 동작하되 UI 메뉴에서는 노출되지 않는 유연한 구조 확립.
+
+## [v13.5.1] - 2026-05-08
+### Fixed
+- **Auto-Focus Removal**: 채팅 진입 시 및 답변 수신 후 자동으로 키보드가 올라오던 `input.focus()` 로직을 전면 제거하여 사용자 주도형 인터랙션으로 개선.
+- **Autofill Overlay Block**: 브라우저가 채팅창을 주소/결제 폼으로 오해하여 결제/위치 옵션을 띄우는 현상을 방지하기 위해 `inputmode`, `spellcheck`, `autocomplete` 속성 강화.
+- **Bubble Residue Cleanup**: 코어 스타일(`components.css`)의 잔재와 충돌하던 문제를 해결하여 AI 응답이 배경 없이 투명하게 전폭으로 표시되도록 완벽 수정.
+
+## [v13.5.0] - 2026-05-08
+### Added
+- **Gemini-Style Alignment**: 사용자 메시지를 우측으로 정렬하고 제미나이 특유의 어두운 말풍선 스타일 적용.
+- **Full-Width AI Response**: AI 답변에서 말풍선을 완전히 제거하고 화면 전체 너비를 활용하여 가독성 극대화.
+- **Signature Star Icon**: AI 응답 헤더에 제미나이의 상징인 별(Diamond) 아이콘 도입 및 불필요한 이름 텍스트 제거.
+- **Top-Zero Layout**: 채팅창 최상단 여백을 제거하여 첫 멘트가 화면 상단에 밀착되도록 조정.
+- **Typography Optimization**: 'Outfit' 폰트 두께를 조정하여 제미나이와 유사한 세련된 텍스트 렌더링 구현.
+
 ## [v13.4.2] - 2026-05-08
 ### Fixed
 - **No Greeting Start**: 첫 접속 시 인사말을 생략하여 제미나이와 같은 깔끔한 시작 화면 구현.

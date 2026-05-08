@@ -7,7 +7,7 @@ import staticConfig from '../../client/config.js';
 
 class RegistryService {
   constructor() {
-    this.VERSION = '13.4.2'; // [v13.4.2] 제미나이 룩 최종 완성 (인사말 생략) 패치
+    this.VERSION = '13.6.0'; // [v13.6.0] Chat Unification & Cache Purge
     this.config = { ...staticConfig };
     this.dynamicConfig = {};
     this.listeners = [];

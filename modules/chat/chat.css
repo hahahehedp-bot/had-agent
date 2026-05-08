@@ -16,16 +16,17 @@
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 0 16px; 
+  /* 상단 여백 제거 */
+  padding: 8px 16px 0 16px; 
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
   -webkit-overflow-scrolling: touch;
 }
 
-.chat-top-shield { height: 10px; }
+.chat-top-shield { display: none; }
 
-/* [v13.4.2] 말풍선 완전 제거 & 전폭 사용 */
+/* [v13.5.0] 말풍선 완전 제거 & 전폭 사용 */
 .msg {
   font-size: 15.5px;
   line-height: 1.6;
@@ -37,32 +38,53 @@
   background: transparent !important;
   padding: 0 !important;
   color: var(--text-primary);
+  /* 제미나이 스타일의 가독성 좋은 굵기 */
+  font-weight: 400;
 }
 
-.msg-ai { align-self: flex-start; }
-.msg-user { 
+.msg-ai { 
   align-self: flex-start; 
-  font-weight: 500;
-  color: var(--primary); 
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  width: 100%;
+}
+
+.msg-user { 
+  /* 사용자 메시지 우측 정렬 및 말풍선 */
+  align-self: flex-end; 
+  width: auto;
+  max-width: 85%;
+  background: #3c4043 !important; /* 제미나이 다크톤 */
+  color: #e8eaed;
+  padding: 10px 16px !important;
+  border-radius: 18px;
+  font-weight: 400;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.msg-ai-wrap {
+  width: 100%;
+  align-self: stretch;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 .msg-ai-header {
-  margin-bottom: 8px;
+  margin-bottom: 4px;
   display: flex;
   align-items: center;
-  gap: 8px;
 }
 
 .msg-avatar {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
 }
 
 .msg-name {
-  font-weight: 600;
-  font-size: 13px;
-  color: var(--text-secondary);
+  display: none; /* 이름은 숨기고 아이콘만 노출 */
 }
 
 /* [v13.4.2] 뚜렷한 알약 모양 입력창 */

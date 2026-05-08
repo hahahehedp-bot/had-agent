@@ -107,9 +107,10 @@ async function init() {
       }
     }));
 
+    const navModules = activeModules.filter(m => !m.hidden);
     const { initSidebar } = await import(`./sidebar.js?v=${version}`);
-    initSidebar(activeModules, loadedModules, config, ServiceContext);
-    initTabBar(activeModules, loadedModules, config, ServiceContext);
+    initSidebar(navModules, loadedModules, config, ServiceContext);
+    initTabBar(navModules, loadedModules, config, ServiceContext);
     initRouter(loadedModules, config, ServiceContext);
 
     const hash = window.location.hash.replace('#', '') || 'home';

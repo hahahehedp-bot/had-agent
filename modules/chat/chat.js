@@ -1,6 +1,6 @@
 // =============================================
 // HAD-Agent — modules/chat/chat.js
-// [v13.4.2] Final Gemini Style - No Greeting, Arrow Icon
+// [v13.5.1] UX Fix - No Auto-Focus, No Bubble, No Autofill Overlay
 // =============================================
 
 export default {
@@ -28,7 +28,14 @@ export default {
 
         <div class="chat-input-container">
           <div class="chat-input-wrapper">
-            <input type="text" id="chatInput" class="chat-input" placeholder="메시지를 입력하세요..." autocomplete="off">
+            <input type="text" id="chatInput" class="chat-input" 
+                   placeholder="메시지를 입력하세요..." 
+                   autocomplete="off" 
+                   autocorrect="off" 
+                   autocapitalize="off" 
+                   spellcheck="false" 
+                   inputmode="text" 
+                   enterkeyhint="send">
             <button id="chatSend" class="chat-send-icon-btn" aria-label="전송">
               <!-- [v13.4.2] 제미나이 스타일 단순 화살표 -->
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -75,8 +82,10 @@ export default {
       aiWrap.className = 'msg-ai-wrap';
       aiWrap.innerHTML = `
         <div class="msg-ai-header">
-          <img src="${agent.avatar}" alt="${agent.name}" class="msg-avatar">
-          <span class="msg-name">${agent.name}</span>
+          <!-- [v13.5.0] 제미나이 스타일 별 아이콘 -->
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="msg-avatar">
+            <path d="M12 3L14.5 9.5L21 12L14.5 14.5L12 21L9.5 14.5L3 12L9.5 9.5L12 3Z" fill="#4285F4"/>
+          </svg>
         </div>
         <div class="msg msg-ai chat-thinking">...</div>
       `;
@@ -112,7 +121,7 @@ export default {
       }
 
       input.disabled = false;
-      input.focus();
+      // input.focus(); // [v13.5.1] 자동 포커스 제거 (키보드 팝업 방지)
       scrollToBottom();
     };
 
@@ -121,7 +130,7 @@ export default {
       if (e.key === 'Enter' && !e.shiftKey) sendMessage();
     });
 
-    input.focus();
+    // input.focus(); // [v13.5.1] 초기 진입 시 자동 포커스 제거
   },
 
   destroy() {}
