@@ -36,6 +36,8 @@
   .sidebar {
     position: relative !important;
     transform: translateX(0) !important;
+    visibility: visible !important; /* PC에선 무조건 보여야 함 */
+    pointer-events: auto !important;
     box-shadow: none;
     border-right: 1px solid var(--border);
     height: 100vh !important;

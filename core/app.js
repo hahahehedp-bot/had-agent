@@ -1,6 +1,6 @@
 // =============================================
 // HAD-Agent — app.js (Core Engine)
-// config 읽기 → 테마 적용 → 모듈 로드 → 라우팅
+// [v13.2.0] Stability Fix: 로딩 화면 제거 보장
 // =============================================
 
 import { Registry } from './services/registry.js';
@@ -11,12 +11,10 @@ import { initTheme } from './services/theme.js';
 import { applyBranding } from './services/branding.js';
 import { initSettings } from './components/settings.js';
 
-// ── 활성 모듈 목록 ───────────────────────────
 function getActiveModules(cfg) {
   return cfg.modules.filter(m => m.enabled);
 }
 
-// ── 모듈 동적 import ─────────────────────────
 async function loadModule(moduleId) {
   try {
     const version = Registry.getVersion();
@@ -28,7 +26,6 @@ async function loadModule(moduleId) {
   }
 }
 
-// ── 전역 이벤트 버스 ──────────────────────────
 window.hadEvents = {
   listeners: {},
   on(event, cb) { (this.listeners[event] = this.listeners[event] || []).push(cb); },
@@ -38,20 +35,15 @@ window.hadEvents = {
 const ServiceContext = {
   events: window.hadEvents,
   notify: (msg, type = 'info') => {
-    // [v13.0.0] 향후 Toast UI로 교체될 지점
     console.log(`[${type.toUpperCase()}] ${msg}`);
     alert(msg); 
   },
   navigate: (to) => navigateTo(to),
-  
-  // 온데만드 컨텍스트 데이터 주입
   setContextData: (data) => {
     window.hadState.contextData = data;
-    console.log('[HAD] Context Data Updated:', data);
   }
 };
 
-// ── 모듈 로드 및 실행 가드 (Sandbox) ─────────────────────────
 async function safeRunModule(moduleId, action, context) {
   try {
     if (context[action]) {
@@ -60,21 +52,27 @@ async function safeRunModule(moduleId, action, context) {
     }
   } catch (e) {
     console.error(`[HAD] 모듈 '${moduleId}' 실행 중 에러 (${action}):`, e);
-    return `<div class="error-state">모듈 실행 중 오류가 발생했습니다.</div>`;
+    return `<div class="error-state">오류 발생</div>`;
   }
 }
 
-// ── 앱 초기화 ────────────────────────────────
 async function init() {
   const version = Registry.getVersion();
   
-  // 1. Service Worker 등록
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js').catch(err => console.warn('[SW] 등록 실패:', err));
   }
 
+  // ── [v13.2.0] 로딩 제거 함수 정의 ──
+  const removeLoading = () => {
+    const loader = document.getElementById('loadingScreen');
+    if (loader) {
+      loader.classList.add('fade-out');
+      setTimeout(() => loader.remove(), 500);
+    }
+  };
+
   try {
-    // 2. 설정 로드 및 브랜딩 적용
     await Registry.init();
     const config = Registry.getConfig();
     ServiceContext.config = config;
@@ -82,11 +80,9 @@ async function init() {
     initTheme(config);
     applyBranding(config);
     
-    // 3. 인증 (비동기 대기)
     await initAuth();
     initSettings(config);
 
-    // 4. 모듈 프리페치 및 초기화
     const activeModules = getActiveModules(config);
     const loadedModules = {};
 
@@ -111,24 +107,27 @@ async function init() {
       }
     }));
 
-    // 5. 사이드바, 탭바, 라우터 초기화
     const { initSidebar } = await import(`./sidebar.js?v=${version}`);
     initSidebar(activeModules, loadedModules, config, ServiceContext);
     initTabBar(activeModules, loadedModules, config, ServiceContext);
     initRouter(loadedModules, config, ServiceContext);
 
-    // 6. 초기 로딩 화면 제거 및 진입
     const hash = window.location.hash.replace('#', '') || 'home';
     navigateTo(hash);
     
-    setTimeout(() => {
-      document.getElementById('loadingScreen')?.classList.add('fade-out');
-      setTimeout(() => document.getElementById('loadingScreen')?.remove(), 500);
-    }, 300);
+    // 초기화 완료 후 로딩 제거
+    setTimeout(removeLoading, 300);
 
   } catch (e) {
     console.error('[HAD] 앱 초기화 치명적 오류:', e);
-    document.body.innerHTML = `<div class="fatal-error">시스템 초기화 실패: ${e.message}</div>`;
+    // 오류가 나더라도 로딩 화면은 일단 치워야 함 (로그인 화면 등이 보일 수 있게)
+    removeLoading();
+    
+    if (e.message.includes('Auth')) {
+      // 인증 관련이면 무시 (authOverlay가 뜰 것임)
+    } else {
+      document.body.innerHTML += `<div class="fatal-error" style="position:fixed; bottom:20px; left:20px; background:rgba(0,0,0,0.8); color:white; padding:10px; border-radius:8px; z-index:10000;">초기화 실패: ${e.message}</div>`;
+    }
   }
 }
 
