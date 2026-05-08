@@ -4,17 +4,22 @@
 
 ---
 
+## [v11.1.0] - 2026-05-08
+### Fixed
+- **UI Flashing & Disappearance**: 렌더링 후 화면이 사라지던 현상(Undeclared Variable 및 Async Race Condition) 해결.
+- **Cache Busting**: 전면적인 버전 점프(v9 -> v11.1)를 통해 브라우저 캐시로 인한 구버전 코드 실행 문제 근본적 차단.
+- **Syntax Cleanup**: 코어 전반의 문법 오류(Duplicate Catch, Misplaced Imports) 전수 수정.
+
+### Added
+- **Self-Healing Config**: 모듈 실행 시 `config`가 유실된 경우 `Registry`에서 즉시 재수혈받는 자가 치유 로직 도입.
+- **Major Version Jump**: 함선의 엔진을 v11 체제로 업그레이드하여 시스템 안정성 확보.
+
 ## [v9.1.0] - 2026-05-08
 ### Added
-- **Core Reinforcement**: '무적 코어' 엔진 구축
-  - **Error Isolation (Sandbox)**: 모듈별 `try-catch` 가드를 도입하여 특정 모듈 에러가 앱 전체로 전이되는 현상 방지.
-  - **Global Event Bus**: `window.hadEvents`를 통한 모듈 간 비종속적 통신 체계 마련.
-  - **Service Context Injection**: 모듈 초기화 시 `ctx` 객체를 통해 API, EventBus, Config 등을 통합 주입하는 표준화된 인터페이스 구축.
-- **AI Work-OS Vision Draft**: `draft_ai_agent_brainstorming.md`에 프로젝트 기반 컨텍스트 및 개인화 지침 설계안 추가.
-
-### Changed
-- **White-label Generalization**: '오순이' 명칭을 '에이전트'로 일반화하고, `userLabel` 변수를 통해 고객사별 사용자 호칭(리더님 등) 동적 적용.
-- **Sandbox Structure**: 구글 드라이브 내 샌드박스를 `HAD-Schedule`, `HAD-Resources`, `HAD-Board`, `HAD-System`의 4대 천왕 수평 구조로 재편.
+- **Core Reinforcement**: '무적 코어' 엔진 구축 시작
+  - **Error Isolation (Sandbox)**: 모듈별 `try-catch` 가드 도입.
+  - **Global Event Bus**: `window.hadEvents` 체계 마련.
+  - **Service Context Injection**: `ctx` 객체 주입 표준화.
 
 ## [v7.3.0] - 2026-05-08
 ### 📋 소셜 피드형 게시판 (HAD-Feed) 신규 개발
