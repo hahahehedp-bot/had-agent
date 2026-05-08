@@ -1,6 +1,6 @@
 // =============================================
 // HAD-Agent — modules/chat/chat.js
-// [v14.0.0] Ultra-Tight Layout & Pure Full-Width Input
+// [v14.3.0] Gemini Header Icons & Internal Navigation Base
 // =============================================
 
 export default {
@@ -124,6 +124,24 @@ export default {
       // input.focus(); // [v13.5.1] 자동 포커스 제거 (키보드 팝업 방지)
       scrollToBottom();
     };
+
+    // [v14.3.0] 헤더 아이콘 리스너 (내부 내비게이션용)
+    const btnChat     = document.getElementById('btnTabChat');
+    const btnHistory  = document.getElementById('btnTabHistory');
+    const btnSettings = document.getElementById('btnTabSettings');
+
+    const switchView = (viewId, activeBtn) => {
+      // 액티브 클래스 교체
+      [btnChat, btnHistory, btnSettings].forEach(b => b?.classList.remove('active'));
+      activeBtn?.classList.add('active');
+      
+      // 실제 뷰 전환 로직은 다음 턴에 상세 구현
+      console.log(`Switching to ${viewId} view...`);
+    };
+
+    btnChat?.addEventListener('click', () => switchView('chat', btnChat));
+    btnHistory?.addEventListener('click', () => switchView('history', btnHistory));
+    btnSettings?.addEventListener('click', () => switchView('settings', btnSettings));
 
     sendBtn.addEventListener('click', sendMessage);
     input.addEventListener('keypress', (e) => {

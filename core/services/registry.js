@@ -7,7 +7,7 @@ import staticConfig from '../../client/config.js';
 
 class RegistryService {
   constructor() {
-    this.VERSION = '14.2.0'; // [v14.2.0] Relaxed Side Padding
+    this.VERSION = '14.3.0'; // [v14.3.0] Gemini Header Icons
     this.config = { ...staticConfig };
     this.dynamicConfig = {};
     this.listeners = [];

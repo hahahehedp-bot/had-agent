@@ -36,15 +36,18 @@
     <div class="agent-drawer-header">
       <div class="agent-status-dot"></div>
       <h3 id="drawerTitle">에이전트</h3>
+      
+      <!-- [v14.3.0] 헤더 통합 아이콘 메뉴 -->
+      <div class="drawer-header-actions">
+        <button class="header-action-btn active" id="btnTabChat" title="대화창">💬</button>
+        <button class="header-action-btn" id="btnTabHistory" title="과거세션">🕒</button>
+        <button class="header-action-btn" id="btnTabSettings" title="설정">⚙️</button>
+      </div>
+      
       <button class="btn-close-agent" id="btnCloseAgent">&times;</button>
     </div>
     
-    <!-- 서랍용 탭 바 -->
-    <div class="agent-drawer-tabs" id="agentDrawerTabs">
-      <div class="drawer-tab active" data-slot="agent">💬 비서</div>
-      <div class="drawer-tab" data-slot="memos">📝 메모</div>
-      <div class="drawer-tab" data-slot="mcp">🛠️ 도구</div>
-    </div>
+    <!-- [v14.3.0] 기존 탭바 제거 (헤더로 통합) -->
 
     <div class="agent-drawer-body" id="agentDrawerBody">
       <div class="agent-welcome-msg" id="drawerWelcomeMsg">...</div>
@@ -99,6 +102,6 @@
   <div id="authOverlay" style="display:none;"></div>
 
   <!-- 앱 진입점 -->
-  <script type="module" src="core/app.js?v=14.2.0"></script>
+  <script type="module" src="core/app.js?v=14.3.0"></script>
 </body>
 </html>
