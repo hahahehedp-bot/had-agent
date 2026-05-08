@@ -63,13 +63,15 @@ async function renderModule(moduleId) {
   main.innerHTML = '<div class="loading-screen"><div class="loading-spinner"></div></div>';
 
   try {
-    const html = await _modules[moduleId].render(_config, _ctx);
+    // 자가 치유: _config가 비어있으면 레지스트리에서 즉시 복구
+    const currentConfig = _config || _ctx.config || Registry.getConfig();
+    const html = await _modules[moduleId].render(currentConfig, _ctx);
     main.innerHTML = html;
     main.querySelector('.module-root')?.classList.add('animate-in');
 
     // 모듈 후처리 (이벤트 바인딩 등)
     if (_modules[moduleId].afterRender) {
-      await _modules[moduleId].afterRender(_config, _ctx);
+      await _modules[moduleId].afterRender(currentConfig, _ctx);
     }
   } catch (e) {
     console.error(`[Router] 렌더링 실패: ${moduleId}`, e);

@@ -13,7 +13,6 @@ import { applyBranding } from './services/branding.js';
 import { updateAppBadge } from './services/notification.js';
 import { initSettings } from './components/settings.js';
 
-let config = Registry.getConfig();
 
 // ── 활성 모듈 목록 ───────────────────────────
 function getActiveModules(cfg) {
@@ -48,8 +47,9 @@ const ServiceContext = {
 async function safeRunModule(moduleId, action, context) {
   try {
     if (context[action]) {
-      // (config, ctx) 순으로 전달하여 기존 모듈 호환성 유지
-      return await context[action](ServiceContext.config, ServiceContext);
+      // 자가 치유: config가 유실된 경우 레지스트리에서 다시 수혈
+      const config = ServiceContext.config || Registry.getConfig();
+      return await context[action](config, ServiceContext);
     }
   } catch (e) {
     console.error(`[HAD] 모듈 '${moduleId}' 실행 중 에러 (${action}):`, e);
