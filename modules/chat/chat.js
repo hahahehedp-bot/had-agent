@@ -1,6 +1,6 @@
 // =============================================
 // HAD-Agent — modules/chat/chat.js
-// [v13.2.7] Simple Greeting & Top-Start Layout
+// [v13.2.8] Greeting Recovery & Layout Safety
 // =============================================
 
 export default {
@@ -10,31 +10,27 @@ export default {
     if (!document.querySelector('link[href="modules/chat/chat.css"]')) {
       const link = document.createElement('link');
       link.rel = 'stylesheet';
-      link.href = 'modules/chat/chat.css?v=' + (window.hadState?.version || Date.now());
+      link.href = 'modules/chat/chat.css?v=' + Date.now();
       document.head.appendChild(link);
     }
-    this._endpoint = config.agent.endpoint;
-    this._avatar   = config.agent.avatar;
-    this._name     = config.agent.name;
   },
 
   async render(config) {
+    const agent = config.agent || {};
+    const welcome = agent.welcomeMsg || `${agent.userLabel || '리더'}님, 무엇을 도와드릴까요? 😊`;
+    
     return `
-      <div class="module-root chat-layout">
+      <div class="module-root chat-layout" id="chatLayout">
         <div class="chat-messages" id="chatMessages">
-          <!-- [v13.2.7] 상단 flex spacer 제거 (위에서부터 시작) -->
-          
-          <!-- 짧고 간결한 인사말 -->
           <div class="msg-ai-wrap">
             <div class="msg-ai-header">
-              <img src="${config.agent.avatar}" alt="${config.agent.name}" class="msg-avatar">
-              <span class="msg-name">${config.agent.name}</span>
+              <img src="${agent.avatar}" alt="${agent.name}" class="msg-avatar">
+              <span class="msg-name">${agent.name}</span>
             </div>
             <div class="msg msg-ai" id="welcomeMsg">
-              ${config.agent.userLabel}, 무엇을 도와드릴까요? 😊
+              ${welcome}
             </div>
           </div>
-          
           <div class="chat-bottom-spacer"></div>
         </div>
 
@@ -55,21 +51,23 @@ export default {
     const input    = document.getElementById('chatInput');
     const sendBtn  = document.getElementById('chatSend');
     const messages = document.getElementById('chatMessages');
-    const endpoint = config.agent.endpoint;
-    const avatar   = config.agent.avatar;
-    const agentName = config.agent.name;
-    const history   = [];
+    const agent    = config.agent || {};
+    const history  = [];
 
     const scrollToBottom = () => {
-      setTimeout(() => {
-        if (messages) {
-          messages.scrollTo({ top: messages.scrollHeight, behavior: 'smooth' });
-        }
-      }, 100);
+      if (messages) {
+        messages.scrollTop = messages.scrollHeight;
+      }
     };
 
-    // 초기 로드 시엔 스크롤 하지 않음 (위에서부터 보이니까)
+    // 마크다운 환영 메시지 적용
+    const welcomeMsg = document.getElementById('welcomeMsg');
+    if (welcomeMsg && typeof marked !== 'undefined') {
+      welcomeMsg.innerHTML = marked.parse(welcomeMsg.innerHTML);
+    }
     
+    scrollToBottom();
+
     const sendMessage = async () => {
       const text = input.value.trim();
       if (!text) return;
@@ -88,8 +86,8 @@ export default {
       aiWrap.className = 'msg-ai-wrap';
       aiWrap.innerHTML = `
         <div class="msg-ai-header">
-          <img src="${avatar}" alt="${agentName}" class="msg-avatar">
-          <span class="msg-name">${agentName}</span>
+          <img src="${agent.avatar}" alt="${agent.name}" class="msg-avatar">
+          <span class="msg-name">${agent.name}</span>
         </div>
         <div class="msg msg-ai chat-thinking">생각 중...</div>
       `;
@@ -99,7 +97,7 @@ export default {
       const bubble = aiWrap.querySelector('.msg-ai');
 
       try {
-        const res  = await fetch(endpoint, {
+        const res  = await fetch(agent.endpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: text, history: history })
@@ -121,7 +119,7 @@ export default {
         }
       } catch (err) {
         bubble.className = 'msg msg-ai msg-error';
-        bubble.textContent = '연결이 원활하지 않습니다.';
+        bubble.textContent = '연결 오류';
       }
 
       input.disabled = false;

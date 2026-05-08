@@ -235,7 +235,7 @@ body.no-scroll {
   top: 0;
   left: 0;
   width: var(--sidebar-w);
-  height: 100dvh; /* [v13.2.2] 동적 높이 적용 */
+  height: 100%; /* [v13.2.8] 호환성을 위해 100%로 복귀 */
   background: var(--surface);
   border-right: 1px solid var(--border-color);
   z-index: 1100;
@@ -315,7 +315,7 @@ body.no-scroll {
   top: 0;
   right: 0;
   width: 320px;
-  height: 100dvh; /* [v13.2.2] 동적 높이 적용 */
+  height: 100%; /* [v13.2.8] 호환성을 위해 100%로 복귀 */
   background: var(--surface);
   border-left: 1px solid var(--border-color);
   z-index: 1100; /* 사이드바와 동급 */
