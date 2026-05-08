@@ -30,8 +30,23 @@
 </head>
 <body>
 
-  <!-- 사이드바 오버레이 -->
+  <!-- 사이드바 오버레이 (좌) -->
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- 에이전트 드로어 오버레이 (우) -->
+  <div class="agent-overlay" id="agentOverlay"></div>
+
+  <!-- 에이전트 비서 드로어 (우) -->
+  <aside class="agent-drawer" id="agentDrawer">
+    <div class="agent-drawer-header">
+      <div class="agent-status-dot"></div>
+      <h3>에이전트 비서</h3>
+      <button class="btn-close-agent" id="btnCloseAgent">&times;</button>
+    </div>
+    <div class="agent-drawer-body" id="agentDrawerBody">
+      <div class="agent-welcome-msg">무엇을 도와드릴까요?</div>
+    </div>
+  </aside>
 
   <div class="app-layout">
     <!-- 사이드바 -->

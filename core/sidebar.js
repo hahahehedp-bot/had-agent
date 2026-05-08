@@ -27,9 +27,6 @@ export function initSidebar(activeModules, loadedModules, config) {
   // 햄버거 버튼
   btnHamburger.addEventListener('click', () => openSidebar());
 
-  // 오버레이 클릭 시 닫기
-  overlay.addEventListener('click', closeSidebar);
-
   function openSidebar() {
     sidebar.classList.add('open');
     overlay.classList.add('active');
@@ -40,11 +37,33 @@ export function initSidebar(activeModules, loadedModules, config) {
     overlay.classList.remove('active');
   }
 
-  // ── 모바일 제스처 (스와이프) 추가 ──────────────────
+  // 오버레이 클릭 시 닫기
+  overlay.addEventListener('click', closeSidebar);
+
+  // ── 에이전트 드로어 (우측 비서) ──────────────────
+  const agentDrawer = document.getElementById('agentDrawer');
+  const agentOverlay = document.getElementById('agentOverlay');
+  const btnCloseAgent = document.getElementById('btnCloseAgent');
+
+  function openAgentDrawer() {
+    agentDrawer.classList.add('open');
+    agentOverlay.classList.add('active');
+    console.log('[HAD-Agent] 비서 호출됨 - 문맥 준비 중...');
+    // TODO: 온데만드 컨텍스트 주입 로직 연동
+  }
+
+  function closeAgentDrawer() {
+    agentDrawer.classList.remove('open');
+    agentOverlay.classList.remove('active');
+  }
+
+  btnCloseAgent.addEventListener('click', closeAgentDrawer);
+  agentOverlay.addEventListener('click', closeAgentDrawer);
+
+  // ── 모바일 제스처 (양방향 스와이프) ───────────────
   let touchStartX = 0;
   let touchStartY = 0;
 
-  // 1. 화면 왼쪽 끝에서 오른쪽으로 밀면 열기
   window.addEventListener('touchstart', (e) => {
     touchStartX = e.touches[0].clientX;
     touchStartY = e.touches[0].clientY;
@@ -56,25 +75,29 @@ export function initSidebar(activeModules, loadedModules, config) {
     const deltaX = touchEndX - touchStartX;
     const deltaY = Math.abs(touchEndY - touchStartY);
 
-    // 조건: 화면 왼쪽 끝(50px)에서 시작 + 오른쪽으로 80px 이상 이동 + 수직 이동이 수평보다 적음
+    // 1. 좌측 끝에서 우측으로 밀기 (메뉴 열기)
     if (touchStartX < 50 && deltaX > 80 && deltaY < 60) {
       openSidebar();
     }
-  }, { passive: true });
-
-  // 2. 사이드바 영역 내부에서 왼쪽으로 밀면 닫기
-  sidebar.addEventListener('touchstart', (e) => {
-    touchStartX = e.touches[0].clientX;
-  }, { passive: true });
-
-  sidebar.addEventListener('touchend', (e) => {
-    const touchEndX = e.changedTouches[0].clientX;
-    const deltaX = touchEndX - touchStartX;
-
-    // 조건: 왼쪽으로 50px 이상 이동
-    if (deltaX < -50) {
-      closeSidebar();
+    
+    // 2. 우측 끝에서 좌측으로 밀기 (비서 열기)
+    if (touchStartX > window.innerWidth - 50 && deltaX < -80 && deltaY < 60) {
+      openAgentDrawer();
     }
+  }, { passive: true });
+
+  // 사이드바 내부에서 왼쪽으로 밀면 닫기
+  sidebar.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; }, { passive: true });
+  sidebar.addEventListener('touchend', (e) => {
+    const deltaX = e.changedTouches[0].clientX - touchStartX;
+    if (deltaX < -50) closeSidebar();
+  }, { passive: true });
+
+  // 비서 드로어 내부에서 오른쪽으로 밀면 닫기
+  agentDrawer.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; }, { passive: true });
+  agentDrawer.addEventListener('touchend', (e) => {
+    const deltaX = e.changedTouches[0].clientX - touchStartX;
+    if (deltaX > 50) closeAgentDrawer();
   }, { passive: true });
 
   // 설정 메뉴

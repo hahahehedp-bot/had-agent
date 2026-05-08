@@ -297,6 +297,87 @@ html, body {
 }
 .sidebar-footer-item:hover { background: var(--bg); }
 
+/* ── 에이전트 드로어 (우측 서랍) ── */
+.agent-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition);
+}
+.agent-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.agent-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 300px;
+  height: 100%;
+  background: var(--surface);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  border-left: 1px solid var(--border-color);
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform var(--transition);
+  box-shadow: var(--shadow-md);
+}
+.agent-drawer.open {
+  transform: translateX(0);
+}
+
+.agent-drawer-header {
+  padding: 50px 20px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+.agent-status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #4caf50;
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
+}
+.agent-drawer-header h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  flex: 1;
+}
+.btn-close-agent {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+
+.agent-drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.agent-welcome-msg {
+  font-size: 14px;
+  color: var(--text-secondary);
+  text-align: center;
+  margin-top: 40px;
+  padding: 20px;
+  background: var(--bg);
+  border-radius: var(--radius);
+  border: 1px dashed var(--border-color);
+}
+
 /* ── 설정 패널 ── */
 .settings-panel {
   position: fixed;
