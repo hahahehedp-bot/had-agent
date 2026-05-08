@@ -1,5 +1,5 @@
 /* modules/chat/chat.css */
-/* [v13.4.2] Final Gemini - Pill Input & Full Width Text */
+/* [v13.8.0] Fixed Empty Layout & Top Gap */
 
 .chat-layout {
   display: flex;
@@ -11,11 +11,16 @@
   background: var(--surface);
 }
 
-  /* 좌우 여백 축소 */
-  padding: 8px 12px 0 12px; 
+.chat-messages {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  /* 상단 여백 최소화 */
+  padding: 4px 12px 0 12px; 
   display: flex;
   flex-direction: column;
-  gap: 16px; /* 전체적인 메시지 간격 축소 */
+  gap: 16px;
   -webkit-overflow-scrolling: touch;
 }
 

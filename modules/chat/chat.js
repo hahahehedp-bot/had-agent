@@ -1,6 +1,6 @@
 // =============================================
 // HAD-Agent — modules/chat/chat.js
-// [v13.7.0] Swipe Sensitivity, No Autofill Icons, Tight Spacing
+// [v13.8.0] Fixed Empty Layout & Top Gap
 // =============================================
 
 export default {
@@ -21,9 +21,7 @@ export default {
     return `
       <div class="module-root chat-layout" id="chatLayout">
         <div class="chat-messages" id="chatMessages">
-          <div class="chat-top-shield"></div>
-          <!-- [v13.4.2] 인사말 생략 -->
-          <div class="chat-bottom-spacer" style="height:30px; flex-shrink:0;"></div>
+          <!-- [v13.8.0] 상단 여백 제거를 위해 쉴드 및 스페이서 삭제 -->
         </div>
 
         <div class="chat-input-container">
@@ -77,7 +75,7 @@ export default {
       const userMsg = document.createElement('div');
       userMsg.className = 'msg msg-user';
       userMsg.textContent = text;
-      messages.insertBefore(userMsg, messages.querySelector('.chat-bottom-spacer'));
+      messages.appendChild(userMsg);
       scrollToBottom();
 
       const aiWrap = document.createElement('div');
@@ -91,7 +89,7 @@ export default {
         </div>
         <div class="msg msg-ai chat-thinking">...</div>
       `;
-      messages.insertBefore(aiWrap, messages.querySelector('.chat-bottom-spacer'));
+      messages.appendChild(aiWrap);
       scrollToBottom();
 
       const bubble = aiWrap.querySelector('.msg-ai');

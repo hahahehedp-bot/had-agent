@@ -7,7 +7,7 @@ import staticConfig from '../../client/config.js';
 
 class RegistryService {
   constructor() {
-    this.VERSION = '13.7.0'; // [v13.7.0] Swipe Sensitivity & Space Opt
+    this.VERSION = '13.8.0'; // [v13.8.0] Fixed Empty Layout & Top Gap
     this.config = { ...staticConfig };
     this.dynamicConfig = {};
     this.listeners = [];
