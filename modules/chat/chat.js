@@ -1,6 +1,6 @@
 // =============================================
 // HAD-Agent — modules/chat/chat.js
-// AI 챗봇 모듈 (Cloud Function 연동)
+// [v13.2.3] Auto-Scroll & UX Stability Fix
 // =============================================
 
 export default {
@@ -10,7 +10,7 @@ export default {
     if (!document.querySelector('link[href="modules/chat/chat.css"]')) {
       const link = document.createElement('link');
       link.rel = 'stylesheet';
-      link.href = 'modules/chat/chat.css?v=5';
+      link.href = 'modules/chat/chat.css?v=' + (window.hadState?.version || Date.now());
       document.head.appendChild(link);
     }
     this._endpoint = config.agent.endpoint;
@@ -21,11 +21,8 @@ export default {
   async render(config) {
     return `
       <div class="module-root chat-layout">
-
-        <!-- 채팅 메시지 영역 -->
         <div class="chat-messages" id="chatMessages">
           <div style="flex:1"></div>
-          <!-- 초기 인사 메시지 -->
           <div class="msg-ai-wrap">
             <div class="msg-ai-header">
               <img src="${config.agent.avatar}" alt="${config.agent.name}" class="msg-avatar">
@@ -37,9 +34,10 @@ export default {
               무엇이든 편하게 물어보세요!
             </div>
           </div>
+          <!-- 마지막 메시지가 가려지지 않게 하는 공간 -->
+          <div class="chat-bottom-spacer"></div>
         </div>
 
-        <!-- 입력창 -->
         <div class="chat-input-bar">
           <input type="text" id="chatInput" class="chat-input" placeholder="메시지를 입력하세요..." autocomplete="off">
           <button id="chatSend" class="chat-send-btn" aria-label="전송">
@@ -49,7 +47,6 @@ export default {
             </svg>
           </button>
         </div>
-
       </div>
     `;
   },
@@ -61,13 +58,33 @@ export default {
     const endpoint = config.agent.endpoint;
     const avatar   = config.agent.avatar;
     const agentName = config.agent.name;
-    const history   = []; // 대화 기록 저장용
+    const history   = [];
+
+    // [v13.2.3] 아주 강력한 스크롤 하단 고정 함수
+    const scrollToBottom = () => {
+      setTimeout(() => {
+        if (messages) {
+          messages.scrollTo({
+            top: messages.scrollHeight,
+            behavior: 'smooth'
+          });
+        }
+        // 전체 서랍 바디도 혹시 모르니 끝까지 내림
+        const drawerBody = document.getElementById('agentDrawerBody');
+        if (drawerBody) {
+          drawerBody.scrollTo({ top: drawerBody.scrollHeight, behavior: 'smooth' });
+        }
+      }, 100);
+    };
 
     // 마크다운 환영 메시지 적용
     const welcomeMsg = document.getElementById('welcomeMsg');
     if (welcomeMsg && typeof marked !== 'undefined') {
       welcomeMsg.innerHTML = marked.parse(welcomeMsg.innerText);
     }
+    
+    // 초기 렌더링 시 스크롤
+    scrollToBottom();
 
     const sendMessage = async () => {
       const text = input.value.trim();
@@ -81,8 +98,9 @@ export default {
       const userMsg = document.createElement('div');
       userMsg.className = 'msg msg-user';
       userMsg.textContent = text;
-      messages.appendChild(userMsg);
-      messages.scrollTop = messages.scrollHeight;
+      // 완충 지대 바로 앞에 삽입
+      messages.insertBefore(userMsg, messages.querySelector('.chat-bottom-spacer'));
+      scrollToBottom();
 
       // AI 로딩 메시지
       const aiWrap = document.createElement('div');
@@ -94,8 +112,8 @@ export default {
         </div>
         <div class="msg msg-ai chat-thinking">생각 중...</div>
       `;
-      messages.appendChild(aiWrap);
-      messages.scrollTop = messages.scrollHeight;
+      messages.insertBefore(aiWrap, messages.querySelector('.chat-bottom-spacer'));
+      scrollToBottom();
 
       const bubble = aiWrap.querySelector('.msg-ai');
 
@@ -113,25 +131,22 @@ export default {
             ? marked.parse(data.reply)
             : data.reply;
             
-          // 기록 업데이트 (현재 발화 + AI 응답)
           history.push({ role: 'user', parts: [{ text: text }] });
           history.push({ role: 'model', parts: [{ text: data.reply }] });
-          
-          // 최대 10턴까지만 유지 (성능 및 토큰 관리)
           if (history.length > 20) history.splice(0, 2);
         } else {
           bubble.className = 'msg msg-ai msg-error';
-          bubble.textContent = '응답을 가져오는 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.';
+          bubble.textContent = '문제가 발생했습니다. 다시 시도해 주세요.';
         }
       } catch (err) {
         bubble.className = 'msg msg-ai msg-error';
-        bubble.textContent = '연결이 원활하지 않습니다. 잠시 후 다시 시도해 주세요. 🙏';
+        bubble.textContent = '연결이 원활하지 않습니다. 🙏';
       }
 
       input.disabled = false;
       sendBtn.disabled = false;
       input.focus();
-      messages.scrollTop = messages.scrollHeight;
+      scrollToBottom();
     };
 
     sendBtn.addEventListener('click', sendMessage);
