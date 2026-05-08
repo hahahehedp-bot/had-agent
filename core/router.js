@@ -10,8 +10,10 @@ let _ctx     = {};
 
 export function initRouter(loadedModules, config, context) {
   _modules = loadedModules;
-  _config  = config;
+  _config  = config || context.config;
   _ctx     = context;
+
+  if (!_config) console.error('[Router] 경고: config가 주입되지 않았습니다!');
 
   window.addEventListener('hashchange', () => {
     const id = window.location.hash.replace('#', '') || 'home';

@@ -66,6 +66,7 @@ async function init() {
   try {
     await Registry.init();
     config = Registry.getConfig();
+    ServiceContext.config = config; // 즉시 수혈
 
     initTheme(config);
     applyBranding(config);
@@ -74,9 +75,6 @@ async function init() {
 
     const activeModules = getActiveModules(config);
     const loadedModules = {};
-
-    // 서비스 컨텍스트에 설정 추가
-    ServiceContext.config = config;
 
     await Promise.all(activeModules.map(async (modCfg) => {
       try {
