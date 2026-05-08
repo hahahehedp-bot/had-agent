@@ -1,6 +1,6 @@
 // =============================================
 // HAD-Agent — modules/chat/chat.js
-// [v13.3.0] Markdown Fix & Button Stability
+// [v13.3.1] Message Guard & Shield Implementation
 // =============================================
 
 export default {
@@ -17,7 +17,6 @@ export default {
 
   async render(config) {
     const agent = config.agent || {};
-    // 인사말 템플릿
     const welcome = agent.welcomeMsg || `${agent.userLabel || '리더'}님, 무엇을 도와드릴까요? 😊`;
     
     return `
@@ -28,20 +27,23 @@ export default {
               <img src="${agent.avatar}" alt="${agent.name}" class="msg-avatar">
               <span class="msg-name">${agent.name}</span>
             </div>
-            <!-- [v13.3.0] 마크다운이 입혀질 공간 -->
             <div class="msg msg-ai" id="welcomeMsg">${welcome}</div>
           </div>
-          <div class="chat-bottom-spacer"></div>
+          <div class="chat-bottom-spacer" style="height:20px; flex-shrink:0;"></div>
         </div>
 
         <div class="chat-input-bar">
-          <input type="text" id="chatInput" class="chat-input" placeholder="메시지를 입력하세요..." autocomplete="off">
-          <button id="chatSend" class="chat-send-btn" aria-label="전송">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="22" y1="2" x2="11" y2="13"></line>
-              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-            </svg>
-          </button>
+          <div class="chat-input-row">
+            <input type="text" id="chatInput" class="chat-input" placeholder="메시지를 입력하세요..." autocomplete="off">
+            <button id="chatSend" class="chat-send-btn" aria-label="전송">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
+            </button>
+          </div>
+          <!-- 물리적인 바닥 보호막 -->
+          <div class="chat-bottom-shield"></div>
         </div>
       </div>
     `;
@@ -60,11 +62,10 @@ export default {
       }
     };
 
-    // [v13.3.0] 마크다운 파싱 로직 보강
+    // 마크다운 파싱
     const welcomeMsg = document.getElementById('welcomeMsg');
     if (welcomeMsg && typeof marked !== 'undefined') {
-      // innerText를 가져와서 마크다운으로 변환 후 다시 삽입
-      const rawText = welcomeMsg.innerText;
+      const rawText = welcomeMsg.innerText.trim();
       welcomeMsg.innerHTML = marked.parse(rawText);
     }
     
@@ -109,15 +110,15 @@ export default {
         if (data.status === 'success' && data.reply) {
           bubble.className = 'msg msg-ai';
           bubble.innerHTML = typeof marked !== 'undefined'
-            ? marked.parse(data.reply)
-            : data.reply;
+            ? marked.parse(data.reply.trim())
+            : data.reply.trim();
             
           history.push({ role: 'user', parts: [{ text: text }] });
           history.push({ role: 'model', parts: [{ text: data.reply }] });
           if (history.length > 20) history.splice(0, 2);
         } else {
           bubble.className = 'msg msg-ai msg-error';
-          bubble.textContent = '문제가 발생했습니다.';
+          bubble.textContent = '응답 오류';
         }
       } catch (err) {
         bubble.className = 'msg msg-ai msg-error';

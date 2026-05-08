@@ -7,7 +7,7 @@ import staticConfig from '../../client/config.js';
 
 class RegistryService {
   constructor() {
-    this.VERSION = '13.3.0'; // [v13.3.0] 파이널 터치 패치 (UI 완성)
+    this.VERSION = '13.3.1'; // [v13.3.1] 오순이 가두기 & 바닥 보호막 패치
     this.config = { ...staticConfig };
     this.dynamicConfig = {};
     this.listeners = [];
