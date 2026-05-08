@@ -401,8 +401,6 @@ body.no-scroll {
   padding: 4px;
   line-height: 1;
 }
-  color: var(--text-secondary);
-}
 
 .agent-drawer-body {
   flex: 1;
