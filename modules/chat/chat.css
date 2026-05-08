@@ -1,10 +1,12 @@
 /* modules/chat/chat.css */
-/* [v13.2.8] Recovery Layout */
+/* [v13.2.9] Flex-Shrink Layout & Bottom Visibility Fix */
 
 .chat-layout {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  /* height: 100% 대신 flex: 1과 min-height: 0으로 부모 크기에 맞춤 */
+  flex: 1;
+  min-height: 0; 
   width: 100%;
   overflow: hidden;
   background: var(--surface);
@@ -12,6 +14,7 @@
 
 .chat-messages {
   flex: 1;
+  min-height: 0; /* flex 자식으로서 줄어들 수 있게 함 */
   overflow-y: auto;
   padding: 15px 15px 0;
   display: flex;
@@ -21,7 +24,7 @@
 }
 
 .chat-bottom-spacer {
-  height: 20px;
+  height: 10px;
   flex-shrink: 0;
 }
 
@@ -32,8 +35,8 @@
   padding: 10px 15px;
   background: var(--surface);
   border-top: 1px solid var(--border);
-  /* 하단 바닥 고정 강화 */
-  padding-bottom: calc(10px + env(safe-area-inset-bottom));
+  /* [v13.2.9] 하단 가시성 확보를 위해 여백 상향 조정 (10px -> 15px) */
+  padding-bottom: calc(15px + env(safe-area-inset-bottom));
   z-index: 10;
 }
 
@@ -61,17 +64,9 @@
   justify-content: center;
 }
 
-.chat-thinking {
-  color: var(--text-secondary) !important;
-  font-style: italic;
-}
-
 /* ── 서랍(Drawer) 내 최적화 ── */
 .agent-drawer-body .chat-layout {
-  height: 100%;
   flex: 1;
-}
-
-.agent-drawer-body .chat-input-bar {
-  padding-bottom: calc(15px + env(safe-area-inset-bottom));
+  height: auto; /* 고정 높이 제거 */
+  min-height: 0;
 }

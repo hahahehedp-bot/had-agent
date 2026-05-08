@@ -363,9 +363,10 @@ body.no-scroll {
 
 .agent-drawer-body {
   flex: 1;
-  display: flex; /* [v13.2.5] 내부 모듈이 높이를 100% 채울 수 있게 */
+  display: flex;
   flex-direction: column;
-  overflow: hidden; /* 서랍 자체 스크롤 제거 (내부 모듈이 직접 수행) */
+  overflow: hidden;
+  min-height: 0; /* [v13.2.9] 자식(채팅창)이 넘치지 않고 줄어들 수 있게 */
   padding: 0;
 }
 

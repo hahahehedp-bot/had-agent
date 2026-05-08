@@ -7,7 +7,7 @@ import staticConfig from '../../client/config.js';
 
 class RegistryService {
   constructor() {
-    this.VERSION = '13.2.8'; // [v13.2.8] 오순이 복귀 & 레이아웃 안정화
+    this.VERSION = '13.2.9'; // [v13.2.9] 입력창 강제 압송 패치 (안정화)
     this.config = { ...staticConfig };
     this.dynamicConfig = {};
     this.listeners = [];
