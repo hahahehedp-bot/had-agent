@@ -1,5 +1,5 @@
 // HAD-Agent — Service Worker (PWA 오프라인 지원)
-const CACHE = 'had-agent-v6';
+const CACHE = 'had-agent-v7';
 const CORE_FILES = [
   './',
   './index.html',
@@ -19,6 +19,8 @@ const CORE_FILES = [
   './modules/chat/chat.css',
   './modules/schedule/schedule.js',
   './modules/resources/resources.js',
+  './modules/board/board.js',
+  './modules/board/board.css',
 ];
 
 self.addEventListener('install', e => {
