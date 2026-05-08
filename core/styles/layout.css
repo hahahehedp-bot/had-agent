@@ -336,11 +336,12 @@ body.no-scroll {
 }
 
 .agent-drawer-header {
-  padding: calc(8px + env(safe-area-inset-top)) 12px 8px 16px; /* 패딩 최적화 */
+  padding: calc(8px + env(safe-area-inset-top)) 12px 8px 16px; 
   display: flex;
   align-items: center;
   gap: 8px;
-  border-bottom: 1px solid var(--border-color);
+  /* [v14.4.0] 상단 분리선 제거 */
+  border-bottom: none; 
   background: var(--surface);
 }
 .agent-status-dot {

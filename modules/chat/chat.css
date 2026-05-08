@@ -1,9 +1,10 @@
 /* modules/chat/chat.css */
-/* [v14.2.0] Relaxed Side Padding & Immersive Width */
+/* [v14.4.0] Clean Layout - No Borders & Bottom Fixed */
 
 .chat-layout {
   display: flex;
   flex-direction: column;
+  height: 100%; /* [v14.4.0] 높이 100% 강제 */
   flex: 1;
   min-height: 0;
   width: 100%;
@@ -92,10 +93,11 @@
 /* [v14.0.0] 제미나이 스타일 완전 전폭 입력창 */
 .chat-input-container {
   flex-shrink: 0;
-  padding: 12px 0; /* 좌우 패딩 전면 제거 */
+  padding: 12px 0; 
   background: var(--surface);
   z-index: 10;
-  border-top: 1px solid var(--border-color);
+  /* [v14.4.0] 입력창 상단 분리선도 제거하여 극강의 깔끔함 추구 */
+  border-top: none; 
 }
 
 .chat-input-wrapper {
