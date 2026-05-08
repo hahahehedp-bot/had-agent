@@ -1,6 +1,6 @@
 // =============================================
 // HAD-Agent — modules/chat/chat.js
-// [v13.3.1] Message Guard & Shield Implementation
+// [v13.3.2] UI Diet & Message Wrap Fix
 // =============================================
 
 export default {
@@ -22,13 +22,18 @@ export default {
     return `
       <div class="module-root chat-layout" id="chatLayout">
         <div class="chat-messages" id="chatMessages">
+          <!-- [v13.3.2] 천장 보호막 (너무 위로 붙지 않게) -->
+          <div class="chat-top-shield" style="height:25px; flex-shrink:0;"></div>
+
           <div class="msg-ai-wrap">
             <div class="msg-ai-header">
               <img src="${agent.avatar}" alt="${agent.name}" class="msg-avatar">
               <span class="msg-name">${agent.name}</span>
             </div>
-            <div class="msg msg-ai" id="welcomeMsg">${welcome}</div>
+            <!-- [v13.3.2] 인사말도 AI 답변과 동일한 스타일 적용 -->
+            <div class="msg msg-ai" id="welcomeMsg"></div>
           </div>
+          
           <div class="chat-bottom-spacer" style="height:20px; flex-shrink:0;"></div>
         </div>
 
@@ -36,13 +41,12 @@ export default {
           <div class="chat-input-row">
             <input type="text" id="chatInput" class="chat-input" placeholder="메시지를 입력하세요..." autocomplete="off">
             <button id="chatSend" class="chat-send-btn" aria-label="전송">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="22" y1="2" x2="11" y2="13"></line>
                 <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
               </svg>
             </button>
           </div>
-          <!-- 물리적인 바닥 보호막 -->
           <div class="chat-bottom-shield"></div>
         </div>
       </div>
@@ -62,11 +66,11 @@ export default {
       }
     };
 
-    // 마크다운 파싱
+    // [v13.3.2] 인사말 렌더링 로직 수정 (텍스트가 직접 들어가지 않도록)
     const welcomeMsg = document.getElementById('welcomeMsg');
     if (welcomeMsg && typeof marked !== 'undefined') {
-      const rawText = welcomeMsg.innerText.trim();
-      welcomeMsg.innerHTML = marked.parse(rawText);
+      const welcomeText = agent.welcomeMsg || `${agent.userLabel || '리더'}님, 무엇을 도와드릴까요? 😊`;
+      welcomeMsg.innerHTML = marked.parse(welcomeText);
     }
     
     scrollToBottom();

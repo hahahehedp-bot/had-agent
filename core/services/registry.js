@@ -7,7 +7,7 @@ import staticConfig from '../../client/config.js';
 
 class RegistryService {
   constructor() {
-    this.VERSION = '13.3.1'; // [v13.3.1] 오순이 가두기 & 바닥 보호막 패치
+    this.VERSION = '13.3.2'; // [v13.3.2] 전투기 비행기 & 천장 보호막 패치
     this.config = { ...staticConfig };
     this.dynamicConfig = {};
     this.listeners = [];
