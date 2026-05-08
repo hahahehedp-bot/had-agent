@@ -1,5 +1,5 @@
 /* modules/chat/chat.css */
-/* [v13.3.2] Fighter-Jet Button & Shielded Layout */
+/* [v13.4.0] Gemini-Inspired Minimalist Layout */
 
 .chat-layout {
   display: flex;
@@ -16,44 +16,67 @@
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 0 15px; /* 천장 보호막이 있으므로 상단 패딩 제거 */
+  /* 좌우 여백을 제미나이처럼 최소화 (15px -> 12px) */
+  padding: 0 12px; 
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px; /* 메시지 간 간격은 조금 더 여유롭게 */
   -webkit-overflow-scrolling: touch;
 }
 
-/* 말풍선 가두기 (절대 방어) */
+/* 천장 보호막 축소 (제미나이는 위쪽 공간을 많이 쓰지 않음) */
+.chat-top-shield {
+  height: 15px;
+  flex-shrink: 0;
+}
+
+/* [v13.4.0] 메시지 스타일 개편 - 제미나이 벤치마킹 */
 .msg {
-  max-width: 85%;
-  width: auto;
-  display: inline-block; /* 너비를 내용에 맞춤 */
-  padding: 10px 14px;
-  border-radius: 18px;
-  font-size: 14.5px;
-  line-height: 1.5;
+  font-size: 15px;
+  line-height: 1.6;
   overflow-wrap: anywhere; 
   word-break: break-word;
   white-space: pre-wrap;
   box-sizing: border-box;
+  position: relative;
 }
 
+/* AI 메시지: 말풍선 제거, 너비 100% 사용 */
 .msg-ai {
-  background: var(--bg-alt, #f0f2f5);
-  color: var(--text-primary);
+  background: transparent !important; /* 배경 제거 */
+  padding: 0; /* 패딩 제거 */
+  max-width: 100%; 
+  width: 100%;
   align-self: flex-start;
-  border-top-left-radius: 4px;
+  color: var(--text-primary);
 }
 
-/* 마크다운 내부 P 태그 여백 제거 */
-.msg p { margin: 0; }
-.msg p + p { margin-top: 8px; }
+/* 마크다운 P 태그 여백 */
+.msg-ai p { margin-bottom: 12px; }
+.msg-ai p:last-child { margin-bottom: 0; }
 
+/* 사용자 메시지: 제미나이처럼 작고 깔끔한 말풍선 */
 .msg-user {
-  background: var(--primary);
-  color: white;
+  background: var(--bg-alt, #f0f2f5); /* 더 부드러운 배경색 */
+  color: var(--text-primary);
   align-self: flex-end;
-  border-top-right-radius: 4px;
+  padding: 8px 14px;
+  border-radius: 18px;
+  max-width: 85%;
+}
+
+/* AI 헤더 (이름/아바타) */
+.msg-ai-header {
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.msg-name {
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text-secondary);
 }
 
 .chat-input-bar {
@@ -61,7 +84,8 @@
   display: flex;
   flex-direction: column;
   background: var(--surface);
-  border-top: 1px solid var(--border);
+  /* 경계선을 더 흐릿하게 (제미나이 스타일) */
+  border-top: 1px solid rgba(0,0,0,0.05); 
   z-index: 10;
 }
 
@@ -69,15 +93,15 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 6px 12px; /* 상하 패딩 축소 */
+  padding: 10px 12px;
 }
 
 .chat-input {
   flex: 1;
   min-width: 0;
-  border: 1.5px solid var(--border);
+  border: 1px solid var(--border); /* 선을 더 얇게 */
   border-radius: 24px;
-  padding: 6px 16px;
+  padding: 10px 18px;
   font-size: 14px;
   outline: none;
   background: var(--bg);
@@ -85,9 +109,8 @@
 }
 
 .chat-send-btn {
-  /* [v13.3.2] 날렵한 전투기 사이즈 (32px) */
-  width: 34px !important;
-  height: 34px !important;
+  width: 36px;
+  height: 36px;
   flex-shrink: 0;
   border-radius: 50%;
   background: var(--primary);
@@ -96,17 +119,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-.chat-send-btn svg {
-  width: 18px;
-  height: 18px;
-}
-
-/* 바닥 보호막 */
+/* [v13.4.0] 바닥 밀착 보호막 (최소화) */
 .chat-bottom-shield {
-  height: calc(8px + env(safe-area-inset-bottom));
+  height: calc(4px + env(safe-area-inset-bottom));
   width: 100%;
   background: transparent;
 }
