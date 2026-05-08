@@ -1,6 +1,6 @@
 // =============================================
 // HAD-Agent — modules/chat/chat.js
-// [v13.9.0] Gemini Full-Width Input & Placeholder
+// [v14.0.0] Ultra-Tight Layout & Pure Full-Width Input
 // =============================================
 
 export default {

@@ -1,5 +1,5 @@
 /* modules/chat/chat.css */
-/* [v13.9.0] Gemini Full-Width Input Area */
+/* [v14.0.0] Ultra-Tight Layout & Pure Full-Width Input */
 
 .chat-layout {
   display: flex;
@@ -16,8 +16,8 @@
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  /* 상단 여백 최소화 */
-  padding: 4px 12px 0 12px; 
+  /* 상단 및 좌우 여백 극소화 */
+  padding: 0 4px 0 4px; 
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -89,13 +89,13 @@
   display: none; /* 이름은 숨기고 아이콘만 노출 */
 }
 
-/* [v13.9.0] 제미나이 스타일 전폭 입력창 */
+/* [v14.0.0] 제미나이 스타일 완전 전폭 입력창 */
 .chat-input-container {
   flex-shrink: 0;
-  padding: 12px 10px; /* 상하 여백만 유지, 좌우는 최소화 */
+  padding: 12px 0; /* 좌우 패딩 전면 제거 */
   background: var(--surface);
   z-index: 10;
-  border-top: 1px solid var(--border-color); /* 구분선 추가 */
+  border-top: 1px solid var(--border-color);
 }
 
 .chat-input-wrapper {
@@ -103,8 +103,9 @@
   align-items: center;
   border: 1px solid var(--border-color, #e0e0e0); 
   border-radius: 24px;
+  margin: 0 8px; /* 화면 끝에 너무 붙지 않게 최소 마진 */
   padding: 2px 6px 2px 16px;
-  background: var(--bg-input, #f0f2f5); /* 살짝 어두운 배경 */
+  background: var(--bg-input, #f0f2f5);
   box-shadow: none;
 }
 
