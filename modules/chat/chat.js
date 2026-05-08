@@ -1,6 +1,6 @@
 // =============================================
 // HAD-Agent — modules/chat/chat.js
-// [v14.3.0] Gemini Header Icons & Internal Navigation Base
+// [v15.2.1] Real-time Streaming Fix & Buffer Sync
 // =============================================
 
 export default {
@@ -21,7 +21,6 @@ export default {
     return `
       <div class="module-root chat-layout" id="chatLayout">
         <div class="chat-messages" id="chatMessages">
-          <!-- [v13.8.0] 상단 여백 제거를 위해 쉴드 및 스페이서 삭제 -->
         </div>
 
         <div class="chat-input-container">
@@ -37,7 +36,6 @@ export default {
                    data-lpignore="true"
                    x-autocompletetype="off">
             <button id="chatSend" class="chat-send-icon-btn" aria-label="전송">
-              <!-- [v13.4.2] 제미나이 스타일 단순 화살표 -->
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="12" y1="19" x2="12" y2="5"></line>
                 <polyline points="5 12 12 5 19 12"></polyline>
@@ -82,12 +80,11 @@ export default {
       aiWrap.className = 'msg-ai-wrap';
       aiWrap.innerHTML = `
         <div class="msg-ai-header">
-          <!-- [v13.5.0] 제미나이 스타일 별 아이콘 -->
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="msg-avatar">
             <path d="M12 3L14.5 9.5L21 12L14.5 14.5L12 21L9.5 14.5L3 12L9.5 9.5L12 3Z" fill="#4285F4"/>
           </svg>
         </div>
-        <div class="msg msg-ai chat-thinking">...</div>
+        <div class="msg msg-ai markdown-body chat-thinking">...</div>
       `;
       messages.appendChild(aiWrap);
       scrollToBottom();
@@ -95,48 +92,59 @@ export default {
       const bubble = aiWrap.querySelector('.msg-ai');
 
       try {
-        const res  = await fetch(agent.endpoint, {
+        const response = await fetch(agent.endpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: text, history: history })
+          body: JSON.stringify({ message: text, history: history, stream: true })
         });
-        const data = await res.json();
 
-        if (data.status === 'success' && data.reply) {
-          bubble.className = 'msg msg-ai';
+        bubble.classList.remove('chat-thinking');
+        bubble.textContent = '';
+        
+        let fullReply = '';
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const chunk = decoder.decode(value, { stream: true });
+          
+          // 실시간 데이터 누적
+          fullReply += chunk;
+
+          // 실시간 마크다운 렌더링
           bubble.innerHTML = typeof marked !== 'undefined'
-            ? marked.parse(data.reply.trim())
-            : data.reply.trim();
-            
-          history.push({ role: 'user', parts: [{ text: text }] });
-          history.push({ role: 'model', parts: [{ text: data.reply }] });
-          if (history.length > 20) history.splice(0, 2);
-        } else {
-          bubble.className = 'msg msg-ai msg-error';
-          bubble.textContent = '응답 오류';
+            ? marked.parse(fullReply)
+            : fullReply;
+          
+          scrollToBottom();
         }
+
+        // 스트리밍 종료 후 히스토리 업데이트
+        history.push({ role: 'user', parts: [{ text: text }] });
+        history.push({ role: 'model', parts: [{ text: fullReply }] });
+        if (history.length > 20) history.splice(0, 2);
+
       } catch (err) {
         bubble.className = 'msg msg-ai msg-error';
-        bubble.textContent = '연결 오류';
+        bubble.textContent = '연결 오류가 발생했습니다.';
+        console.error('Streaming Error:', err);
       }
 
       input.disabled = false;
-      // input.focus(); // [v13.5.1] 자동 포커스 제거 (키보드 팝업 방지)
       scrollToBottom();
     };
 
-    // [v14.3.0] 헤더 아이콘 리스너 (내부 내비게이션용)
     const btnChat     = document.getElementById('btnTabChat');
     const btnHistory  = document.getElementById('btnTabHistory');
     const btnSettings = document.getElementById('btnTabSettings');
 
     const switchView = (viewId, activeBtn) => {
-      // 액티브 클래스 교체
       [btnChat, btnHistory, btnSettings].forEach(b => b?.classList.remove('active'));
       activeBtn?.classList.add('active');
-      
-      // 실제 뷰 전환 로직은 다음 턴에 상세 구현
-      console.log(`Switching to ${viewId} view...`);
+      console.log(\`Switching to \${viewId} view...\`);
     };
 
     btnChat?.addEventListener('click', () => switchView('chat', btnChat));
@@ -147,8 +155,6 @@ export default {
     input.addEventListener('keypress', (e) => {
       if (e.key === 'Enter' && !e.shiftKey) sendMessage();
     });
-
-    // input.focus(); // [v13.5.1] 초기 진입 시 자동 포커스 제거
   },
 
   destroy() {}
