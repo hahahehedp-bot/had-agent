@@ -4,6 +4,18 @@
 
 ---
 
+## [v9.1.0] - 2026-05-08
+### Added
+- **Core Reinforcement**: '무적 코어' 엔진 구축
+  - **Error Isolation (Sandbox)**: 모듈별 `try-catch` 가드를 도입하여 특정 모듈 에러가 앱 전체로 전이되는 현상 방지.
+  - **Global Event Bus**: `window.hadEvents`를 통한 모듈 간 비종속적 통신 체계 마련.
+  - **Service Context Injection**: 모듈 초기화 시 `ctx` 객체를 통해 API, EventBus, Config 등을 통합 주입하는 표준화된 인터페이스 구축.
+- **AI Work-OS Vision Draft**: `draft_ai_agent_brainstorming.md`에 프로젝트 기반 컨텍스트 및 개인화 지침 설계안 추가.
+
+### Changed
+- **White-label Generalization**: '오순이' 명칭을 '에이전트'로 일반화하고, `userLabel` 변수를 통해 고객사별 사용자 호칭(리더님 등) 동적 적용.
+- **Sandbox Structure**: 구글 드라이브 내 샌드박스를 `HAD-Schedule`, `HAD-Resources`, `HAD-Board`, `HAD-System`의 4대 천왕 수평 구조로 재편.
+
 ## [v7.3.0] - 2026-05-08
 ### 📋 소셜 피드형 게시판 (HAD-Feed) 신규 개발
 - **Social Feed UI 구현**: 페이스북/인스타그램의 UX를 벤치마킹한 카드 기반 피드 레이아웃 구축 (`modules/board/`).
