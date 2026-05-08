@@ -1,6 +1,6 @@
 // =============================================
 // HAD-Agent — modules/chat/chat.js
-// [v13.5.1] UX Fix - No Auto-Focus, No Bubble, No Autofill Overlay
+// [v13.7.0] Swipe Sensitivity, No Autofill Icons, Tight Spacing
 // =============================================
 
 export default {
@@ -28,14 +28,16 @@ export default {
 
         <div class="chat-input-container">
           <div class="chat-input-wrapper">
-            <input type="text" id="chatInput" class="chat-input" 
+            <input type="search" id="chat-query" class="chat-input" 
                    placeholder="메시지를 입력하세요..." 
                    autocomplete="off" 
                    autocorrect="off" 
                    autocapitalize="off" 
                    spellcheck="false" 
                    inputmode="text" 
-                   enterkeyhint="send">
+                   enterkeyhint="send"
+                   data-lpignore="true"
+                   x-autocompletetype="off">
             <button id="chatSend" class="chat-send-icon-btn" aria-label="전송">
               <!-- [v13.4.2] 제미나이 스타일 단순 화살표 -->
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -51,7 +53,7 @@ export default {
   },
 
   afterRender(config) {
-    const input    = document.getElementById('chatInput');
+    const input    = document.getElementById('chat-query');
     const sendBtn  = document.getElementById('chatSend');
     const messages = document.getElementById('chatMessages');
     const agent    = config.agent || {};

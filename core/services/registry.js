@@ -7,7 +7,7 @@ import staticConfig from '../../client/config.js';
 
 class RegistryService {
   constructor() {
-    this.VERSION = '13.6.0'; // [v13.6.0] Chat Unification & Cache Purge
+    this.VERSION = '13.7.0'; // [v13.7.0] Swipe Sensitivity & Space Opt
     this.config = { ...staticConfig };
     this.dynamicConfig = {};
     this.listeners = [];

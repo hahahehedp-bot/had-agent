@@ -11,16 +11,11 @@
   background: var(--surface);
 }
 
-.chat-messages {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
-  /* 상단 여백 제거 */
-  padding: 8px 16px 0 16px; 
+  /* 좌우 여백 축소 */
+  padding: 8px 12px 0 12px; 
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px; /* 전체적인 메시지 간격 축소 */
   -webkit-overflow-scrolling: touch;
 }
 
@@ -54,13 +49,14 @@
   /* 사용자 메시지 우측 정렬 및 말풍선 */
   align-self: flex-end; 
   width: auto;
-  max-width: 85%;
-  background: #3c4043 !important; /* 제미나이 다크톤 */
+  max-width: 88%;
+  background: #3c4043 !important;
   color: #e8eaed;
-  padding: 10px 16px !important;
+  padding: 8px 14px !important; /* 패딩 살짝 축소 */
   border-radius: 18px;
   font-weight: 400;
   box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  margin-bottom: -4px; /* AI 답변과의 간격을 위해 아래 여백 당김 */
 }
 
 .msg-ai-wrap {
@@ -69,6 +65,7 @@
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
+  margin-top: -4px; /* 사용자 메시지와 더 밀착 */
 }
 
 .msg-ai-header {

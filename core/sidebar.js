@@ -171,7 +171,7 @@ export function initSidebar(activeModules, loadedModules, config, ctx) {
     const deltaY = Math.abs(e.changedTouches[0].clientY - touchStartY);
     if (!isDrawerMode() || deltaY > 60) return; 
     
-    if (touchStartX < 50 && deltaX > 80) toggleDrawer('left', true);
-    if (touchStartX > window.innerWidth - 50 && deltaX < -80) toggleDrawer('right', true);
+    if (touchStartX < 80 && deltaX > 60) toggleDrawer('left', true);
+    if (touchStartX > window.innerWidth - 100 && deltaX < -60) toggleDrawer('right', true);
   }, { passive: true });
 }
