@@ -48,8 +48,8 @@ const ServiceContext = {
 async function safeRunModule(moduleId, action, context) {
   try {
     if (context[action]) {
-      // (ctx, config) 순으로 전달하여 하이브리드 지원
-      return await context[action](ServiceContext, ServiceContext.config);
+      // (config, ctx) 순으로 전달하여 기존 모듈 호환성 유지
+      return await context[action](ServiceContext.config, ServiceContext);
     }
   } catch (e) {
     console.error(`[HAD] 모듈 '${moduleId}' 실행 중 에러 (${action}):`, e);
