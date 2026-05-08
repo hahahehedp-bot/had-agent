@@ -22,7 +22,7 @@ function getActiveModules(cfg) {
 // ── 모듈 동적 import ─────────────────────────
 async function loadModule(moduleId) {
   try {
-    const mod = await import(`../modules/${moduleId}/${moduleId}.js?v=8`);
+    const mod = await import(`../modules/${moduleId}/${moduleId}.js?v=9`);
     return mod.default;
   } catch (e) {
     console.warn(`[HAD] 모듈 로드 실패: ${moduleId}`, e);
@@ -52,7 +52,7 @@ async function init() {
     await initAuth();
 
     // 3. 설정 패널 초기화
-    initSettings();
+    initSettings(config);
 
     // 4. 활성 모듈 로드
     const activeModules = getActiveModules(config);

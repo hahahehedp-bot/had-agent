@@ -32,7 +32,7 @@ export default {
               <span class="msg-name">${config.agent.name}</span>
             </div>
             <div class="msg msg-ai" id="welcomeMsg">
-              반갑습니다, 리더님! 😊<br>
+              반갑습니다, ${config.agent.userLabel}! 😊<br>
               <strong>${config.agent.name}</strong>입니다.<br>
               무엇이든 편하게 물어보세요!
             </div>

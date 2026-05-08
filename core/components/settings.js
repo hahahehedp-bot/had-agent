@@ -7,7 +7,7 @@
 import { toggleTheme } from '../services/theme.js';
 import { updateAppBadge } from '../services/notification.js';
 
-export function initSettings() {
+export function initSettings(config) {
   const btnProfile = document.getElementById('btnProfile');
   const settingsPanel = document.getElementById('settingsPanel');
   const closeSettings = document.getElementById('closeSettings');
@@ -21,21 +21,27 @@ export function initSettings() {
   }
 
   if (settingsBody) {
-    renderSettings(settingsBody);
+    renderSettings(settingsBody, config);
   }
 }
 
-function renderSettings(container) {
+function renderSettings(container, config) {
   const optSound = localStorage.getItem('noti-sound') !== 'off';
   const optVibe  = localStorage.getItem('noti-vibe') !== 'off';
   const optBadge = localStorage.getItem('noti-badge') !== 'off';
+
+  // 현재 사용자 정보 (나중에 auth 모듈에서 가져와야 함)
+  const user = {
+    name: "유여름",
+    email: "admin@owner.com"
+  };
 
   container.innerHTML = `
     <div class="settings-profile-header">
       <div class="settings-avatar">👤</div>
       <div class="settings-user-info">
-        <div class="user-name">유여름 리더님</div>
-        <div class="user-email">admin@owner.com</div>
+        <div class="user-name">${user.name} ${config.agent.userLabel}</div>
+        <div class="user-email">${user.email}</div>
       </div>
     </div>
     
@@ -53,8 +59,8 @@ function renderSettings(container) {
     </div>
 
     <div class="settings-footer">
-      <p>HAD-Agent v2.0</p>
-      <p>Powered by AI Thinking Lab</p>
+      <p>${config.pwa.shortName} v2.0</p>
+      <p>Powered by ${config.brand.name}</p>
     </div>
   `;
 

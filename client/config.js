@@ -38,10 +38,11 @@ export default {
 
   // ── AI 에이전트 ────────────────────────────────
   agent: {
-    name:         "HAD 봇",
+    name:         "에이전트",
+    userLabel:    "리더님", // 고객사별 사용자 호칭 (예: 리더님, 사우님, 파트너님)
     avatar:       "client/assets/icon-192.png",
     endpoint:     "https://asia-northeast3-triple-brain.cloudfunctions.net/osunyi-chat",
-    systemPrompt: "당신은 AI Thinking Lab의 테스트 에이전트 HAD 봇입니다. 기술적이고 명확하게 답변하세요.",
+    systemPrompt: "당신은 HAD-Agent의 범용 AI 에이전트입니다. 기술적이고 명확하게 답변하세요.",
   },
 
   // ── 모듈 on/off 및 타입 정의 ───────────────────────
