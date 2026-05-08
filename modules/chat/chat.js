@@ -1,6 +1,6 @@
 // =============================================
 // HAD-Agent — modules/chat/chat.js
-// [v13.2.3] Auto-Scroll & UX Stability Fix
+// [v13.2.7] Simple Greeting & Top-Start Layout
 // =============================================
 
 export default {
@@ -22,19 +22,19 @@ export default {
     return `
       <div class="module-root chat-layout">
         <div class="chat-messages" id="chatMessages">
-          <div style="flex:1"></div>
+          <!-- [v13.2.7] 상단 flex spacer 제거 (위에서부터 시작) -->
+          
+          <!-- 짧고 간결한 인사말 -->
           <div class="msg-ai-wrap">
             <div class="msg-ai-header">
               <img src="${config.agent.avatar}" alt="${config.agent.name}" class="msg-avatar">
               <span class="msg-name">${config.agent.name}</span>
             </div>
             <div class="msg msg-ai" id="welcomeMsg">
-              반갑습니다, ${config.agent.userLabel}! 😊<br>
-              <strong>${config.agent.name}</strong>입니다.<br>
-              무엇이든 편하게 물어보세요!
+              ${config.agent.userLabel}, 무엇을 도와드릴까요? 😊
             </div>
           </div>
-          <!-- 마지막 메시지가 가려지지 않게 하는 공간 -->
+          
           <div class="chat-bottom-spacer"></div>
         </div>
 
@@ -60,32 +60,16 @@ export default {
     const agentName = config.agent.name;
     const history   = [];
 
-    // [v13.2.3] 아주 강력한 스크롤 하단 고정 함수
     const scrollToBottom = () => {
       setTimeout(() => {
         if (messages) {
-          messages.scrollTo({
-            top: messages.scrollHeight,
-            behavior: 'smooth'
-          });
-        }
-        // 전체 서랍 바디도 혹시 모르니 끝까지 내림
-        const drawerBody = document.getElementById('agentDrawerBody');
-        if (drawerBody) {
-          drawerBody.scrollTo({ top: drawerBody.scrollHeight, behavior: 'smooth' });
+          messages.scrollTo({ top: messages.scrollHeight, behavior: 'smooth' });
         }
       }, 100);
     };
 
-    // 마크다운 환영 메시지 적용
-    const welcomeMsg = document.getElementById('welcomeMsg');
-    if (welcomeMsg && typeof marked !== 'undefined') {
-      welcomeMsg.innerHTML = marked.parse(welcomeMsg.innerText);
-    }
+    // 초기 로드 시엔 스크롤 하지 않음 (위에서부터 보이니까)
     
-    // 초기 렌더링 시 스크롤
-    scrollToBottom();
-
     const sendMessage = async () => {
       const text = input.value.trim();
       if (!text) return;
@@ -94,15 +78,12 @@ export default {
       input.disabled = true;
       sendBtn.disabled = true;
 
-      // 사용자 메시지 추가
       const userMsg = document.createElement('div');
       userMsg.className = 'msg msg-user';
       userMsg.textContent = text;
-      // 완충 지대 바로 앞에 삽입
       messages.insertBefore(userMsg, messages.querySelector('.chat-bottom-spacer'));
       scrollToBottom();
 
-      // AI 로딩 메시지
       const aiWrap = document.createElement('div');
       aiWrap.className = 'msg-ai-wrap';
       aiWrap.innerHTML = `
@@ -136,11 +117,11 @@ export default {
           if (history.length > 20) history.splice(0, 2);
         } else {
           bubble.className = 'msg msg-ai msg-error';
-          bubble.textContent = '문제가 발생했습니다. 다시 시도해 주세요.';
+          bubble.textContent = '문제가 발생했습니다.';
         }
       } catch (err) {
         bubble.className = 'msg msg-ai msg-error';
-        bubble.textContent = '연결이 원활하지 않습니다. 🙏';
+        bubble.textContent = '연결이 원활하지 않습니다.';
       }
 
       input.disabled = false;

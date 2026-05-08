@@ -7,7 +7,7 @@ import staticConfig from '../../client/config.js';
 
 class RegistryService {
   constructor() {
-    this.VERSION = '13.2.6'; // [v13.2.6] 공간 극대화 패치
+    this.VERSION = '13.2.7'; // [v13.2.7] 최종 압축 & 고정 패치
     this.config = { ...staticConfig };
     this.dynamicConfig = {};
     this.listeners = [];
