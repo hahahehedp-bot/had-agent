@@ -2,6 +2,12 @@
 
 이 문서는 HAD-Agent 프로젝트의 버전별 작업 내역과 주요 변경 사항을 기록합니다.
 
+## [v14.1.0] - 2026-05-08
+### Changed
+- **Immersive Drawer Width**: 비서 서랍의 너비를 기존 320px에서 380px(최대 90vw)로 확장하여 대화 몰입감 극대화.
+- **Low-Blur Overlay**: 배경 블러 강도를 낮추어(4px -> 2px) 비서창 뒤의 원래 화면이 어렴풋이 부각되도록 조정.
+- **Enhanced Transparency**: 오버레이 투명도를 미세 조정하여 세련된 유리 질감 구현.
+
 ## [v14.0.0] - 2026-05-08
 ### Changed
 - **Ultra-Tight Layout**: `.agent-drawer-body`의 코어 스타일 충돌(padding 20px)을 제거하여 여백을 최소화하고 화면 활용도 극대화.

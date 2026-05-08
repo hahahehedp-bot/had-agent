@@ -209,9 +209,10 @@ html, body {
 .global-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.4);
-  backdrop-filter: blur(4px);
-  z-index: 1000; /* 모든 일반 요소보다 위 */
+  background: rgba(0,0,0,0.3); /* 배경 투명도 살짝 완화 */
+  backdrop-filter: blur(2px); /* 블러 낮춤 */
+  -webkit-backdrop-filter: blur(2px);
+  z-index: 1000;
   opacity: 0;
   pointer-events: none;
   visibility: hidden;
@@ -314,7 +315,8 @@ body.no-scroll {
   position: fixed;
   top: 0;
   right: 0;
-  width: 320px;
+  width: 380px; /* [v14.1.0] 몰입감을 위해 너비 확장 */
+  max-width: 90vw; /* 모바일 대응 */
   height: 100%; /* [v13.2.8] 호환성을 위해 100%로 복귀 */
   background: var(--surface);
   border-left: 1px solid var(--border-color);
