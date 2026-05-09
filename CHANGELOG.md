@@ -2,6 +2,12 @@
 
 이 문서는 HAD-Agent 프로젝트의 버전별 작업 내역과 주요 변경 사항을 기록합니다.
 
+## [v15.9.6] - 2026-05-09
+### Cleaned
+- **Core Purification**: 프로젝트 전반의 CSS 빈 줄, 구형 버전 주석 및 사용되지 않는 임시 주석 소거.
+- **Integrity Synchronization**: 모든 코어 파일(`app.js`, `sidebar.js`, `layout.css`)의 버전 헤더를 v15.9.6으로 동기화.
+- **Notification Hygiene**: `app.js` 내의 불필요한 레거시 TODO 주석 정리.
+
 ## [v15.9.5] - 2026-05-09
 ### Fixed
 - **State Mutex Lock**: 패널 전환 및 트랜지션 중(350ms) 추가 입력을 차단하는 `isMoving` 플래그 도입으로 '푸시-풀(Push-Pull)' 현상 원천 차단.

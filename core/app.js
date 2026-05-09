@@ -1,6 +1,6 @@
 // =============================================
 // HAD-Agent — app.js (Core Engine)
-// [v13.2.0] Stability Fix: 로딩 화면 제거 보장
+// [v15.9.6] Core Purification & Integrity Guard
 // =============================================
 
 import { Registry } from './services/registry.js';
@@ -36,12 +36,10 @@ const ServiceContext = {
   events: window.hadEvents,
   notify: (msg, type = 'info') => {
     console.log(`[${type.toUpperCase()}] ${msg}`);
-    // [v15.3.0] TODO: 전용 토스트 UI 모듈이 있다면 alert 대신 교체 예정
     alert(msg); 
   },
   navigate: (to) => navigateTo(to),
   setContextData: (data) => {
-    // [DEPRECATED] window.hadState.contextData = data; 
     Registry.updateState({ contextData: data });
   }
 };
@@ -59,7 +57,6 @@ async function safeRunModule(moduleId, action, context) {
 }
 
 async function init() {
-  // [v15.3.0] 버전 정보는 이제 Registry에서 단일화하여 관리함
   const version = Registry.getVersion();
   console.log(`[HAD] Core Engine v${version} Starting...`);
   
