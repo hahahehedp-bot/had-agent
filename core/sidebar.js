@@ -65,14 +65,16 @@ export function initSidebar(activeModules, loadedModules, config, ctx) {
     }
   }
 
-  // ── 📱 실시간 슬라이딩 엔진 (Live Panoramic Tracking) ──
+  // [v16.0.0-alpha.4] 고도화된 스냅 엔진 (Velocity & Flick Support)
   let touchStartX = 0;
+  let startTime = 0;
   let startTranslateX = 0;
   let isDragging = false;
 
   window.addEventListener('touchstart', (e) => {
     if (!isMobile()) return;
     touchStartX = e.touches[0].clientX;
+    startTime = Date.now();
     const matrix = window.getComputedStyle(layout).transform;
     if (matrix !== 'none') {
       startTranslateX = parseFloat(matrix.split(',')[4]);
@@ -107,16 +109,30 @@ export function initSidebar(activeModules, loadedModules, config, ctx) {
   window.addEventListener('touchend', (e) => {
     if (!isMobile() || !isDragging) return;
     isDragging = false;
-    layout.style.transition = ''; // Restore CSS transition
+    layout.style.transition = ''; 
 
-    const deltaX = e.changedTouches[0].clientX - touchStartX;
-    const threshold = window.innerWidth / 5; // 20% Threshold
+    const touchEndX = e.changedTouches[0].clientX;
+    const deltaX = touchEndX - touchStartX;
+    const deltaTime = Date.now() - startTime;
+    const velocity = deltaX / deltaTime; // px/ms
 
-    if (Math.abs(deltaX) > threshold) {
-      if (deltaX > 0 && currentPanelIndex > 0) currentPanelIndex--;
-      else if (deltaX < 0 && currentPanelIndex < 2) currentPanelIndex++;
+    const threshold = window.innerWidth * 0.3; // [v16.0.0-alpha.4] 스냅 턱 상향 (30%)
+    const velocityThreshold = 0.5; // [v16.0.0-alpha.4] 플릭 감도 설정
+
+    let targetIndex = currentPanelIndex;
+
+    // 1. 속도 기반 판정 (Flick)
+    if (Math.abs(velocity) > velocityThreshold) {
+      if (velocity > 0 && currentPanelIndex > 0) targetIndex--;
+      else if (velocity < 0 && currentPanelIndex < 2) targetIndex++;
+    } 
+    // 2. 거리 기반 판정 (Slow Drag)
+    else if (Math.abs(deltaX) > threshold) {
+      if (deltaX > 0 && currentPanelIndex > 0) targetIndex--;
+      else if (deltaX < 0 && currentPanelIndex < 2) targetIndex++;
     }
-    setPanel(currentPanelIndex);
+
+    setPanel(targetIndex);
   }, { passive: true });
 
   // ── 🎨 초기화 및 이벤트 바인딩 ──
