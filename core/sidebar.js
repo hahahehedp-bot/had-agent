@@ -44,12 +44,21 @@ export function initSidebar(activeModules, loadedModules, config, ctx) {
   /**
    * ── 서랍 제어 핵심 ──────────────────────────
    */
+  let isMoving = false; // [v15.9.5] 동작 잠금 플래그 (중복 호출 및 푸시-풀 방지)
+
   function toggleDrawer(side, force = null) {
+    if (isMoving) return;
+    
     const target = (side === 'left') ? sidebar : agentDrawer;
     const other  = (side === 'left') ? agentDrawer : sidebar;
     
     const isCurrentlyOpen = target.classList.contains('open');
     const shouldOpen = (force !== null) ? force : !isCurrentlyOpen;
+
+    if (isCurrentlyOpen === shouldOpen) return; // 상태 변화가 없으면 중단
+
+    isMoving = true;
+    setTimeout(() => { isMoving = false; }, 350); // 트랜지션 완료 후 잠금 해제
 
     if (shouldOpen) {
       // [모바일 독점 모드]
@@ -241,24 +250,29 @@ export function initSidebar(activeModules, loadedModules, config, ctx) {
   }, { passive: true });
 
   window.addEventListener('touchend', (e) => {
+    if (isMoving) return; // 동작 중일 때는 제스처 무시
+
     const deltaX = e.changedTouches[0].clientX - touchStartX;
     const deltaY = Math.abs(e.changedTouches[0].clientY - touchStartY);
+    
+    // Y축 이동이 크거나 수평 이동이 너무 적으면 무시
     if (!isDrawerMode() || deltaY > 80 || Math.abs(deltaX) < 60) return; 
     
     const isSidebarOpen = sidebar.classList.contains('open');
     const isDrawerOpen = agentDrawer.classList.contains('open');
 
-    // [v15.9.4] 1. 닫기 제스처 (패널이 열려있을 때 최우선)
+    // [v15.9.5] 상호 배제(Mutual Exclusion) 기반 제스처 로직
+    // 1. 현재 열려 있는 패널이 있다면 '닫기'만 수행
     if (isSidebarOpen) {
       if (deltaX < -60) toggleDrawer('left', false);
-      return; // 닫기 동작 시 열기 로직 차단
+      return;
     }
     if (isDrawerOpen) {
       if (deltaX > 60) toggleDrawer('right', false);
-      return; // 닫기 동작 시 열기 로직 차단
+      return;
     }
 
-    // [v15.9.4] 2. 열기 제스처 (패널이 모두 닫혀있을 때만)
+    // 2. 아무것도 열려 있지 않을 때만 '열기' 수행 (푸시-풀 원천 차단)
     if (!isSidebarOpen && !isDrawerOpen) {
       if (touchStartX < 80 && deltaX > 60) {
         toggleDrawer('left', true);

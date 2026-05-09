@@ -2,6 +2,12 @@
 
 이 문서는 HAD-Agent 프로젝트의 버전별 작업 내역과 주요 변경 사항을 기록합니다.
 
+## [v15.9.5] - 2026-05-09
+### Fixed
+- **State Mutex Lock**: 패널 전환 및 트랜지션 중(350ms) 추가 입력을 차단하는 `isMoving` 플래그 도입으로 '푸시-풀(Push-Pull)' 현상 원천 차단.
+- **Mutual Exclusive Gestures**: 패널이 하나라도 열려 있으면 '닫기' 제스처만 허용하도록 논리 격리 강화.
+- **Immediate State Guard**: 현재 상태와 목표 상태가 동일할 경우 중복 실행을 방지하는 가드 로직 추가.
+
 ## [v15.9.4] - 2026-05-09
 ### Optimized
 - **Intelligent Gesture Priority**: 패널이 열려 있을 때 닫기 제스처(`deltaX` 반대 방향)를 최우선으로 처리하도록 로직 전면 개편.

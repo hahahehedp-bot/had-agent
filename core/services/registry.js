@@ -7,7 +7,7 @@ import staticConfig from '../../client/config.js';
 
 class RegistryService {
   constructor() {
-    this.VERSION = '15.9.4'; // [v15.9.4] Intelligent Gesture Priority Patch
+    this.VERSION = '15.9.5'; // [v15.9.5] State Mutex & Gesture Decoupling Patch
     this.config = { ...staticConfig };
     this.dynamicConfig = {};
     this.permissions = null; // 등급별 권한 데이터
