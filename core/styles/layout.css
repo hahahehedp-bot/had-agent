@@ -51,7 +51,7 @@
 
 @media (max-width: 1023px) {
   :root {
-    --header-h: 56px;
+    --header-h: 40px; /* [v15.8.9] 56px -> 40px 초슬림화 */
     --tabbar-h: 64px;
     --status-h: 0px; 
   }
@@ -108,6 +108,29 @@ html, body {
   font-weight: 700;
   color: var(--text-primary);
   letter-spacing: -0.02em;
+}
+
+/* ── 햄버거 버튼 (Mobile Navigation) ── */
+.btn-hamburger {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  padding: 0 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 1100;
+}
+.btn-hamburger span {
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: var(--text-primary);
+  border-radius: 1px;
+  transition: transform var(--transition), opacity var(--transition);
 }
 
 /* ── [v15.8.0] 헤더 우측 액션 그룹 (Mini) ── */
@@ -325,17 +348,18 @@ body.no-scroll {
 /* ── 사이드바 (좌) ── */
 .sidebar {
   position: fixed;
-  top: var(--header-h);
-  bottom: var(--status-h);
+  top: 0; /* [v15.9.0] Gemini Style: 상단바 가림 */
+  bottom: 0;
   left: 0;
   width: var(--sidebar-w);
   background: var(--surface);
   border-right: 1px solid var(--border-color);
-  z-index: 900;
+  z-index: 1200; /* 상단바(1000)보다 위 */
   display: flex;
   flex-direction: column;
   transform: translateX(-100%); 
   transition: transform var(--transition);
+  padding-top: env(safe-area-inset-top); /* 모바일 노치 대응 */
 }
 .sidebar.open {
   transform: translateX(0);
@@ -370,13 +394,13 @@ body.no-scroll {
 /* ── 🤖 에이전트 서랍 (우) ── */
 .agent-drawer {
   position: fixed;
-  top: var(--header-h);
-  bottom: var(--status-h);
+  top: 0; /* [v15.9.0] Gemini Style: 상단바 가림 */
+  bottom: 0;
   right: 0;
   width: 380px;
   background: var(--surface);
   border-left: 1px solid var(--border-color);
-  z-index: 900;
+  z-index: 1200; /* 상단바(1000)보다 위 */
   display: flex;
   flex-direction: column;
   transform: translateX(100%);

@@ -7,7 +7,7 @@ import staticConfig from '../../client/config.js';
 
 class RegistryService {
   constructor() {
-    this.VERSION = '15.8.8'; // [v15.8.8] Core Purification & Integrity Guard
+    this.VERSION = '15.9.0'; // [v15.9.0] Gemini Style Full-height Overlay
     this.config = { ...staticConfig };
     this.dynamicConfig = {};
     this.permissions = null; // 등급별 권한 데이터

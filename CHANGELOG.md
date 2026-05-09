@@ -2,6 +2,18 @@
 
 이 문서는 HAD-Agent 프로젝트의 버전별 작업 내역과 주요 변경 사항을 기록합니다.
 
+## [v15.9.0] - 2026-05-09
+### Added
+- **Gemini Overlay Style**: 사이드바와 에이전트 드로어가 상단바(Header)를 덮고 화면 전체 높이(`top: 0`, `bottom: 0`)로 나타나는 제미나이 앱 스타일 레이아웃 도입.
+- **Layering Architecture**: 사이드바의 `z-index`를 1200으로 격상하여 상단바와의 계층 구조 역전.
+- **Notch Support**: 모바일 노치 및 상단 영역 대응을 위해 사이드바 상단에 `safe-area-inset-top` 패딩 적용.
+
+## [v15.8.9] - 2026-05-09
+### Optimized
+- **Mobile Ultra-Slim Header**: 모바일 상단바 높이를 56px에서 **40px**로 축소하여 세로 공간 활용도 극대화.
+- **Hamburger Navigation**: 햄버거 버튼의 스타일을 정밀 조정(gap 4px, span 18px)하여 슬림한 헤더에서도 터치 조작성과 심미성을 동시에 확보.
+- **Header Balancing**: 로고와 프로필 버튼의 간격을 재조정하여 초슬림 헤더에서의 시각적 균형 최적화.
+
 ## [v15.8.8] - 2026-05-09
 ### Added
 - **Core Purification (코어 대정화)**: 코어 엔진 내 잔존하던 모듈 종속성 및 하드코딩을 전면 제거하여 '무결성 헌법' 체계 확립.
