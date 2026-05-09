@@ -2,6 +2,13 @@
 
 이 문서는 HAD-Agent 프로젝트의 버전별 작업 내역과 주요 변경 사항을 기록합니다.
 
+## [v15.3.0] - 2026-05-09
+### Added
+- **AI Thinking Identity**: AI를 단순 생산성 도구가 아닌 '공동 사고(Shared Thinking)' 파트너로 정의하는 핵심 철학 주입.
+- **Dynamic KST Awareness**: 서버 시간(UTC)이 아닌 한국 표준시(KST)를 실시간으로 인지하여 답변에 반영하는 지능형 시간 시스템 도입.
+- **Grounding Insight**: 구글 검색 결과에 'AI Thinking' 관점의 인사이트를 결합하여 답변하도록 지침 고도화.
+- **Emergence Focus**: 답변의 마무리에서 사용자의 지적 자극과 창발(Emergence)을 유도하는 로직 강화.
+
 ## [v15.2.8] - 2026-05-09
 ### Fixed
 - **Markdown Rendering Safety**: 백엔드에서 헤더(`###`) 수신 시 앞에 줄바꿈이 없으면 강제로 주입하여 모바일 렌더링 깨짐 현상 완벽 해결.

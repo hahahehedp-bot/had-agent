@@ -1,7 +1,9 @@
 // =============================================
 // HAD-Agent — sidebar.js (Core)
-// [v13.2.0] Stability Fix (PC 가시성 및 모바일 로딩 에러 방지)
+// [v15.3.0] Core Stabilization & Dynamic Versioning
 // =============================================
+
+import { Registry } from './services/registry.js';
 
 export function initSidebar(activeModules, loadedModules, config, ctx) {
   const ServiceContext = ctx;
@@ -91,11 +93,14 @@ export function initSidebar(activeModules, loadedModules, config, ctx) {
   // ── 마스터 운영실 (보안 강화) ──────────────────
   function updateAdminMenu() {
     const footer = document.querySelector('.sidebar-footer');
-    if (window.hadState?.isAdmin && footer && !document.getElementById('sidebarAdmin')) {
+    // [v15.3.0] window.Registry를 통해 관리자 권한 확인 (ReferenceError 방지)
+    const isAdmin = window.Registry?.getState('isAdmin');
+    
+    if (isAdmin && footer && !document.getElementById('sidebarAdmin')) {
       const adminItem = document.createElement('div');
-      adminItem.className = 'sidebar-footer-item master-admin';
+      adminItem.className = 'sidebar-nav-item master-admin'; 
       adminItem.id = 'sidebarAdmin';
-      adminItem.innerHTML = '🛡️ 마스터 운영실';
+      adminItem.innerHTML = '<span class="nav-icon">🛡️</span> <span class="nav-label">마스터 운영실</span>';
       footer.prepend(adminItem);
       adminItem.addEventListener('click', () => {
         if (isDrawerMode()) toggleDrawer('left', false);
@@ -118,15 +123,26 @@ export function initSidebar(activeModules, loadedModules, config, ctx) {
     toggleDrawer('right', false);
   });
 
-  document.getElementById('sidebarSettings')?.addEventListener('click', () => {
-    if (isDrawerMode()) toggleDrawer('left', false);
-    document.getElementById('settingsPanel')?.classList.add('open');
-  });
+  // [v15.3.0] 설정 및 정보 버튼 바인딩 정합성 강화
+  const settingsBtn = document.getElementById('sidebarSettings');
+  if (settingsBtn) {
+    settingsBtn.addEventListener('click', () => {
+      if (isDrawerMode()) toggleDrawer('left', false);
+      const panel = document.getElementById('settingsPanel');
+      if (panel) panel.classList.add('open');
+      else console.warn('[HAD] Settings Panel 요소를 찾을 수 없습니다.');
+    });
+  }
   
-  document.getElementById('sidebarInfo')?.addEventListener('click', () => {
-    if (isDrawerMode()) toggleDrawer('left', false);
-    alert(`${config.brand.name} v${window.hadState.version}\nPowered by AI Thinking Lab`);
-  });
+  const infoBtn = document.getElementById('sidebarInfo');
+  if (infoBtn) {
+    infoBtn.addEventListener('click', () => {
+      if (isDrawerMode()) toggleDrawer('left', false);
+      // [v15.3.0] window.Registry에서 버전을 가져와 표시
+      const version = window.Registry?.getVersion();
+      alert(`${config.brand.name} v${version}\nPowered by AI Thinking Lab`);
+    });
+  }
 
   // ── 라우터 변경 감지 ────────────────────────────
   ServiceContext.events.on('moduleChanged', (moduleId) => {

@@ -36,11 +36,13 @@ const ServiceContext = {
   events: window.hadEvents,
   notify: (msg, type = 'info') => {
     console.log(`[${type.toUpperCase()}] ${msg}`);
+    // [v15.3.0] TODO: 전용 토스트 UI 모듈이 있다면 alert 대신 교체 예정
     alert(msg); 
   },
   navigate: (to) => navigateTo(to),
   setContextData: (data) => {
-    window.hadState.contextData = data;
+    // [DEPRECATED] window.hadState.contextData = data; 
+    Registry.updateState({ contextData: data });
   }
 };
 
@@ -52,23 +54,28 @@ async function safeRunModule(moduleId, action, context) {
     }
   } catch (e) {
     console.error(`[HAD] 모듈 '${moduleId}' 실행 중 에러 (${action}):`, e);
-    return `<div class="error-state">오류 발생</div>`;
+    return `<div class="error-state">오류 발생 (Module Error)</div>`;
   }
 }
 
 async function init() {
+  // [v15.3.0] 버전 정보는 이제 Registry에서 단일화하여 관리함
   const version = Registry.getVersion();
+  console.log(`[HAD] Core Engine v${version} Starting...`);
   
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js').catch(err => console.warn('[SW] 등록 실패:', err));
+    // [DEPRECATED] 구형 캐시 갱신 방식 대신 Registry 버전을 쿼리로 활용 고려
+    navigator.serviceWorker.register(`./sw.js?v=${version}`).catch(err => console.warn('[SW] 등록 실패:', err));
   }
 
-  // ── [v13.2.0] 로딩 제거 함수 정의 ──
   const removeLoading = () => {
     const loader = document.getElementById('loadingScreen');
     if (loader) {
       loader.classList.add('fade-out');
-      setTimeout(() => loader.remove(), 500);
+      setTimeout(() => {
+        loader.remove();
+        console.log('[HAD] Loading Screen Removed.');
+      }, 500);
     }
   };
 
@@ -86,6 +93,7 @@ async function init() {
     const activeModules = getActiveModules(config);
     const loadedModules = {};
 
+    // ── 모듈 로드 엔진 (병렬 처리) ──
     await Promise.all(activeModules.map(async (modCfg) => {
       try {
         if (modCfg.type === 'iframe') {
@@ -103,12 +111,13 @@ async function init() {
           }
         }
       } catch (e) {
-        console.error(`[HAD] 모듈 '${modCfg.id}' 로드 중 오류:`, e);
+        console.error(`[HAD] 모듈 '${modCfg.id}' 로드 실패:`, e);
       }
     }));
 
     const navModules = activeModules.filter(m => !m.hidden);
     const { initSidebar } = await import(`./sidebar.js?v=${version}`);
+    
     initSidebar(navModules, loadedModules, config, ServiceContext);
     initTabBar(navModules, loadedModules, config, ServiceContext);
     initRouter(loadedModules, config, ServiceContext);
@@ -121,13 +130,10 @@ async function init() {
 
   } catch (e) {
     console.error('[HAD] 앱 초기화 치명적 오류:', e);
-    // 오류가 나더라도 로딩 화면은 일단 치워야 함 (로그인 화면 등이 보일 수 있게)
     removeLoading();
     
-    if (e.message.includes('Auth')) {
-      // 인증 관련이면 무시 (authOverlay가 뜰 것임)
-    } else {
-      document.body.innerHTML += `<div class="fatal-error" style="position:fixed; bottom:20px; left:20px; background:rgba(0,0,0,0.8); color:white; padding:10px; border-radius:8px; z-index:10000;">초기화 실패: ${e.message}</div>`;
+    if (!e.message.includes('Auth')) {
+      document.body.innerHTML += `<div class="fatal-error" style="position:fixed; bottom:20px; left:20px; background:rgba(220,38,38,0.9); color:white; padding:12px 20px; border-radius:8px; z-index:10000; box-shadow: 0 4px 12px rgba(0,0,0,0.3); font-family: sans-serif;">시스템 초기화 실패: ${e.message}</div>`;
     }
   }
 }

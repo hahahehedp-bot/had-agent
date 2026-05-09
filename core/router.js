@@ -15,9 +15,13 @@ export function initRouter(loadedModules, config, context) {
   _config  = config || context.config;
   _ctx     = context;
 
-  // [v13.0.0] 중복 리스너 정리: hashchange만 사용 (popstate는 브라우저 네비게이션 시 hashchange를 유발함)
+  // [v15.3.0] 중복 리스너 정리 및 동적 기본 경로 설정
   window.addEventListener('hashchange', () => {
-    const id = window.location.hash.replace('#', '') || 'home';
+    const activeModules = _config.modules?.filter(m => m.enabled) || [];
+    const defaultId = activeModules.length > 0 ? activeModules[0].id : 'home';
+    
+    // [DEPRECATED] const id = window.location.hash.replace('#', '') || 'home';
+    const id = window.location.hash.replace('#', '') || defaultId;
     renderModule(id);
   });
 }
@@ -25,7 +29,8 @@ export function initRouter(loadedModules, config, context) {
 export async function navigateTo(moduleId) {
   if (!_modules[moduleId]) {
     console.warn(`[Router] 모듈 없음: ${moduleId}`);
-    moduleId = Object.keys(_modules)[0] || 'home';
+    const activeModules = _config.modules?.filter(m => m.enabled) || [];
+    moduleId = activeModules.length > 0 ? activeModules[0].id : Object.keys(_modules)[0];
   }
 
   // URL 해시 업데이트 -> hashchange 이벤트 유발
@@ -51,11 +56,10 @@ async function renderModule(moduleId) {
   
   _current = moduleId;
 
-  // 2. 전역 상태 업데이트 및 이벤트 발행 (v13.0.0 교체)
-  window.hadState.currentModule = moduleId;
-  window.hadState.contextData = null; 
+  // 2. 전역 상태 업데이트 및 이벤트 발행 (v15.3.0 캡슐화 적용 - window.Registry 명시)
+  window.Registry?.updateState({ currentModule: moduleId, contextData: null });
   
-  // 사이드바/탭바에게 변경 알림 (전역 함수 대체)
+  // 사이드바/탭바에게 변경 알림
   _ctx.events.emit('moduleChanged', moduleId);
 
   // 3. 메인 영역 렌더링
@@ -63,7 +67,7 @@ async function renderModule(moduleId) {
   main.innerHTML = '<div class="module-loading"><div class="loading-spinner"></div></div>';
 
   try {
-    const currentConfig = _config || Registry.getConfig();
+    const currentConfig = _config || window.Registry?.getConfig();
     const html = await _modules[moduleId].render(currentConfig, _ctx);
     
     main.innerHTML = html;
@@ -79,7 +83,7 @@ async function renderModule(moduleId) {
     main.innerHTML = `
       <div class="error-state">
         <div class="error-icon">⚠️</div>
-        <p>화면을 불러오는 중 문제가 발생했습니다.</p>
+        <p>화면을 불러오는 중 문제가 발생했습니다. (v${window.Registry?.getVersion()})</p>
         <button onclick="location.reload()">새로고침</button>
       </div>`;
   }

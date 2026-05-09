@@ -7,18 +7,27 @@ import staticConfig from '../../client/config.js';
 
 class RegistryService {
   constructor() {
-    this.VERSION = '14.6.0'; // [v14.6.0] Absolute Anchored Layout
+    this.VERSION = '15.3.0'; // [v15.3.0] Core Stabilization & Dynamic Versioning
     this.config = { ...staticConfig };
     this.dynamicConfig = {};
     this.listeners = [];
     
-    // 전역 상태 초기화 (중앙화)
+    // 전역 상태 초기화 (중앙화 및 캡슐화 준비)
     window.hadState = {
       version: this.VERSION,
       currentModule: null,
       isAdmin: false,
       contextData: null
     };
+  }
+
+  // ── [v15.3.0] 상태 관리 인터페이스 (Capsule) ──
+  getState(key) { return key ? window.hadState[key] : window.hadState; }
+  
+  updateState(delta) {
+    window.hadState = { ...window.hadState, ...delta };
+    // [DEPRECATED] 직접적인 window.hadState 수정 방식은 점진적으로 폐지함.
+    // ~~window.hadState.key = val;~~ -> Registry.updateState({ key: val });
   }
 
   /**
@@ -100,4 +109,7 @@ class RegistryService {
   }
 }
 
-export const Registry = new RegistryService();
+const Registry = new RegistryService();
+window.Registry = Registry; 
+
+export { Registry };
