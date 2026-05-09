@@ -35,19 +35,26 @@
 
 :root {
   /* 구조적 변수 (크기, 간격, 애니메이션 등 테마 무관) */
-  --radius: 16px;
-  --header-h: 60px;
-  --tabbar-h: 64px;
-  --sidebar-w: 260px;
-  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
-  /* 🎨 컴포넌트 토큰 (테마 변수 맵핑) */
+  --radius: 12px;
+  --header-h: 36px;
+  --status-h: 22px;
+  --tabbar-h: 0px; /* PC 기본값 */
+  --sidebar-w: 240px;
+  --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* 🎨 컴포넌트 토큰 */
   --card-bg: var(--surface);
   --border: var(--border-color);
-  --shadow: var(--shadow-md);
+  --shadow: var(--shadow-sm);
   --primary: var(--brand-color);
-  --dark: var(--text-primary);
-  --text-dim: var(--text-secondary);
+}
+
+@media (max-width: 1023px) {
+  :root {
+    --header-h: 56px;
+    --tabbar-h: 64px;
+    --status-h: 0px; 
+  }
 }
 
 *, *::before, *::after {
@@ -66,94 +73,173 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* ── 앱 레이아웃 ── */
-.app-layout {
-  display: block; /* 모바일에서는 기본 블록 흐름(순정 스크롤 지원) */
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-
-/* ── 헤더 ── */
+/* [v15.8.0] Antigravity 스타일 초슬림 헤더 */
 .app-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
   height: var(--header-h);
-  background: var(--surface-header);
-  backdrop-filter: var(--backdrop-blur);
-  -webkit-backdrop-filter: var(--backdrop-blur);
+  background: var(--surface);
   border-bottom: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 16px;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  flex-shrink: 0;
-}
-
-.btn-hamburger {
-  width: 40px;
-  height: 40px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 5px;
-  padding: 8px;
-  border-radius: 10px;
-  transition: background var(--transition);
-}
-.btn-hamburger:hover { background: var(--bg); }
-.btn-hamburger span {
-  display: block;
-  height: 2px;
-  background: var(--text-primary);
-  border-radius: 2px;
-  transition: all var(--transition);
+  padding: 0 12px;
+  z-index: 1000;
+  user-select: none;
 }
 
 .header-logo-wrap {
   display: flex;
   align-items: center;
   gap: 8px;
+  user-select: none;
 }
-.header-logo {
-  height: 36px;
-  width: auto;
-  object-fit: contain;
-  border-radius: 50%;
+.header-client-logo {
+  height: 22px;
+  width: 22px;
+  border-radius: 4px;
+  object-fit: cover;
+  border: 1px solid var(--border-color);
 }
-.header-logo-text {
-  height: 28px;
-  width: auto;
-  object-fit: contain;
-  mix-blend-mode: multiply;
+.header-client-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
 }
 
-.btn-profile {
+/* ── [v15.8.0] 헤더 우측 액션 그룹 (Mini) ── */
+.header-right-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.header-tool-btn {
   width: 36px;
   height: 36px;
   background: none;
-  border: 2px solid var(--border-color);
-  border-radius: 50%;
+  border: none;
   cursor: pointer;
-  transition: border-color var(--transition);
+  display: none; /* PC에서 노출 */
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  border-radius: 0; /* 풀-헤이트 버튼은 각진 형태가 IDE스러움 */
+  transition: background var(--transition);
+}
+.header-tool-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
+.header-tool-btn svg { width: 20px; height: 20px; }
+
+.btn-profile {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+.btn-profile:hover { background: var(--bg-hover); }
+.avatar-placeholder {
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
+  background: var(--bg);
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-  padding: 0;
+  border: 1px solid var(--border-color);
 }
-.btn-profile:hover { border-color: var(--brand-color); }
-.btn-profile img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+
+.profile-wrap {
+  position: relative;
 }
-.avatar-placeholder {
-  font-size: 20px;
-  color: var(--text-secondary);
+.profile-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 4px;
+  width: 240px;
+  background: #252526; /* VSCode 전용 다크 배경 */
+  border: 1px solid #454545;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  padding: 4px 0;
+  z-index: 2000;
+  display: none;
+  animation: dropdownFade 0.1s ease-out;
+  color: #cccccc;
+}
+.profile-dropdown.open {
+  display: block;
+}
+
+.dropdown-section.user-info {
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.user-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #ffffff;
+}
+.user-email {
+  font-size: 10px;
+  color: #989898;
+}
+
+.dropdown-item {
+  padding: 4px 12px;
+  font-size: 11px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  line-height: 1.8;
+}
+.dropdown-item:hover {
+  background: #094771; /* VSCode Selection Blue */
+  color: #ffffff;
+}
+.dropdown-item.logout {
+  color: #ef5350;
+}
+.dropdown-item.logout:hover {
+  background: #c62828;
+  color: #ffffff;
+}
+
+.item-key {
+  font-size: 10px;
+  opacity: 0.5;
+  font-family: monospace;
+}
+.item-sub {
+  font-size: 10px;
+  opacity: 0.5;
+  margin-left: auto;
+  margin-right: 8px;
+}
+.item-arrow {
+  font-size: 14px;
+  opacity: 0.5;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  margin: 4px 0;
+}
+
+@keyframes dropdownFade {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* ── 메인 콘텐츠 ── */
@@ -239,49 +325,25 @@ body.no-scroll {
 /* ── 사이드바 (좌) ── */
 .sidebar {
   position: fixed;
-  top: 0;
+  top: var(--header-h);
+  bottom: var(--status-h);
   left: 0;
   width: var(--sidebar-w);
-  height: 100%; /* [v13.2.8] 호환성을 위해 100%로 복귀 */
   background: var(--surface);
   border-right: 1px solid var(--border-color);
-  z-index: 1100;
+  z-index: 900;
   display: flex;
   flex-direction: column;
-  transform: translateX(-105%); 
-  visibility: hidden;
-  pointer-events: none;
-  transition: transform var(--transition), visibility 0.2s ease;
-  box-shadow: var(--shadow-md);
+  transform: translateX(-100%); 
+  transition: transform var(--transition);
 }
 .sidebar.open {
   transform: translateX(0);
-  visibility: visible;
-  pointer-events: auto;
-}
-
-.sidebar-header {
-  padding: 50px 20px 20px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  border-bottom: 1px solid var(--border-color);
-}
-.sidebar-logo {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-.sidebar-brand {
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--text-primary);
 }
 
 .sidebar-nav {
   flex: 1;
-  padding: 12px 0;
+  padding: 8px 0;
   overflow-y: auto;
 }
 .sidebar-nav-item {
@@ -303,97 +365,61 @@ body.no-scroll {
 }
 .sidebar-nav-item .nav-icon { font-size: 20px; }
 
-.sidebar-footer {
-  padding: 12px 0;
-  border-top: 1px solid var(--border-color);
-}
-.sidebar-footer-item {
-  padding: 12px 24px;
-  font-size: 14px;
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: background var(--transition);
-}
-.sidebar-footer-item:hover { background: var(--bg); }
 
-/* ── 에이전트 드로어 (우측 슬롯 -> PC 상시 노출) ── */
+
+/* ── 🤖 에이전트 서랍 (우) ── */
 .agent-drawer {
   position: fixed;
-  top: 0;
+  top: var(--header-h);
+  bottom: var(--status-h);
   right: 0;
-  width: 380px; 
-  max-width: 90vw;
-  height: 100%;
-  height: 100dvh;
+  width: 380px;
   background: var(--surface);
   border-left: 1px solid var(--border-color);
-  z-index: 1100; 
+  z-index: 900;
   display: flex;
   flex-direction: column;
-  transform: translateX(105%);
-  visibility: hidden;
-  pointer-events: none;
-  transition: transform var(--transition), visibility 0.2s ease;
-  box-shadow: var(--shadow-md);
+  transform: translateX(100%);
+  transition: transform var(--transition);
+}
+.agent-drawer.open {
+  transform: translateX(0);
 }
 
-/* ── [v15.7.0] 헤더 우측 액션 그룹 ── */
-.header-right-actions {
-  display: flex;
+/* [v15.8.0] 하단 상태 표시줄 */
+.app-status-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: var(--status-h);
+  background: var(--brand-color);
+  color: #ffffff;
+  display: none; /* PC에서 노출 */
   align-items: center;
-  gap: 8px;
+  justify-content: space-between;
+  padding: 0 10px;
+  font-size: 11px;
+  z-index: 1000;
+  opacity: 0.9;
 }
-.header-tool-btn {
-  width: 32px;
-  height: 32px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  display: none; /* 기본 숨김 (PC에서만 노출) */
-  align-items: center;
-  justify-content: center;
-  color: var(--text-secondary);
-  border-radius: 6px;
-  transition: background var(--transition), color var(--transition);
-}
-.header-tool-btn:hover {
-  background: var(--bg);
-  color: var(--text-primary);
-}
-.header-tool-btn svg {
-  width: 18px;
-  height: 18px;
+.app-status-bar .status-item {
+  margin-right: 12px;
+  opacity: 0.8;
 }
 
 @media (min-width: 1024px) {
   .header-tool-btn { display: flex; }
+  .app-status-bar { display: flex; }
   
-  /* [v15.7.0] PC 동적 레이아웃 제어 (Attribute 기반) */
-  body[data-pc="true"] .sidebar {
-    transform: translateX(-100%);
-    box-shadow: none;
-    z-index: 90;
-  }
-  body[data-pc="true"] .sidebar.open {
-    transform: translateX(0);
-    visibility: visible;
-    pointer-events: auto;
-  }
+  /* PC 동적 레이아웃 제어 (Pusher) */
+  body[data-pc="true"] .sidebar { transform: translateX(-100%); }
+  body[data-pc="true"] .sidebar.open { transform: translateX(0); }
 
-  body[data-pc="true"] .agent-drawer {
-    transform: translateX(100%);
-    box-shadow: none;
-    z-index: 80;
-    right: 0;
-    left: auto;
-  }
-  body[data-pc="true"] .agent-drawer.open {
-    transform: translateX(0);
-    visibility: visible;
-    pointer-events: auto;
-  }
+  body[data-pc="true"] .agent-drawer { transform: translateX(100%); }
+  body[data-pc="true"] .agent-drawer.open { transform: translateX(0); }
 
-  /* 뷰포트 동적 마진 (Pushing Logic) */
+  /* 뷰포트 동적 마진 (Pusher) */
   body[data-pc="true"] .app-viewport {
     transition: margin var(--transition);
     margin-left: 0;
@@ -405,50 +431,27 @@ body.no-scroll {
   body[data-pc="true"][data-drawer-open="true"] .app-viewport {
     margin-right: 380px;
   }
-
-  /* 헤더 위치 동기화 */
-  body[data-pc="true"] .app-header {
-    transition: left var(--transition), width var(--transition);
-    left: 0;
-    width: 100%;
-  }
-  body[data-pc="true"][data-sidebar-open="true"] .app-header {
-    left: var(--sidebar-w);
-    width: calc(100% - var(--sidebar-w));
-  }
-  body[data-pc="true"][data-drawer-open="true"] .app-header {
-    width: calc(100% - 380px);
-    right: 380px;
-  }
-  body[data-pc="true"][data-sidebar-open="true"][data-drawer-open="true"] .app-header {
-    width: calc(100% - var(--sidebar-w) - 380px);
-  }
 }
 
-.agent-drawer.open {
-  transform: translateX(0);
-  visibility: visible;
-  pointer-events: auto;
-}
+
 
 .agent-drawer-header {
-  padding: calc(8px + env(safe-area-inset-top)) 12px 8px 16px; 
+  padding: 10px 12px;
   display: flex;
   align-items: center;
   gap: 8px;
-  /* [v14.4.0] 상단 분리선 제거 */
-  border-bottom: none; 
+  border-bottom: 1px solid var(--border-color);
   background: var(--surface);
 }
 .agent-status-dot {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: #4caf50;
   flex-shrink: 0;
 }
 .agent-drawer-header h3 {
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--text-primary);
   flex: 1;

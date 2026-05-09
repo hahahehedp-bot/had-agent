@@ -106,7 +106,7 @@ async function init() {
     const loadedModules = {};
 
     // ── 모듈 로드 엔진 (병렬 처리) ──
-    await Promise.all(activeModules.map(async (modCfg) => {
+    await Promise.allSettled(activeModules.map(async (modCfg) => {
       try {
         if (modCfg.type === 'iframe') {
           loadedModules[modCfg.id] = { 
@@ -128,9 +128,20 @@ async function init() {
     }));
 
     const navModules = activeModules.filter(m => !m.hidden);
-    const { initSidebar } = await import(`./sidebar.js?v=${version}`);
     
-    initSidebar(navModules, loadedModules, config, ServiceContext);
+    // [v15.8.5] 사이드바 및 라우터 초기화 (안전 임포트)
+    try {
+      const SidebarModule = await import(`./sidebar.js?v=${version}`);
+      const SidebarInit = SidebarModule.initSidebar || SidebarModule.default;
+      if (SidebarInit) {
+        SidebarInit(navModules, loadedModules, config, ServiceContext);
+      } else {
+        console.error('[HAD] initSidebar를 찾을 수 없습니다.');
+      }
+    } catch (e) {
+      console.error('[HAD] 사이드바 모듈 임포트 실패:', e);
+    }
+
     initTabBar(navModules, loadedModules, config, ServiceContext);
     initRouter(loadedModules, config, ServiceContext);
 
@@ -138,17 +149,28 @@ async function init() {
     const hash = window.location.hash.replace('#', '') || defaultId;
     navigateTo(hash);
     
-    // 초기화 완료 후 로딩 제거
+    // 초기화 완료 후 로딩 제거 (강제 타이머 추가)
     setTimeout(removeLoading, 300);
 
   } catch (e) {
     console.error('[HAD] 앱 초기화 치명적 오류:', e);
     removeLoading();
     
+    // 치명적 오류 시에도 최소한의 사이드바/라우터는 작동 시도
+    if (!window.initSidebar) {
+       console.warn('[HAD] 비정상 상태에서 초기화 시도 중...');
+    }
+    
     if (!e.message.includes('Auth')) {
-      document.body.innerHTML += `<div class="fatal-error" style="position:fixed; bottom:20px; left:20px; background:rgba(220,38,38,0.9); color:white; padding:12px 20px; border-radius:8px; z-index:10000; box-shadow: 0 4px 12px rgba(0,0,0,0.3); font-family: sans-serif;">시스템 초기화 실패: ${e.message}</div>`;
+      const errorDiv = document.createElement('div');
+      errorDiv.style = "position:fixed; bottom:20px; left:20px; background:rgba(220,38,38,0.9); color:white; padding:12px 20px; border-radius:8px; z-index:10000; box-shadow: 0 4px 12px rgba(0,0,0,0.3); font-family: sans-serif;";
+      errorDiv.textContent = `시스템 초기화 실패: ${e.message}`;
+      document.body.appendChild(errorDiv);
     }
   }
+
+  // [Safety Net] 어떤 상황에서도 5초 후에는 로딩 제거
+  setTimeout(removeLoading, 5000);
 }
 
 init().catch(console.error);

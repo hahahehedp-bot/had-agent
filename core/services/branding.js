@@ -13,26 +13,21 @@ export function applyBranding(cfg) {
   // 2. 파비콘 및 앱 아이콘
   injectIcons(cfg);
 
-  // 3. 헤더 및 로고 주입
-  injectLogos(cfg);
-
-  // 4. 사이드바 헤더 주입
-  const sHeader = document.getElementById('sidebarHeader');
-  if (sHeader) {
-    sHeader.innerHTML = '';
+  // 3. 헤더 로고 및 고객사명 주입 (Global Title Bar)
+  const hWrap = document.getElementById('headerLogoWrap');
+  if (hWrap) {
+    hWrap.innerHTML = '';
     if (cfg.brand.logo) {
-      sHeader.innerHTML += `<img src="${cfg.brand.logo}" alt="로고" class="sidebar-logo">`;
+      hWrap.innerHTML += `<img src="${cfg.brand.logo}" alt="로고" class="header-client-logo">`;
     }
-    sHeader.innerHTML += `<span class="sidebar-brand">${cfg.brand.name}</span>`;
+    hWrap.innerHTML += `<span class="header-client-name">${cfg.brand.name}</span>`;
   }
 
-  // 5. [v13.0.0] 에이전트 정보 주입 (index.html 연동)
-  const drawerTitle = document.getElementById('drawerTitle');
-  if (drawerTitle) drawerTitle.textContent = cfg.agent?.name || '에이전트';
+  // 4. [v15.8.5] 사이드바 헤더는 순수 메뉴를 위해 비움
+  const sHeader = document.getElementById('sidebarHeader');
+  if (sHeader) sHeader.remove();
 
-  const drawerWelcome = document.getElementById('drawerWelcomeMsg');
-  if (drawerWelcome) drawerWelcome.textContent = cfg.agent?.welcomeMsg || '무엇을 도와드릴까요?';
-
+  // 5. 에이전트 및 로딩 정보 주입
   const loadingText = document.getElementById('loadingText');
   if (loadingText) loadingText.textContent = `${cfg.brand.name} 로딩 중...`;
 }
@@ -46,14 +41,5 @@ function injectIcons(cfg) {
       document.head.appendChild(linkIcon);
     }
     linkIcon.href = cfg.brand.icon192;
-  }
-}
-
-function injectLogos(cfg) {
-  const hWrap = document.getElementById('headerLogoWrap');
-  if (hWrap) {
-    hWrap.innerHTML = '';
-    if (cfg.brand.logo) hWrap.innerHTML += `<img src="${cfg.brand.logo}" alt="로고" class="header-logo">`;
-    if (cfg.brand.logoText) hWrap.innerHTML += `<img src="${cfg.brand.logoText}" alt="브랜드" class="header-logo-text">`;
   }
 }

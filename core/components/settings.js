@@ -13,9 +13,10 @@ export function initSettings(config) {
   const closeSettings = document.getElementById('closeSettings');
   const settingsBody = document.getElementById('settingsBody');
 
-  if (btnProfile && settingsPanel) {
-    btnProfile.addEventListener('click', () => settingsPanel.classList.add('open'));
-  }
+  // [v15.8.5] 프로필 버튼 클릭 시 사이드바를 여는 레거시 로직 제거 (드롭다운으로 대체됨)
+  // if (btnProfile && settingsPanel) {
+  //   btnProfile.addEventListener('click', () => settingsPanel.classList.add('open'));
+  // }
   if (closeSettings && settingsPanel) {
     closeSettings.addEventListener('click', () => settingsPanel.classList.remove('open'));
   }

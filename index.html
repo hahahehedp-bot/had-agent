@@ -39,12 +39,7 @@
   <div class="app-layout">
     <!-- 사이드바 -->
     <aside class="sidebar" id="sidebar">
-      <div class="sidebar-header" id="sidebarHeader"></div>
       <nav class="sidebar-nav" id="sidebarNav"></nav>
-      <div class="sidebar-footer">
-        <div class="sidebar-footer-item" id="sidebarSettings">⚙️ 설정</div>
-        <div class="sidebar-footer-item" id="sidebarInfo">ℹ️ 앱 정보</div>
-      </div>
     </aside>
 
     <!-- 메인 영역 -->
@@ -70,9 +65,43 @@
             </svg>
           </button>
 
-          <button class="btn-profile" id="btnProfile" aria-label="프로필 메뉴">
-            <div class="avatar-placeholder" id="headerAvatar">👤</div>
-          </button>
+          <div class="profile-wrap">
+            <button class="btn-profile" id="btnProfile" aria-label="프로필 메뉴">
+              <div class="avatar-placeholder" id="headerAvatar">👤</div>
+            </button>
+            <!-- [v15.8.5] 안티그래비티 스타일 고정밀 드롭다운 -->
+            <div class="profile-dropdown" id="profileDropdown">
+              <div class="dropdown-section user-info">
+                <span class="user-name" id="dropUserName">유여름 리더님</span>
+                <span class="user-email" id="dropUserEmail">admin@owner.com</span>
+              </div>
+              <div class="dropdown-divider"></div>
+              
+              <div class="dropdown-item" id="dropQuickSettings">
+                <span class="item-label">Quick Settings Panel</span>
+                <span class="item-key">⌘,</span>
+              </div>
+              
+              <div class="dropdown-divider"></div>
+              
+              <div class="dropdown-item has-submenu" id="dropTheme">
+                <span class="item-label">테마 전환</span>
+                <span class="item-sub">Dark/Light</span>
+                <span class="item-arrow">›</span>
+              </div>
+              <div class="dropdown-item" id="dropUpdate">업데이트 확인...</div>
+              
+              <div class="dropdown-divider"></div>
+              
+              <div class="dropdown-item" id="dropDocs">Docs</div>
+              <div class="dropdown-item" id="dropIssue">Report Issue</div>
+              <div class="dropdown-item" id="dropChangelog">Changelog</div>
+              
+              <div class="dropdown-divider"></div>
+              
+              <div class="dropdown-item logout" id="dropLogout">로그아웃</div>
+            </div>
+          </div>
         </div>
       </header>
 
@@ -83,6 +112,18 @@
           <p id="loadingText">HAD-Agent 로딩 중...</p>
         </div>
       </main>
+
+      <!-- [v15.8.0] 하단 상태 표시줄 (Global Status Bar) -->
+      <footer class="app-status-bar" id="appStatusBar">
+        <div class="status-left">
+          <span class="status-item">Ready</span>
+          <span class="status-item branch-info">main*</span>
+        </div>
+        <div class="status-right">
+          <span class="status-item">UTF-8</span>
+          <span class="status-item" id="statusVersion">v15.8.0</span>
+        </div>
+      </footer>
 
       <nav class="tab-bar" id="tabBar"></nav>
     </div>

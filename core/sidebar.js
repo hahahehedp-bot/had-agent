@@ -80,7 +80,7 @@ export function initSidebar(activeModules, loadedModules, config, ctx) {
 
     updatePanelAttrs();
 
-    // 글로벌 오버레이 및 바디 스크롤 잠금 처리
+  // 글로벌 오버레이 및 바디 스크롤 잠금 처리
     const anyOpen = sidebar.classList.contains('open') || agentDrawer.classList.contains('open');
     if (anyOpen && isDrawerMode()) {
       globalOverlay.classList.add('active');
@@ -117,24 +117,52 @@ export function initSidebar(activeModules, loadedModules, config, ctx) {
     });
   }
 
-  // ── 마스터 운영실 (보안 강화) ──────────────────
-  function updateAdminMenu() {
-    const footer = document.querySelector('.sidebar-footer');
-    const isAdmin = window.Registry?.getState('isAdmin');
-    
-    if (isAdmin && footer && !document.getElementById('sidebarAdmin')) {
-      const adminItem = document.createElement('div');
-      adminItem.className = 'sidebar-nav-item master-admin'; 
-      adminItem.id = 'sidebarAdmin';
-      adminItem.innerHTML = '<span class="nav-icon">🛡️</span> <span class="nav-label">마스터 운영실</span>';
-      footer.prepend(adminItem);
-      adminItem.addEventListener('click', () => {
-        if (isDrawerMode()) toggleDrawer('left', false);
-        ServiceContext.notify('마스터 운영실을 준비 중입니다.');
-      });
+  // ── 프로필 드롭다운 제어 (Profile Dropdown) ──────────
+  const btnProfile      = document.getElementById('btnProfile');
+  const profileDropdown = document.getElementById('profileDropdown');
+
+  // [v15.8.5] 사용자 정보 동적 반영
+  const updateProfileUI = () => {
+    const user = window.Registry?.getState('user');
+    const nameEl = document.getElementById('dropUserName');
+    const emailEl = document.getElementById('dropUserEmail');
+    if (user && nameEl) nameEl.textContent = `${user.name} ${user.role || '리더님'}`;
+    if (user && emailEl) emailEl.textContent = user.email || 'guest@owner.com';
+  };
+
+  btnProfile?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    updateProfileUI();
+    profileDropdown?.classList.toggle('open');
+  });
+
+  document.addEventListener('click', () => {
+    profileDropdown?.classList.remove('open');
+  });
+
+  // ── 안티그래비티 스타일 드롭다운 액션 바인딩 ───────────────────────
+  document.getElementById('dropQuickSettings')?.addEventListener('click', () => {
+    ServiceContext.notify('퀵 설정 패널을 준비 중입니다. (Antigravity Style)');
+  });
+
+  document.getElementById('dropTheme')?.addEventListener('click', () => {
+    const current = document.body.getAttribute('data-theme');
+    const next = current === 'glass-dark' ? 'modern-light' : 'glass-dark';
+    document.body.setAttribute('data-theme', next);
+    localStorage.setItem('had_theme', next);
+    ServiceContext.notify(`테마가 ${next}로 변경되었습니다.`);
+  });
+
+  document.getElementById('dropUpdate')?.addEventListener('click', () => {
+    ServiceContext.notify('최신 버전(v15.8.5)입니다.');
+  });
+
+  document.getElementById('dropLogout')?.addEventListener('click', () => {
+    if (confirm('로그아웃 하시겠습니까?')) {
+      localStorage.removeItem('had_agent_token');
+      window.location.reload();
     }
-  }
-  updateAdminMenu();
+  });
 
   // ── 버튼 이벤트 (안전 바인딩) ──────────────────
   btnHamburger?.addEventListener('click', (e) => {
@@ -161,26 +189,6 @@ export function initSidebar(activeModules, loadedModules, config, ctx) {
     toggleDrawer('left', false);
     toggleDrawer('right', false);
   });
-
-  // [v15.3.0] 설정 및 정보 버튼 바인딩 정합성 강화
-  const settingsBtn = document.getElementById('sidebarSettings');
-  if (settingsBtn) {
-    settingsBtn.addEventListener('click', () => {
-      if (isDrawerMode()) toggleDrawer('left', false);
-      const panel = document.getElementById('settingsPanel');
-      if (panel) panel.classList.add('open');
-      else console.warn('[HAD] Settings Panel 요소를 찾을 수 없습니다.');
-    });
-  }
-  
-  const infoBtn = document.getElementById('sidebarInfo');
-  if (infoBtn) {
-    infoBtn.addEventListener('click', () => {
-      if (isDrawerMode()) toggleDrawer('left', false);
-      const version = window.Registry?.getVersion();
-      alert(`${config.brand.name} v${version}\nPowered by AI Thinking Lab`);
-    });
-  }
 
   // ── 라우터 변경 감지 ────────────────────────────
   ServiceContext.events.on('moduleChanged', (moduleId) => {
