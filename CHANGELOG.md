@@ -2,6 +2,12 @@
 
 이 문서는 HAD-Agent 프로젝트의 버전별 작업 내역과 주요 변경 사항을 기록합니다.
 
+## [v15.9.4] - 2026-05-09
+### Optimized
+- **Intelligent Gesture Priority**: 패널이 열려 있을 때 닫기 제스처(`deltaX` 반대 방향)를 최우선으로 처리하도록 로직 전면 개편.
+- **Cross-Triggering Prevention**: 닫기 동작 시 반대편 패널이 예기치 않게 열리는 현상을 논리적으로 차단하여 제스처 주권 확립.
+- **Swipe Tolerance**: 세로 스크롤 간섭 방지를 위해 Y축 오차 허용 범위를 80px로 조정.
+
 ## [v15.9.3] - 2026-05-09
 ### Fixed
 - **Symmetry Alignment**: `responsive.css`에서 사이드바의 `position: relative !important` 설정을 제거하여 우측 드로어와 동일한 `fixed` 좌표 체계로 통일.

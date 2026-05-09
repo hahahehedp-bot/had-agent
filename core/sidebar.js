@@ -243,9 +243,28 @@ export function initSidebar(activeModules, loadedModules, config, ctx) {
   window.addEventListener('touchend', (e) => {
     const deltaX = e.changedTouches[0].clientX - touchStartX;
     const deltaY = Math.abs(e.changedTouches[0].clientY - touchStartY);
-    if (!isDrawerMode() || deltaY > 60) return; 
+    if (!isDrawerMode() || deltaY > 80 || Math.abs(deltaX) < 60) return; 
     
-    if (touchStartX < 80 && deltaX > 60) toggleDrawer('left', true);
-    if (touchStartX > window.innerWidth - 100 && deltaX < -60) toggleDrawer('right', true);
+    const isSidebarOpen = sidebar.classList.contains('open');
+    const isDrawerOpen = agentDrawer.classList.contains('open');
+
+    // [v15.9.4] 1. 닫기 제스처 (패널이 열려있을 때 최우선)
+    if (isSidebarOpen) {
+      if (deltaX < -60) toggleDrawer('left', false);
+      return; // 닫기 동작 시 열기 로직 차단
+    }
+    if (isDrawerOpen) {
+      if (deltaX > 60) toggleDrawer('right', false);
+      return; // 닫기 동작 시 열기 로직 차단
+    }
+
+    // [v15.9.4] 2. 열기 제스처 (패널이 모두 닫혀있을 때만)
+    if (!isSidebarOpen && !isDrawerOpen) {
+      if (touchStartX < 80 && deltaX > 60) {
+        toggleDrawer('left', true);
+      } else if (touchStartX > window.innerWidth - 100 && deltaX < -60) {
+        toggleDrawer('right', true);
+      }
+    }
   }, { passive: true });
 }
