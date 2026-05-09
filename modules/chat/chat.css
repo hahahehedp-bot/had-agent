@@ -147,3 +147,18 @@
   height: env(safe-area-inset-bottom);
   width: 100%;
 }
+
+/* ── [v15.2.8] Thinking Indicator (반응 확인용 애니메이션) ── */
+.chat-thinking {
+  display: inline-block;
+  color: var(--text-secondary);
+  font-weight: 600;
+  letter-spacing: 2px;
+  animation: chat-thinking-fade 1.4s infinite linear;
+}
+
+@keyframes chat-thinking-fade {
+  0% { opacity: 0.2; transform: translateY(0); }
+  50% { opacity: 0.8; transform: translateY(-2px); }
+  100% { opacity: 0.2; transform: translateY(0); }
+}
