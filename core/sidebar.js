@@ -1,6 +1,6 @@
 // =============================================
 // HAD-Agent — sidebar.js (Core)
-// [v16.0.0 Alpha] Obsidian-Style Sliding Reboot
+// [v16.0.0-alpha.3] High-Density Panoramic Engine (2026 Standard)
 // =============================================
 
 import { Registry } from './services/registry.js';
@@ -9,206 +9,165 @@ export function initSidebar(activeModules, loadedModules, config, ctx) {
   const ServiceContext = ctx;
   const sidebar      = document.getElementById('sidebar');
   const agentDrawer  = document.getElementById('agentDrawer');
-  const globalOverlay = document.getElementById('globalOverlay');
-  
+  const layout       = document.querySelector('.app-layout');
+  const nav          = document.getElementById('sidebarNav');
   const btnHamburger = document.getElementById('btnHamburger');
   const btnToggleLeft  = document.getElementById('btnToggleLeft');
   const btnToggleRight = document.getElementById('btnToggleRight');
-  const nav            = document.getElementById('sidebarNav');
+  const profileDropdown = document.getElementById('profileDropdown');
+  const btnProfile = document.getElementById('btnProfile');
+  const statusVersion = document.getElementById('statusVersion');
 
-  if (!sidebar || !agentDrawer) {
-    console.error('[HAD] 필수 레이아웃 요소를 찾을 수 없습니다.');
-    return;
-  }
+  if (!sidebar || !agentDrawer || !layout) return;
+
+  // ── 🛠️ 환경 및 상태 관리 ──
+  const isMobile = () => Registry.getEnv() === 'mobile';
+  const PANEL_OFFSETS = [0, -92, -184]; // [v16.0.0-alpha.3] 92vw Peek Coordinate
+  let currentPanelIndex = 1; // Default: Viewport (Center)
 
   const updatePanelAttrs = () => {
-    const isMobile = isDrawerMode();
-    document.body.setAttribute('data-sidebar-open', sidebar.classList.contains('open'));
-    document.body.setAttribute('data-drawer-open', agentDrawer.classList.contains('open'));
-    document.body.setAttribute('data-pc', !isMobile);
+    document.body.setAttribute('data-sidebar-open', currentPanelIndex === 0);
+    document.body.setAttribute('data-drawer-open', currentPanelIndex === 2);
     document.body.setAttribute('data-panel-index', currentPanelIndex);
   };
 
-  const isDrawerMode = () => {
-    const isDesktop = /Windows|Macintosh|Linux/.test(navigator.userAgent) && !/Android|iPhone|iPad/.test(navigator.userAgent);
-    return !isDesktop;
-  };
-
-  let isMoving = false; 
-  let currentPanelIndex = 1;
-
   function setPanel(index, force = false) {
-    if (isMoving && !force) return;
     if (index < 0 || index > 2) return;
-
     currentPanelIndex = index;
-    const layout = document.querySelector('.app-layout');
-    
-    if (isDrawerMode()) {
-      const offset = -100 * index;
-      layout.style.transform = "translateX(" + offset + "vw)";
-      sidebar.classList.toggle('open', index === 0);
-      agentDrawer.classList.toggle('open', index === 2);
-      
-      if (index !== 1) {
-        globalOverlay.classList.add('active');
-        document.body.classList.add('no-scroll');
-      } else {
-        globalOverlay.classList.remove('active');
-        document.body.classList.remove('no-scroll');
-      }
-    } else {
-      layout.style.transform = 'none';
-    }
+    const offset = PANEL_OFFSETS[index];
 
-    updatePanelAttrs();
-    
-    if (index === 2) {
-      const slotMap = config.ui?.drawerSlots || {};
-      ServiceContext.events.emit('drawerOpening', { slot: 'agent', moduleId: slotMap['agent'] });
-    } else if (index === 1) {
-       ServiceContext.events.emit('drawerClosed', { slot: 'agent' });
-    }
+    requestAnimationFrame(() => {
+      layout.style.transform = `translateX(${offset}vw)`;
+      // [v16.0.0] Zero-Blur Policy: No global-overlay activation
+      document.body.classList.remove('no-scroll');
+      updatePanelAttrs();
+
+      // 모듈 렌더링 이벤트 트리거
+      if (index === 2) renderSlotContent('agent');
+      ServiceContext.events.emit(index === 1 ? 'drawerClosed' : 'drawerOpening', { slot: 'agent' });
+    });
   }
 
   function toggleDrawer(side, force = null) {
-    if (!isDrawerMode()) {
-      const target = (side === 'left') ? sidebar : agentDrawer;
-      const shouldOpen = (force !== null) ? force : !target.classList.contains('open');
-      target.classList.toggle('open', shouldOpen);
-      updatePanelAttrs();
-      return;
-    }
-    if (side === 'left') {
-      const targetIdx = (currentPanelIndex === 0) ? 1 : 0;
-      setPanel(force === true ? 0 : (force === false ? 1 : targetIdx));
+    if (!isMobile()) {
+      // PC 모드: 기존 사이드바 토글 (Attribute 방식)
+      const attr = (side === 'left') ? 'data-sidebar-open' : 'data-drawer-open';
+      const current = document.body.getAttribute(attr) === 'true';
+      const target = (force !== null) ? force : !current;
+      document.body.setAttribute(attr, target);
     } else {
-      const targetIdx = (currentPanelIndex === 2) ? 1 : 2;
-      setPanel(force === true ? 2 : (force === false ? 1 : targetIdx));
+      // 모바일 모드: 파노라마 슬라이딩
+      if (side === 'left') {
+        setPanel(currentPanelIndex === 0 ? 1 : 0);
+      } else {
+        setPanel(currentPanelIndex === 2 ? 1 : 2);
+      }
     }
   }
 
-  if (!isDrawerMode()) {
-    sidebar.classList.add('open');
-    agentDrawer.classList.add('open');
-    sidebar.style.visibility = 'visible';
-    agentDrawer.style.visibility = 'visible';
-    setTimeout(() => renderSlotContent('agent'), 100);
-  } else {
-    setPanel(1, true);
-  }
-  updatePanelAttrs();
-  
-  const statusVersion = document.getElementById('statusVersion');
+  // ── 📱 실시간 슬라이딩 엔진 (Live Panoramic Tracking) ──
+  let touchStartX = 0;
+  let startTranslateX = 0;
+  let isDragging = false;
+
+  window.addEventListener('touchstart', (e) => {
+    if (!isMobile()) return;
+    touchStartX = e.touches[0].clientX;
+    const matrix = window.getComputedStyle(layout).transform;
+    if (matrix !== 'none') {
+      startTranslateX = parseFloat(matrix.split(',')[4]);
+    } else {
+      startTranslateX = PANEL_OFFSETS[currentPanelIndex] * (window.innerWidth / 100);
+    }
+    isDragging = false;
+  }, { passive: true });
+
+  window.addEventListener('touchmove', (e) => {
+    if (!isMobile()) return;
+    const deltaX = e.touches[0].clientX - touchStartX;
+    if (!isDragging && Math.abs(deltaX) > 10) {
+      isDragging = true;
+      layout.style.transition = 'none';
+    }
+
+    if (isDragging) {
+      let newTranslate = startTranslateX + deltaX;
+      const vw = window.innerWidth;
+      const minTranslate = PANEL_OFFSETS[2] * (vw / 100);
+      const maxTranslate = 0;
+
+      // Elastic Boundary (Rubber Banding)
+      if (newTranslate > maxTranslate) newTranslate /= 3;
+      if (newTranslate < minTranslate) newTranslate = minTranslate + (newTranslate - minTranslate) / 3;
+
+      layout.style.transform = `translateX(${newTranslate}px)`;
+    }
+  }, { passive: true });
+
+  window.addEventListener('touchend', (e) => {
+    if (!isMobile() || !isDragging) return;
+    isDragging = false;
+    layout.style.transition = ''; // Restore CSS transition
+
+    const deltaX = e.changedTouches[0].clientX - touchStartX;
+    const threshold = window.innerWidth / 5; // 20% Threshold
+
+    if (Math.abs(deltaX) > threshold) {
+      if (deltaX > 0 && currentPanelIndex > 0) currentPanelIndex--;
+      else if (deltaX < 0 && currentPanelIndex < 2) currentPanelIndex++;
+    }
+    setPanel(currentPanelIndex);
+  }, { passive: true });
+
+  // ── 🎨 초기화 및 이벤트 바인딩 ──
   if (statusVersion) statusVersion.textContent = "v" + Registry.getVersion();
+  if (isMobile()) setPanel(1, true);
+  else {
+    document.body.setAttribute('data-sidebar-open', 'true');
+    document.body.setAttribute('data-drawer-open', 'true');
+    renderSlotContent('agent');
+  }
 
-  ServiceContext.events.on('drawerOpening', ({ slot }) => {
-    renderSlotContent(slot);
-  });
-
+  // 내비게이션 렌더링
   if (nav) {
-    nav.innerHTML = activeModules.map(mod => "<div class='sidebar-nav-item' data-module='" + mod.id + "'><span class='nav-icon'>" + mod.icon + "</span><span class='nav-label'>" + mod.label + "</span></div>").join('');
+    nav.innerHTML = activeModules.map(mod => `
+      <div class='sidebar-nav-item' data-module='${mod.id}'>
+        <span class='nav-icon'>${mod.icon}</span>
+        <span class='nav-label'>${mod.label}</span>
+      </div>
+    `).join('');
     nav.addEventListener('click', (e) => {
       const item = e.target.closest('.sidebar-nav-item');
       if (!item) return;
-      if (isDrawerMode()) setPanel(1);
+      if (isMobile()) setPanel(1);
       ServiceContext.navigate(item.dataset.module);
     });
   }
 
-  const btnProfile = document.getElementById('btnProfile');
-  const profileDropdown = document.getElementById('profileDropdown');
-
-  btnProfile?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    profileDropdown?.classList.toggle('open');
-  });
-
-  document.addEventListener('click', () => {
-    profileDropdown?.classList.remove('open');
-  });
-
-  btnHamburger?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    toggleDrawer('left');
-  });
-
+  // 각종 버튼 이벤트
+  btnHamburger?.addEventListener('click', (e) => { e.stopPropagation(); toggleDrawer('left'); });
   btnToggleLeft?.addEventListener('click', () => toggleDrawer('left'));
   btnToggleRight?.addEventListener('click', () => toggleDrawer('right'));
-  
-  globalOverlay?.addEventListener('click', () => {
-    setPanel(1);
-  });
+  btnProfile?.addEventListener('click', (e) => { e.stopPropagation(); profileDropdown?.classList.toggle('open'); });
+  document.addEventListener('click', () => profileDropdown?.classList.remove('open'));
+
+  async function renderSlotContent(slot) {
+    const drawerBody = document.getElementById('agentDrawerBody');
+    if (!drawerBody) return;
+    const slotMap = config.ui?.drawerSlots || {};
+    const moduleId = slotMap[slot];
+    const mod = loadedModules[moduleId];
+    if (mod) {
+      drawerBody.innerHTML = '<div class="loading-spinner"></div>';
+      const html = await mod.render(config, ServiceContext);
+      drawerBody.innerHTML = html;
+      if (mod.afterRender) await mod.afterRender(config, ServiceContext);
+    }
+  }
 
   ServiceContext.events.on('moduleChanged', (moduleId) => {
     nav?.querySelectorAll('.sidebar-nav-item').forEach(el => {
       el.classList.toggle('active', el.dataset.module === moduleId);
     });
   });
-
-  async function renderSlotContent(slot) {
-    const drawerBody = document.getElementById('agentDrawerBody');
-    if (!drawerBody) return;
-    drawerBody.innerHTML = '<div class="loading-spinner-wrap"><div class="loading-spinner"></div></div>';
-    const slotMap = config.ui?.drawerSlots || {};
-    const moduleId = slotMap[slot];
-    const mod = loadedModules[moduleId];
-    if (mod) {
-      try {
-        const html = await mod.render(config, ServiceContext);
-        drawerBody.innerHTML = html;
-        if (mod.afterRender) await mod.afterRender(config, ServiceContext);
-      } catch (e) {
-        drawerBody.innerHTML = '<div class="error-msg">모듈 에러</div>';
-      }
-    }
-  }
-
-  // ── 📱 실시간 슬라이딩 엔진 (Live Sliding) ──
-  let touchStartX = 0;
-  let touchStartY = 0;
-  let startXOffset = 0; 
-  let isDragging = false;
-  const layout = document.querySelector('.app-layout');
-
-  window.addEventListener('touchstart', (e) => {
-    if (!isDrawerMode()) return;
-    touchStartX = e.touches[0].clientX;
-    touchStartY = e.touches[0].clientY;
-    const matrix = window.getComputedStyle(layout).transform;
-    if (matrix !== 'none') startXOffset = parseFloat(matrix.split(',')[4]);
-    else startXOffset = -100 * currentPanelIndex * (window.innerWidth / 100);
-    isDragging = false;
-  }, { passive: true });
-
-  window.addEventListener('touchmove', (e) => {
-    if (!isDrawerMode()) return;
-    const deltaX = e.touches[0].clientX - touchStartX;
-    const deltaY = Math.abs(e.touches[0].clientY - touchStartY);
-    if (!isDragging && deltaY < Math.abs(deltaX) && Math.abs(deltaX) > 10) {
-      isDragging = true;
-      layout.style.transition = 'none';
-    }
-    if (isDragging) {
-      let newTranslate = startXOffset + deltaX;
-      const vw = window.innerWidth;
-      if (newTranslate > 0) newTranslate /= 3; 
-      if (newTranslate < -2 * vw) newTranslate = -2 * vw + (newTranslate + 2 * vw) / 3;
-      layout.style.transform = `translateX(${newTranslate}px)`;
-    }
-  }, { passive: false });
-
-  window.addEventListener('touchend', (e) => {
-    if (!isDrawerMode() || !isDragging) return;
-    isDragging = false;
-    layout.style.transition = ''; 
-    const deltaX = e.changedTouches[0].clientX - touchStartX;
-    const threshold = window.innerWidth / 4; 
-    let targetIndex = currentPanelIndex;
-    if (Math.abs(deltaX) > threshold) {
-      if (deltaX > 0 && currentPanelIndex > 0) targetIndex--;
-      else if (deltaX < 0 && currentPanelIndex < 2) targetIndex++;
-    }
-    setPanel(targetIndex, true);
-  }, { passive: true });
 }

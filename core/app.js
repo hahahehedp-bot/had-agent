@@ -124,6 +124,9 @@ async function init() {
       }
     }));
 
+    // [v16.0.0] OS 기반 환경 식별자 주입
+    document.body.setAttribute('data-env', Registry.getEnv());
+
     const navModules = activeModules.filter(m => !m.hidden);
     
     // [v15.8.5] 사이드바 및 라우터 초기화 (안전 임포트)

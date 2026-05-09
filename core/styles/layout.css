@@ -345,121 +345,87 @@ body.no-scroll {
   touch-action: none;
 }
 
-/* ── 📱 앱 레이아웃 (Sliding Container) ── */
-.app-layout {
+/* ── 📱 [v16.0.0] OS 기반 환경 레이아웃 (Identity-First) ── */
+
+/* [Mobile] 92vw 고밀도 파노라마 슬라이딩 엔진 */
+body[data-env="mobile"] .app-layout {
+  width: 284vw; /* 92 + 100 + 92 */
+  display: flex;
+  transform: translateX(-92vw); /* 기본값: 중앙(Viewport) 포커스 */
+  transition: transform 0.4s cubic-bezier(0.2, 0, 0, 1);
+  will-change: transform;
+}
+
+body[data-env="mobile"] .sidebar {
+  width: 92vw;
+  min-width: 92vw;
+  height: 100vh;
+  position: relative;
+  z-index: 10;
+  box-shadow: 10px 0 20px rgba(0,0,0,0.1);
+  background: var(--sidebar-bg);
+  border-right: none;
+}
+
+body[data-env="mobile"] .app-viewport {
+  width: 100vw;
+  min-width: 100vw;
+  height: 100vh;
+  position: relative;
+  z-index: 5;
+}
+
+body[data-env="mobile"] .agent-drawer {
+  width: 92vw;
+  min-width: 92vw;
+  height: 100vh;
+  position: relative;
+  z-index: 10;
+  box-shadow: -10px 0 20px rgba(0,0,0,0.1);
+  background: var(--card-bg);
+  display: block !important;
+  border-left: none;
+}
+
+/* [PC] 기존 안정화된 워크벤치 레이아웃 */
+body[data-env="pc"] .app-layout {
   display: flex;
   width: 100%;
   height: 100vh;
-  height: 100dvh;
   overflow: hidden;
-  will-change: transform; /* 성능 최적화 */
-  transition: transform var(--transition);
 }
 
-@media (max-width: 1023px) {
-  .app-layout {
-    width: 300vw; /* [v16.0.0] 3-Panel Panoramic */
-    transform: translateX(-100vw); /* 기본값: 중앙(Viewport) 포커스 */
-  }
-}
-
-/* ── 사이드바 (좌 / 0번 패널) ── */
-.sidebar {
-  width: var(--sidebar-w);
-  height: 100%;
+body[data-env="pc"] .sidebar {
+  width: 280px;
+  min-width: 280px;
   background: var(--surface);
-  border-right: 1px solid var(--border-color);
-  z-index: 100;
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-  transition: transform var(--transition), margin var(--transition), width var(--transition);
-  box-shadow: 4px 0 15px rgba(0, 0, 0, 0.05); /* 우측 그림자 추가 */
+  border-right: 1px solid var(--border);
+  transition: margin 0.3s var(--transition);
 }
 
-@media (max-width: 1023px) {
-  .sidebar {
-    width: 100vw;
-    position: relative; /* Sliding flow */
-    transform: none !important;
-    border-right: none; /* 모바일 전폭 시 경계선 제거 */
-  }
-}
-
-.sidebar-nav {
-  flex: 1;
-  padding: 0; 
-  overflow-y: auto;
-}
-
-.sidebar-nav {
-  flex: 1;
-  padding: 0; /* [v15.9.2] 8px 패딩 제거 -> 천장 밀착 */
-  overflow-y: auto;
-}
-.sidebar-nav-item {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 14px 24px;
-  cursor: pointer;
-  font-size: 15px;
-  color: var(--text-primary);
-  transition: background var(--transition), color var(--transition);
-  border-radius: 0;
-}
-.sidebar-nav-item:hover { background: var(--bg); }
-.sidebar-nav-item.active {
-  background: var(--brand-color-dim);
-  color: var(--brand-color);
-  font-weight: 600;
-}
-.sidebar-nav-item .nav-icon { font-size: 20px; }
-
-
-
-/* ── 뷰포트 (중앙 / 1번 패널) ── */
-.app-viewport {
+body[data-env="pc"] .app-viewport {
   flex: 1;
   min-width: 0;
-  display: flex;
-  flex-direction: column;
   background: var(--bg);
-  position: relative;
-  z-index: 50;
-  flex-shrink: 0;
 }
 
-@media (max-width: 1023px) {
-  .app-viewport {
-    width: 100vw;
-  }
-}
-
-/* ── 🤖 에이전트 서랍 (우 / 2번 패널) ── */
-.agent-drawer {
+body[data-env="pc"] .agent-drawer {
   width: 380px;
-  height: 100%;
+  min-width: 380px;
   background: var(--surface);
-  border-left: 1px solid var(--border-color);
-  z-index: 100; 
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-  transition: transform var(--transition), margin var(--transition), width var(--transition);
-  overflow: hidden; 
-  box-shadow: -4px 0 15px rgba(0, 0, 0, 0.05); /* 좌측 그림자 추가 */
+  border-left: 1px solid var(--border);
+  transition: margin 0.3s var(--transition);
 }
 
-@media (max-width: 1023px) {
-  .agent-drawer {
-    width: 100vw;
-    position: relative;
-    transform: none !important;
-    border-left: none; /* 모바일 전폭 시 경계선 제거 */
-  }
+/* PC 사이드바/드로어 토글 제어 */
+body[data-env="pc"][data-sidebar-open="false"] .sidebar {
+  margin-left: -280px;
+}
+body[data-env="pc"][data-drawer-open="false"] .agent-drawer {
+  margin-right: -380px;
 }
 
+/* ── 에이전트 드로어 공통 구조 ── */
 .agent-drawer-content {
   flex: 1;
   position: relative;
@@ -471,14 +437,14 @@ body.no-scroll {
 
 /* [v15.8.0] 하단 상태 표시줄 */
 .app-status-bar {
-  position: absolute; /* [v16.0.0] 뷰포트 내부 하단 고정 */
+  position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
   height: var(--status-h);
   background: var(--brand-color);
   color: #ffffff;
-  display: none; /* PC에서 노출 */
+  display: none;
   align-items: center;
   justify-content: space-between;
   padding: 0 10px;
@@ -486,31 +452,9 @@ body.no-scroll {
   z-index: 1000;
   opacity: 0.9;
 }
-.app-status-bar .status-item {
-  margin-right: 12px;
-  opacity: 0.8;
-}
 
-@media (min-width: 1024px) {
-  .header-tool-btn { display: flex; }
-  .app-status-bar { display: flex; }
-  
-  /* PC 워크벤치 레이아웃 */
-  .sidebar { transform: translateX(0) !important; }
-  .agent-drawer { transform: translateX(0) !important; }
-
-  /* 뷰포트 영역 (헤더 제외) */
-  .app-viewport {
-    flex: 1;
-  }
-  
-  /* [v16.0.0] 사이드바/드로어 토글에 따른 뷰포트 제어 (Pusher 유지) */
-  body[data-sidebar-open="false"] .sidebar {
-    margin-left: calc(-1 * var(--sidebar-w));
-  }
-  body[data-drawer-open="false"] .agent-drawer {
-    margin-right: -380px;
-  }
+body[data-env="pc"] .app-status-bar {
+  display: flex;
 }
 
 
