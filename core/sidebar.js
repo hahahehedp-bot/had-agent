@@ -12,8 +12,9 @@ export function initSidebar(activeModules, loadedModules, config, ctx) {
   const globalOverlay = document.getElementById('globalOverlay');
   
   const btnHamburger = document.getElementById('btnHamburger');
-  const btnCloseAgent = document.getElementById('btnCloseAgent');
-  const nav          = document.getElementById('sidebarNav');
+  const btnToggleLeft  = document.getElementById('btnToggleLeft');
+  const btnToggleRight = document.getElementById('btnToggleRight');
+  const nav            = document.getElementById('sidebarNav');
 
   if (!sidebar || !agentDrawer) {
     console.error('[HAD] 필수 레이아웃 요소를 찾을 수 없습니다.');
@@ -21,11 +22,23 @@ export function initSidebar(activeModules, loadedModules, config, ctx) {
   }
 
   /**
-   * ── 환경 판정 (Environment Detection) ─────────────────────
+   * ── 패널 상태 동기화 (Attribute Sync) ─────────────────────
+   */
+  const updatePanelAttrs = () => {
+    document.body.setAttribute('data-sidebar-open', sidebar.classList.contains('open'));
+    document.body.setAttribute('data-drawer-open', agentDrawer.classList.contains('open'));
+    document.body.setAttribute('data-pc', !isDrawerMode());
+  };
+
+  /**
+   * ── 지능형 환경 판정 (Identity-based Detection) ──────────
+   * [v15.7.5] OS 기반 단일 판정 체계
+   * 해상도나 종횡비가 아닌, 기기의 '본질(OS)'을 기준으로 기능을 개방합니다.
+   * 사용자가 세로 피씨 모니터를 쓰더라도 전문가용 기능을 온전히 누리게 함이 목적입니다.
    */
   const isDrawerMode = () => {
-    // 윈도우 너비가 768px 미만이면 모바일 서랍 모드로 간주 (스타일 계산보다 안전)
-    return window.innerWidth < 768;
+    const isDesktop = /Windows|Macintosh|Linux/.test(navigator.userAgent) && !/Android|iPhone|iPad/.test(navigator.userAgent);
+    return !isDesktop;
   };
 
   /**
@@ -39,7 +52,7 @@ export function initSidebar(activeModules, loadedModules, config, ctx) {
     const shouldOpen = (force !== null) ? force : !isCurrentlyOpen;
 
     if (shouldOpen) {
-      // [독점 모드]
+      // [모바일 독점 모드]
       if (isDrawerMode()) {
         other.classList.remove('open');
         other.style.visibility = 'hidden';
@@ -49,18 +62,23 @@ export function initSidebar(activeModules, loadedModules, config, ctx) {
       target.style.pointerEvents = 'auto';
       target.classList.add('open');
       
-      if (side === 'right') renderSlotContent('agent');
+      if (side === 'right') {
+        const slotMap = config.ui?.drawerSlots || { 'agent': 'chat' };
+        ServiceContext.events.emit('drawerOpening', { slot: 'agent', moduleId: slotMap['agent'] });
+      }
     } else {
       target.classList.remove('open');
+      if (side === 'right') ServiceContext.events.emit('drawerClosed', { slot: 'agent' });
       
-      // 닫기 후 가시성 복구
+      // 닫기 후 가시성 복구 (모바일만)
       setTimeout(() => {
-        if (!target.classList.contains('open')) {
-          // PC 모드면 항상 보이게, 모바일이면 숨김
-          target.style.visibility = isDrawerMode() ? 'hidden' : 'visible';
+        if (!target.classList.contains('open') && isDrawerMode()) {
+          target.style.visibility = 'hidden';
         }
       }, 300);
     }
+
+    updatePanelAttrs();
 
     // 글로벌 오버레이 및 바디 스크롤 잠금 처리
     const anyOpen = sidebar.classList.contains('open') || agentDrawer.classList.contains('open');
@@ -72,6 +90,15 @@ export function initSidebar(activeModules, loadedModules, config, ctx) {
       document.body.classList.remove('no-scroll');
     }
   }
+
+  // 초기 상태 반영 (PC면 기본적으로 열어둠)
+  if (!isDrawerMode()) {
+    sidebar.classList.add('open');
+    agentDrawer.classList.add('open');
+    sidebar.style.visibility = 'visible';
+    agentDrawer.style.visibility = 'visible';
+  }
+  updatePanelAttrs();
 
   // ── 메뉴 항목 생성 ─────────────────────────────
   if (nav) {
@@ -93,7 +120,6 @@ export function initSidebar(activeModules, loadedModules, config, ctx) {
   // ── 마스터 운영실 (보안 강화) ──────────────────
   function updateAdminMenu() {
     const footer = document.querySelector('.sidebar-footer');
-    // [v15.3.0] window.Registry를 통해 관리자 권한 확인 (ReferenceError 방지)
     const isAdmin = window.Registry?.getState('isAdmin');
     
     if (isAdmin && footer && !document.getElementById('sidebarAdmin')) {
@@ -115,8 +141,21 @@ export function initSidebar(activeModules, loadedModules, config, ctx) {
     e.stopPropagation();
     toggleDrawer('left');
   });
+
+  btnToggleLeft?.addEventListener('click', () => toggleDrawer('left'));
+  btnToggleRight?.addEventListener('click', () => toggleDrawer('right'));
   
-  btnCloseAgent?.addEventListener('click', () => toggleDrawer('right', false));
+  const closeAgentBtn = document.getElementById('btnCloseAgent');
+  closeAgentBtn?.addEventListener('click', () => toggleDrawer('right', false));
+
+  // [v15.6.0] 외부 리전 요청 대응 (Router 등에서 호출)
+  ServiceContext.events.on('requestDrawerOpen', ({ side, moduleId }) => {
+    toggleDrawer(side, true);
+  });
+
+  ServiceContext.events.on('requestDrawerClose', ({ side }) => {
+    toggleDrawer(side, false);
+  });
   
   globalOverlay?.addEventListener('click', () => {
     toggleDrawer('left', false);
@@ -138,7 +177,6 @@ export function initSidebar(activeModules, loadedModules, config, ctx) {
   if (infoBtn) {
     infoBtn.addEventListener('click', () => {
       if (isDrawerMode()) toggleDrawer('left', false);
-      // [v15.3.0] window.Registry에서 버전을 가져와 표시
       const version = window.Registry?.getVersion();
       alert(`${config.brand.name} v${version}\nPowered by AI Thinking Lab`);
     });

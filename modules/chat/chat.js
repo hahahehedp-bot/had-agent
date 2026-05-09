@@ -4,7 +4,7 @@
 // =============================================
 
 export default {
-  id: 'chat',
+  placement: { primary: 'DRAWER' },
 
   async init(config) {
     if (!document.querySelector('link[href="modules/chat/chat.css"]')) {
@@ -19,9 +19,20 @@ export default {
     const agent = config.agent || {};
     
     return `
+      <div class="agent-drawer-header">
+        <div class="agent-status-dot"></div>
+        <h3 id="drawerTitle">${agent.name || '에이전트'}</h3>
+        <div class="drawer-header-actions">
+          <button class="header-action-btn active" id="btnTabChat" title="대화창">💬</button>
+          <button class="header-action-btn" id="btnTabHistory" title="과거세션">🕒</button>
+          <button class="header-action-btn" id="btnTabSettings" title="설정">⚙️</button>
+        </div>
+        <button class="btn-close-agent" id="btnCloseAgent">&times;</button>
+      </div>
+
       <div class="module-root chat-layout" id="chatLayout">
         <div class="chat-messages" id="chatMessages">
-          <!-- [v13.8.0] 상단 여백 제거를 위해 쉴드 및 스페이서 삭제 -->
+          <!-- 채팅 메시지 영역 -->
         </div>
 
         <div class="chat-input-container">
@@ -37,7 +48,6 @@ export default {
                    data-lpignore="true"
                    x-autocompletetype="off">
             <button id="chatSend" class="chat-send-icon-btn" aria-label="전송">
-              <!-- [v13.4.2] 제미나이 스타일 단순 화살표 -->
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="12" y1="19" x2="12" y2="5"></line>
                 <polyline points="5 12 12 5 19 12"></polyline>
@@ -114,20 +124,39 @@ export default {
 
           const chunk = decoder.decode(value, { stream: true });
           
-          // [v15.2.8] 공백 킥스타트 및 불필요한 초기 공백 제거
-          fullReply = (fullReply + chunk).trimStart();
+          // [v15.3.3] 텍스트 누적 및 메타데이터 필터링
+          fullReply += chunk;
 
-          // 실시간 마크다운 렌더링 (속도 최적화를 위해 requestAnimationFrame 고려 가능)
+          // 메타데이터 영역 분리 시도
+          let cleanDisplay = fullReply;
+          if (fullReply.includes('[METADATA]')) {
+            const parts = fullReply.split('[METADATA]');
+            cleanDisplay = parts[0].trim();
+            
+            // 메타데이터 파싱 (종료 시점에 1회 수행)
+            if (parts.length >= 3) {
+              try {
+                const metadata = JSON.parse(parts[1]);
+                console.log('[v15.3.3] Usage Metadata Received:', metadata);
+                // [TODO] Registry.updateUsage(metadata) 호출하여 장부 기록 로직 연결
+              } catch (e) {
+                console.warn('[v15.3.3] Metadata Parse Error:', e);
+              }
+            }
+          }
+
+          // 실시간 마크다운 렌더링 (메타데이터 제외한 깨끗한 내용만)
           bubble.innerHTML = typeof marked !== 'undefined'
-            ? marked.parse(fullReply)
-            : fullReply;
+            ? marked.parse(cleanDisplay)
+            : cleanDisplay;
           
           scrollToBottom();
         }
 
-        // 스트리밍 종료 후 히스토리 업데이트
+        // 스트리밍 종료 후 히스토리 업데이트 (메타데이터 제외한 깨끗한 답변만 저장)
+        const finalAnswer = fullReply.split('[METADATA]')[0].trim();
         history.push({ role: 'user', parts: [{ text: text }] });
-        history.push({ role: 'model', parts: [{ text: fullReply }] });
+        history.push({ role: 'model', parts: [{ text: finalAnswer }] });
         if (history.length > 20) history.splice(0, 2);
 
       } catch (err) {
@@ -159,6 +188,12 @@ export default {
     btnSettings?.addEventListener('click', () => switchView('settings', btnSettings));
 
     sendBtn.addEventListener('click', sendMessage);
+    
+    // [v15.6.0] 서랍 닫기 연동
+    document.getElementById('btnCloseAgent')?.addEventListener('click', () => {
+      ctx.events.emit('requestDrawerClose', { side: 'right' });
+    });
+
     input.addEventListener('keypress', (e) => {
       if (e.key === 'Enter' && !e.shiftKey) sendMessage();
     });

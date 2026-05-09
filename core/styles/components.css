@@ -150,9 +150,6 @@
   flex-shrink: 0;
 }
 
-/* ── 채팅 (모듈에서 개별 관리하므로 코어에서는 제거됨) ── */
-.chat-messages { display: flex; flex-direction: column; }
-
 /* ── 빈 상태 ── */
 .empty-state {
   text-align: center;
@@ -223,62 +220,6 @@
   display: flex;
   flex-direction: column;
 }
-.agent-context-badge {
-  font-size: 11px;
-  font-weight: 800;
-  color: var(--primary);
-  background: color-mix(in srgb, var(--primary) 10%, transparent);
-  padding: 4px 12px;
-  border-radius: 20px;
-  width: fit-content;
-  animation: pulse 2s infinite;
-}
-.agent-context-preview {
-  font-size: 13px;
-  color: var(--text);
-  background: var(--bg);
-  padding: 14px;
-  border-radius: 12px;
-  border-left: 4px solid var(--primary);
-  font-style: italic;
-  line-height: 1.5;
-}
-.agent-welcome-msg {
-  font-size: 14px;
-  line-height: 1.6;
-  color: var(--text);
-}
-@keyframes pulse {
-  0% { opacity: 1; }
-  50% { opacity: 0.6; }
-  100% { opacity: 1; }
-}
-.agent-drawer-tabs {
-  display: flex;
-  background: var(--bg);
-  padding: 4px;
-  margin: 0 12px 4px 12px; /* 하단 마진 축소 */
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  gap: 4px;
-}
-.drawer-tab {
-  flex: 1;
-  text-align: center;
-  padding: 8px 0;
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text-dim);
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.drawer-tab.active {
-  background: var(--card-bg);
-  color: var(--primary);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-.drawer-tab:active { transform: scale(0.95); }
 /* ── 마크다운 콤팩트 타이포그래피 (Global Standard v14.8.0) ── */
 .markdown-body {
   font-size: 16.5px;

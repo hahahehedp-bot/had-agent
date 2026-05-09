@@ -5,6 +5,13 @@
 
 import { Registry } from './services/registry.js';
 
+const REGIONS = {
+  VIEWPORT: 'appMain',
+  DRAWER: 'agentDrawerBody',
+  SIDEBAR: 'sidebarNav',
+  NAVBAR: 'tabBar'
+};
+
 let _modules = {};
 let _config  = {};
 let _current = null;
@@ -15,78 +22,79 @@ export function initRouter(loadedModules, config, context) {
   _config  = config || context.config;
   _ctx     = context;
 
-  // [v15.3.0] 중복 리스너 정리 및 동적 기본 경로 설정
+  // 1. 해시 변경 리스너 (VIEWPORT 전용)
   window.addEventListener('hashchange', () => {
     const activeModules = _config.modules?.filter(m => m.enabled) || [];
-    const defaultId = activeModules.length > 0 ? activeModules[0].id : 'home';
-    
-    // [DEPRECATED] const id = window.location.hash.replace('#', '') || 'home';
+    const defaultId = _config.ui?.defaultModule || (activeModules.length > 0 ? activeModules[0].id : 'home');
     const id = window.location.hash.replace('#', '') || defaultId;
-    renderModule(id);
+    
+    // 모듈의 배치가 VIEWPORT인 경우에만 메인 라우팅 수행
+    const mod = _modules[id];
+    if (mod && (!mod.placement || mod.placement.primary === 'VIEWPORT')) {
+      renderModule(id, 'VIEWPORT');
+    }
+  });
+
+  // 2. 서랍 오픈 리스너 (DRAWER 전용)
+  _ctx.events.on('drawerOpening', ({ moduleId }) => {
+    if (_modules[moduleId]) {
+      renderModule(moduleId, 'DRAWER');
+    }
   });
 }
 
 export async function navigateTo(moduleId) {
-  if (!_modules[moduleId]) {
-    console.warn(`[Router] 모듈 없음: ${moduleId}`);
-    const activeModules = _config.modules?.filter(m => m.enabled) || [];
-    moduleId = activeModules.length > 0 ? activeModules[0].id : Object.keys(_modules)[0];
-  }
+  const mod = _modules[moduleId];
+  if (!mod) return;
 
-  // URL 해시 업데이트 -> hashchange 이벤트 유발
-  if (window.location.hash !== `#${moduleId}`) {
-    window.location.hash = moduleId;
+  // DRAWER 모듈인 경우 해시를 바꾸지 않고 직접 렌더링 요청 (혹은 서랍 열기 이벤트 발행)
+  if (mod.placement?.primary === 'DRAWER') {
+    // 서랍이 이미 열려있지 않다면 사이드바 서비스에 열기 요청 필요
+    // 여기서는 간단히 이벤트를 통해 연쇄 작용 유도
+    _ctx.events.emit('requestDrawerOpen', { side: 'right', moduleId });
   } else {
-    // 이미 같은 해시인 경우 수동 렌더링
-    renderModule(moduleId);
+    // VIEWPORT 모듈인 경우 해시 업데이트
+    if (window.location.hash !== `#${moduleId}`) {
+      window.location.hash = moduleId;
+    } else {
+      renderModule(moduleId, 'VIEWPORT');
+    }
   }
 }
 
-async function renderModule(moduleId) {
-  if (!_modules[moduleId] || _current === moduleId) return;
+async function renderModule(moduleId, regionId = 'VIEWPORT') {
+  const mod = _modules[moduleId];
+  if (!mod) return;
 
-  // 1. 이전 모듈 정리
-  if (_current && _modules[_current]?.destroy) {
-    try {
-      _modules[_current].destroy(_ctx);
-    } catch (e) {
-      console.warn(`[Router] 모듈 '${_current}' destroy 실패:`, e);
-    }
+  const containerId = REGIONS[regionId];
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  // 1. 이전 모듈 정리 (해당 리전에 국한)
+  // TODO: 리전별 현재 모듈 상태 관리 필요
+
+  // 2. 상태 업데이트
+  if (regionId === 'VIEWPORT') {
+    _current = moduleId;
+    window.Registry?.updateState({ currentModule: moduleId });
+    _ctx.events.emit('moduleChanged', moduleId);
   }
-  
-  _current = moduleId;
 
-  // 2. 전역 상태 업데이트 및 이벤트 발행 (v15.3.0 캡슐화 적용 - window.Registry 명시)
-  window.Registry?.updateState({ currentModule: moduleId, contextData: null });
-  
-  // 사이드바/탭바에게 변경 알림
-  _ctx.events.emit('moduleChanged', moduleId);
-
-  // 3. 메인 영역 렌더링
-  const main = document.getElementById('appMain');
-  main.innerHTML = '<div class="module-loading"><div class="loading-spinner"></div></div>';
+  // 3. 렌더링
+  container.innerHTML = '<div class="module-loading"><div class="loading-spinner"></div></div>';
 
   try {
     const currentConfig = _config || window.Registry?.getConfig();
-    const html = await _modules[moduleId].render(currentConfig, _ctx);
+    const html = await mod.render(currentConfig, _ctx);
     
-    main.innerHTML = html;
-    const root = main.querySelector('.module-root');
-    if (root) root.classList.add('animate-in');
-
-    // 4. 후처리
-    if (_modules[moduleId].afterRender) {
-      await _modules[moduleId].afterRender(currentConfig, _ctx);
+    container.innerHTML = html;
+    
+    // 후처리
+    if (mod.afterRender) {
+      await mod.afterRender(currentConfig, _ctx);
     }
   } catch (e) {
-    console.error(`[Router] 렌더링 실패: ${moduleId}`, e);
-    main.innerHTML = `
-      <div class="error-state">
-        <div class="error-icon">⚠️</div>
-        <p>화면을 불러오는 중 문제가 발생했습니다. (v${window.Registry?.getVersion()})</p>
-        <button onclick="location.reload()">새로고침</button>
-      </div>`;
+    console.error(`[Router] ${regionId} 렌더링 실패: ${moduleId}`, e);
+    container.innerHTML = `<div class="error-state">오류 발생</div>`;
   }
-
-  main.scrollTop = 0;
 }

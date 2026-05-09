@@ -7,16 +7,16 @@ import staticConfig from '../../client/config.js';
 
 class RegistryService {
   constructor() {
-    this.VERSION = '15.3.0'; // [v15.3.0] Core Stabilization & Dynamic Versioning
+    this.VERSION = '15.4.0'; // [v15.4.0] Dynamic RBAC & Triple-Sync
     this.config = { ...staticConfig };
     this.dynamicConfig = {};
+    this.permissions = null; // 등급별 권한 데이터
     this.listeners = [];
     
-    // 전역 상태 초기화 (중앙화 및 캡슐화 준비)
     window.hadState = {
       version: this.VERSION,
       currentModule: null,
-      isAdmin: false,
+      user: null, // { email, role, name, employee_id, ... }
       contextData: null
     };
   }
@@ -26,12 +26,10 @@ class RegistryService {
   
   updateState(delta) {
     window.hadState = { ...window.hadState, ...delta };
-    // [DEPRECATED] 직접적인 window.hadState 수정 방식은 점진적으로 폐지함.
-    // ~~window.hadState.key = val;~~ -> Registry.updateState({ key: val });
   }
 
   /**
-   * 초기화: 드라이브(현 로컬스토리지)에서 동적 설정을 가져와 머지합니다.
+   * 초기화: 드라이브에서 설정을 가져와 머지합니다.
    */
   async init() {
     console.log(`[Registry] v${this.VERSION} 초기화 시작...`);
@@ -39,35 +37,60 @@ class RegistryService {
       const saved = localStorage.getItem('had_dynamic_config');
       if (saved) {
         this.dynamicConfig = JSON.parse(saved);
-        this.mergeConfig();
       }
       
-      // 사용자 권한 상태 복구 (auth에서 세부 설정)
-      const userEmail = localStorage.getItem('had_agent_email');
-      if (userEmail) {
-        const authCfg = this.config.auth || {};
-        window.hadState.isAdmin = authCfg.adminEmails?.includes(userEmail);
+      // 사용자 세션 복구
+      const user = localStorage.getItem('had_agent_user');
+      if (user) {
+        window.hadState.user = JSON.parse(user);
       }
 
-      console.log('[Registry] 최종 활성 모듈:', this.config.modules.filter(m => m.enabled).map(m => m.id));
+      this.mergeConfig();
     } catch (e) {
-      console.warn('[Registry] 동적 설정 로드 실패:', e);
+      console.warn('[Registry] 초기화 실패:', e);
     }
   }
 
   /**
-   * 정적 설정과 동적 설정을 합칩니다.
+   * 드라이브의 권한 규정(grade_permissions.json)과 동기화하여 UI 필터링
+   */
+  async syncPermissions(Drive) {
+    try {
+      const perms = await Drive.getCompanyFile('System/Config/grade_permissions.json');
+      if (perms) {
+        this.permissions = perms.permissions;
+        this.mergeConfig();
+        console.log('[Registry] 권한 동기화 완료:', window.hadState.user?.role);
+      }
+    } catch (e) {
+      console.error('[Registry] 권한 동기화 실패:', e);
+    }
+  }
+
+  /**
+   * 정적 설정과 동적 설정, 그리고 권한을 합칩니다.
    */
   mergeConfig() {
-    // 1. 모듈 온오프 상태 업데이트
+    let finalModules = [...staticConfig.modules];
+
+    // 1. 권한 기반 필터링 (RBAC)
+    const userRole = window.hadState.user?.role;
+    if (this.permissions && userRole && this.permissions[userRole]) {
+      const allowed = this.permissions[userRole].allowed_modules;
+      finalModules = finalModules.filter(m => allowed.includes(m.id) || m.hidden);
+    }
+
+    // 2. 동적 온오프 상태 업데이트
     if (this.dynamicConfig.modules) {
-      this.config.modules = this.config.modules.map(mod => {
+      finalModules = finalModules.map(mod => {
         const dynamicMod = this.dynamicConfig.modules.find(d => d.id === mod.id);
         return dynamicMod ? { ...mod, enabled: dynamicMod.enabled } : mod;
       });
     }
 
-    // 2. 브랜드/에이전트 정보 업데이트
+    this.config.modules = finalModules;
+
+    // 3. 브랜드/에이전트 정보 업데이트
     if (this.dynamicConfig.brand) {
       this.config.brand = { ...this.config.brand, ...this.dynamicConfig.brand };
     }

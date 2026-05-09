@@ -5,6 +5,7 @@
 
 export default {
   id: 'home',
+  placement: { primary: 'VIEWPORT' },
 
   async init(config) {
     if (!document.querySelector('link[href="modules/home/home.css"]')) {

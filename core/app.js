@@ -87,10 +87,22 @@ async function init() {
     initTheme(config);
     applyBranding(config);
     
+    // 1. 인증 초기화 및 사용자 확보
     await initAuth();
+    const user = Registry.getState('user');
+    const token = localStorage.getItem('had_agent_token');
+
+    // 2. [v15.4.0] 드라이브 서비스 시동 및 권한 동기화
+    if (token && token !== 'dev_bypass_token') {
+      const { Drive } = await import('./services/drive.js?v=' + version);
+      await Drive.init(token);
+      await Registry.syncPermissions(Drive);
+      ServiceContext.drive = Drive; // 모듈에서 드라이브 접근 가능하도록 주입
+    }
+
     initSettings(config);
 
-    const activeModules = getActiveModules(config);
+    const activeModules = getActiveModules(Registry.getConfig());
     const loadedModules = {};
 
     // ── 모듈 로드 엔진 (병렬 처리) ──
@@ -122,7 +134,8 @@ async function init() {
     initTabBar(navModules, loadedModules, config, ServiceContext);
     initRouter(loadedModules, config, ServiceContext);
 
-    const hash = window.location.hash.replace('#', '') || 'home';
+    const defaultId = config.ui?.defaultModule || (activeModules.length > 0 ? activeModules[0].id : 'home');
+    const hash = window.location.hash.replace('#', '') || defaultId;
     navigateTo(hash);
     
     // 초기화 완료 후 로딩 제거

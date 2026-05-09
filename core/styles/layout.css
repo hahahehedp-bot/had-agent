@@ -177,6 +177,10 @@ html, body {
   right: 0;
   z-index: 100;
   padding-bottom: env(safe-area-inset-bottom);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.tab-bar.hidden {
+  transform: translateY(100%);
 }
 
 .tab-item {
@@ -333,35 +337,91 @@ body.no-scroll {
   box-shadow: var(--shadow-md);
 }
 
-/* [v15.0.0] PC 환경: 좌측 사이드바 옆 상시 노출 고정 */
+/* ── [v15.7.0] 헤더 우측 액션 그룹 ── */
+.header-right-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.header-tool-btn {
+  width: 32px;
+  height: 32px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: none; /* 기본 숨김 (PC에서만 노출) */
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  border-radius: 6px;
+  transition: background var(--transition), color var(--transition);
+}
+.header-tool-btn:hover {
+  background: var(--bg);
+  color: var(--text-primary);
+}
+.header-tool-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
 @media (min-width: 1024px) {
-  .agent-drawer {
-    transform: translateX(0) !important;
-    visibility: visible !important;
-    pointer-events: auto !important;
-    left: var(--sidebar-w); /* 사이드바 바로 옆 */
-    right: auto;
-    border-left: none;
-    border-right: 1px solid var(--border-color);
-    box-shadow: none;
-    z-index: 90; /* 사이드바보다는 아래 */
-  }
+  .header-tool-btn { display: flex; }
   
-  /* 비서가 차지하는 공간만큼 메인 뷰포트 밀기 */
-  .app-viewport {
-    margin-left: calc(var(--sidebar-w) + 380px);
-    transition: margin-left var(--transition);
+  /* [v15.7.0] PC 동적 레이아웃 제어 (Attribute 기반) */
+  body[data-pc="true"] .sidebar {
+    transform: translateX(-100%);
+    box-shadow: none;
+    z-index: 90;
+  }
+  body[data-pc="true"] .sidebar.open {
+    transform: translateX(0);
+    visibility: visible;
+    pointer-events: auto;
   }
 
-  /* PC에서는 닫기 버튼 숨김 */
-  .btn-close-agent {
-    display: none;
+  body[data-pc="true"] .agent-drawer {
+    transform: translateX(100%);
+    box-shadow: none;
+    z-index: 80;
+    right: 0;
+    left: auto;
   }
-  
-  /* PC 헤더 조정 */
-  .app-header {
-    left: calc(var(--sidebar-w) + 380px);
-    width: auto;
+  body[data-pc="true"] .agent-drawer.open {
+    transform: translateX(0);
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  /* 뷰포트 동적 마진 (Pushing Logic) */
+  body[data-pc="true"] .app-viewport {
+    transition: margin var(--transition);
+    margin-left: 0;
+    margin-right: 0;
+  }
+  body[data-pc="true"][data-sidebar-open="true"] .app-viewport {
+    margin-left: var(--sidebar-w);
+  }
+  body[data-pc="true"][data-drawer-open="true"] .app-viewport {
+    margin-right: 380px;
+  }
+
+  /* 헤더 위치 동기화 */
+  body[data-pc="true"] .app-header {
+    transition: left var(--transition), width var(--transition);
+    left: 0;
+    width: 100%;
+  }
+  body[data-pc="true"][data-sidebar-open="true"] .app-header {
+    left: var(--sidebar-w);
+    width: calc(100% - var(--sidebar-w));
+  }
+  body[data-pc="true"][data-drawer-open="true"] .app-header {
+    width: calc(100% - 380px);
+    right: 380px;
+  }
+  body[data-pc="true"][data-sidebar-open="true"][data-drawer-open="true"] .app-header {
+    width: calc(100% - var(--sidebar-w) - 380px);
   }
 }
 

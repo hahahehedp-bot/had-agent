@@ -20,8 +20,14 @@ export default {
     type: "google",
     clientId: "473448066886-7kjj7jhvliclqgdpa30et6t2m1shgbdt.apps.googleusercontent.com",
     required: true,
-    adminEmails: ["hahahehedp@gmail.com", "admin@owner.com"], // 마스터 관리자 이메일
-    allowBypass: true, // [v13.0.0] 개발용 로그인 우회 허용
+    adminEmails: ["hahahehedp@gmail.com", "admin@owner.com"],
+    allowBypass: true,
+    // [v15.5.0] Kakao MFA Configuration
+    mfa: {
+      enabled: true,
+      senderId: '@연희동베이커리_세종빵집_맛집', // [REAL] 유여름 사장님 보유 비즈니스 채널
+      templateId: 'auth_code_v1'
+    }
   },
 
   // ── 테마 (사용자 선택 및 기본 테마 지정) ──────────────
@@ -29,22 +35,29 @@ export default {
     default: "modern-light", // "modern-light", "glass-dark" 등
   },
 
-  // ── Drive 설정 ─────────────────────────────────
-  // 고객사 드라이브 폴더 ID (공개 공유 필요)
+  // ── Drive 설정 (Drive-as-CMS Section 5) ──────────────────────────
+  // 고객사 드라이브 폴더 ID 및 내부 구조 정의
   drive: {
-    rootFolderId:      "TEST_FOLDER_ID", 
-    scheduleCsvId:     "TEST_CSV_ID",
-    resourcesFolderId: "TEST_RESOURCES_ID",
+    rootFolderId:      "TEST_ROOT_ID", 
+    systemPath:        "System",      // 엔진룸 (Config, Agent, User_Data)
+    dataPath:          "Data",        // 공용 데이터 (Schedule, Resources, Feed)
+    
+    // [v15.3.3] 세부 경로 정의
+    paths: {
+      memberDirectory: "System/Config/member_directory.json",
+      userWorkspace:   "System/User_Data",
+      sessions:        "Chat/Sessions"
+    }
   },
 
-  // ── AI 에이전트 ────────────────────────────────
+  // ── AI 에이전트 아이덴티티 ────────────────────────────
   agent: {
-    name:         "HAD 비서",
-    userLabel:    "리더님", // 고객사별 사용자 호칭 (예: 리더님, 사우님, 파트너님)
-    welcomeMsg:   "무엇을 도와드릴까요? 필요한 정보를 말씀해 주세요.", // [v13.0.0] 환영 인사
+    name:         "HAD 에이전트",
+    userLabel:    "리더님", 
+    welcomeMsg:   "반갑습니다. 지적 협업을 위한 HAD 에이전트입니다. 무엇을 도와드릴까요?",
     avatar:       "client/assets/icon-192.png",
     endpoint:     "https://asia-northeast3-triple-brain.cloudfunctions.net/osunyi-chat",
-    systemPrompt: "당신은 HAD-Agent의 범용 AI 에이전트입니다. 기술적이고 명확하게 답변하세요.",
+    systemPrompt: "당신은 HAD-Agent 플랫폼의 전문 비서입니다. 사용자를 '{userLabel}'(으)로 호칭하며, 기술적이고 명확한 분석을 제공합니다.",
   },
 
   // ── 모듈 on/off 및 타입 정의 ───────────────────────
@@ -59,13 +72,21 @@ export default {
     { id: "myoffice",  enabled: true,  type: "iframe", url: "https://example.com/myoffice", icon: "🏢", label: "마이오피스", description: "나의 비즈니스 현황" },
   ],
 
-  // ── UI 레이아웃 설정 ───────────────────────────
+  // ── UI 레이아웃 설정 (v15.6.0 리전 시스템 적용) ───────────────────
   ui: {
+    defaultModule: "home", 
     useOverlayOnPC: false,
     drawerSlots: {
-      'agent': 'chat',
-      'memos': 'home',
-      'mcp': 'schedule'
+      'agent': 'chat'
+    },
+    // 하단 탭바 설정 (선택 사항)
+    navbar: {
+      enabled: false, // 기본 비활성 (Invisible AI 지향)
+      items: [
+        { id: "home", icon: "🏠", label: "홈" },
+        { id: "feed", icon: "📋", label: "피드" },
+        { id: "chat", icon: "💬", label: "비서" }
+      ]
     }
   },
 
