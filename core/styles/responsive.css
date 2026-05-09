@@ -3,15 +3,8 @@
    PC/태블릿/모바일 반응형
    ============================================= */
 
-/* ── 모바일 기본 (< 768px) ── */
-@media (max-width: 767px) {
-  .sidebar {
-    width: min(var(--sidebar-w), 85vw);
-  }
-  .app-viewport {
-    display: block; /* 순정 스크롤을 위해 Flex 해제 */
-    min-width: 0;
-  }
+/* ── 모바일 기본 (< 1024px) ── */
+@media (max-width: 1023px) {
   .settings-panel {
     width: 100%;
   }
@@ -20,8 +13,8 @@
   }
 }
 
-/* ── PC / 태블릿 (>= 768px) ── */
-@media (min-width: 768px) {
+/* ── PC / 태블릿 (>= 1024px) ── */
+@media (min-width: 1024px) {
   body {
     overflow: hidden;
   }
@@ -32,31 +25,8 @@
     height: 100vh;
   }
 
-  /* PC: 사이드바 항상 펼침 */
-  .sidebar {
-    position: fixed !important; /* [v15.9.3] relative 제거 -> fixed로 천장 밀착 강제 */
-    transform: translateX(0) !important;
-    visibility: visible !important; 
-    pointer-events: auto !important;
-    box-shadow: none;
-    border-right: 1px solid var(--border);
-    height: 100vh !important;
-    height: 100dvh !important;
-    flex-shrink: 0;
-  }
-
-  /* PC: 오버레이 없음 */
+  /* PC: 사이드바 및 드로어 상태는 layout.css에서 제어 */
   .sidebar-overlay { display: none !important; }
-
-  /* PC: 오른쪽 영역 */
-  .app-viewport {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    height: 100vh;
-    background: var(--bg);
-  }
 
   /* PC: 하단 탭바 숨김 */
   .tab-bar { display: none !important; }

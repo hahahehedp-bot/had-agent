@@ -1,4 +1,4 @@
-﻿// =============================================
+// =============================================
 // HAD-Agent — sidebar.js (Core)
 // [v16.0.0 Alpha] Obsidian-Style Sliding Reboot
 // =============================================
@@ -164,21 +164,51 @@ export function initSidebar(activeModules, loadedModules, config, ctx) {
     }
   }
 
+  // ── 📱 실시간 슬라이딩 엔진 (Live Sliding) ──
   let touchStartX = 0;
   let touchStartY = 0;
+  let startXOffset = 0; 
+  let isDragging = false;
+  const layout = document.querySelector('.app-layout');
+
   window.addEventListener('touchstart', (e) => {
+    if (!isDrawerMode()) return;
     touchStartX = e.touches[0].clientX;
     touchStartY = e.touches[0].clientY;
+    const matrix = window.getComputedStyle(layout).transform;
+    if (matrix !== 'none') startXOffset = parseFloat(matrix.split(',')[4]);
+    else startXOffset = -100 * currentPanelIndex * (window.innerWidth / 100);
+    isDragging = false;
   }, { passive: true });
 
-  window.addEventListener('touchend', (e) => {
-    const deltaX = e.changedTouches[0].clientX - touchStartX;
-    const deltaY = Math.abs(e.changedTouches[0].clientY - touchStartY);
-    if (!isDrawerMode() || deltaY > 100 || Math.abs(deltaX) < 80) return; 
-    if (deltaX > 80) {
-      setPanel(currentPanelIndex - 1);
-    } else if (deltaX < -80) {
-      setPanel(currentPanelIndex + 1);
+  window.addEventListener('touchmove', (e) => {
+    if (!isDrawerMode()) return;
+    const deltaX = e.touches[0].clientX - touchStartX;
+    const deltaY = Math.abs(e.touches[0].clientY - touchStartY);
+    if (!isDragging && deltaY < Math.abs(deltaX) && Math.abs(deltaX) > 10) {
+      isDragging = true;
+      layout.style.transition = 'none';
     }
+    if (isDragging) {
+      let newTranslate = startXOffset + deltaX;
+      const vw = window.innerWidth;
+      if (newTranslate > 0) newTranslate /= 3; 
+      if (newTranslate < -2 * vw) newTranslate = -2 * vw + (newTranslate + 2 * vw) / 3;
+      layout.style.transform = `translateX(${newTranslate}px)`;
+    }
+  }, { passive: false });
+
+  window.addEventListener('touchend', (e) => {
+    if (!isDrawerMode() || !isDragging) return;
+    isDragging = false;
+    layout.style.transition = ''; 
+    const deltaX = e.changedTouches[0].clientX - touchStartX;
+    const threshold = window.innerWidth / 4; 
+    let targetIndex = currentPanelIndex;
+    if (Math.abs(deltaX) > threshold) {
+      if (deltaX > 0 && currentPanelIndex > 0) targetIndex--;
+      else if (deltaX < 0 && currentPanelIndex < 2) targetIndex++;
+    }
+    setPanel(targetIndex, true);
   }, { passive: true });
 }

@@ -352,6 +352,7 @@ body.no-scroll {
   height: 100vh;
   height: 100dvh;
   overflow: hidden;
+  will-change: transform; /* 성능 최적화 */
   transition: transform var(--transition);
 }
 
@@ -372,7 +373,8 @@ body.no-scroll {
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
-  transition: transform var(--transition), margin var(--transition); /* 마진 애니메이션 추가 */
+  transition: transform var(--transition), margin var(--transition), width var(--transition);
+  box-shadow: 4px 0 15px rgba(0, 0, 0, 0.05); /* 우측 그림자 추가 */
 }
 
 @media (max-width: 1023px) {
@@ -380,6 +382,7 @@ body.no-scroll {
     width: 100vw;
     position: relative; /* Sliding flow */
     transform: none !important;
+    border-right: none; /* 모바일 전폭 시 경계선 제거 */
   }
 }
 
@@ -443,8 +446,9 @@ body.no-scroll {
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
-  transition: transform var(--transition), margin var(--transition);
+  transition: transform var(--transition), margin var(--transition), width var(--transition);
   overflow: hidden; 
+  box-shadow: -4px 0 15px rgba(0, 0, 0, 0.05); /* 좌측 그림자 추가 */
 }
 
 @media (max-width: 1023px) {
@@ -452,6 +456,7 @@ body.no-scroll {
     width: 100vw;
     position: relative;
     transform: none !important;
+    border-left: none; /* 모바일 전폭 시 경계선 제거 */
   }
 }
 

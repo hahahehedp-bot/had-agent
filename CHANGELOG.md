@@ -2,13 +2,16 @@
 
 이 문서는 HAD-Agent 프로젝트의 버전별 작업 내역과 주요 변경 사항을 기록합니다.
 
-## [v16.0.0-alpha.1] - 2026-05-09 (Experimental Branch)
+## [v16.0.0-alpha.2] - 2026-05-10
 ### Added
-- **Obsidian-Style Sliding**: 사이드바, 뷰포트, 드로어를 나란히 배치한 300vw 파노라마 레이아웃 도입.
-- **Full-Screen Swipe**: 특정 엣지 대신 화면 전체 어디서든 스와이프하여 패널 간 이동 가능.
-- **Horizontal Mutex**: 수평 슬라이딩 인덱스(0, 1, 2) 기반의 상태 관리 엔진 구축.
+- **Live Sliding Engine**: `touchmove`를 통한 실시간 패널 트래킹 및 인터랙티브 드래그 시스템 구축 (`sidebar.js`).
+- **Visual Depth Enhancement**: 슬라이딩 패널 경계에 `box-shadow`를 추가하여 공간적 입체감 부여 (`layout.css`).
 ### Changed
-- **DOM Restructure**: `agent-drawer`를 `app-layout` 내부로 이동하여 슬라이딩 구조 최적화.
+- **CSS Architecture Purification**: `responsive.css` 내의 레이아웃 충돌 규칙을 제거하고 `layout.css`로 제어권 통합.
+- **Unified Breakpoint**: 모바일/PC 판정 기준을 `1024px`로 통일하여 태블릿 환경 대응력 강화.
+- **PC Pusher Consistency**: PC 모드에서의 사이드바/드로어 토글 애니메이션을 새로운 레이아웃 규격에 맞춰 최적화.
+
+## [v16.0.0-alpha.1] - 2026-05-09 (Experimental Branch)
 
 ## [v15.9.6] - 2026-05-09
 ### Cleaned
