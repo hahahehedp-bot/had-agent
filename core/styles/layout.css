@@ -348,18 +348,18 @@ body.no-scroll {
 /* ── 사이드바 (좌) ── */
 .sidebar {
   position: fixed;
-  top: 0; /* [v15.9.0] Gemini Style: 상단바 가림 */
-  bottom: 0;
-  left: 0;
+  inset: 0 auto 0 0; /* [v15.9.1] 천장부터 바닥까지 고정 (Top, Bottom, Left 0) */
   width: var(--sidebar-w);
+  height: 100%;
+  height: 100dvh; /* 모바일 가변 높이 대응 */
   background: var(--surface);
   border-right: 1px solid var(--border-color);
-  z-index: 1200; /* 상단바(1000)보다 위 */
+  z-index: 1200; 
   display: flex;
   flex-direction: column;
   transform: translateX(-100%); 
   transition: transform var(--transition);
-  padding-top: env(safe-area-inset-top); /* 모바일 노치 대응 */
+  padding-top: env(safe-area-inset-top); 
 }
 .sidebar.open {
   transform: translateX(0);
@@ -394,18 +394,18 @@ body.no-scroll {
 /* ── 🤖 에이전트 서랍 (우) ── */
 .agent-drawer {
   position: fixed;
-  top: 0; /* [v15.9.0] Gemini Style: 상단바 가림 */
-  bottom: 0;
-  right: 0;
+  inset: 0 0 0 auto; /* [v15.9.1] 천장부터 바닥까지 고정 (Top, Bottom, Right 0) */
   width: 380px;
+  height: 100%;
+  height: 100dvh;
   background: var(--surface);
   border-left: 1px solid var(--border-color);
-  z-index: 1200; /* 상단바(1000)보다 위 */
+  z-index: 1200; 
   display: flex;
   flex-direction: column;
   transform: translateX(100%);
   transition: transform var(--transition);
-  overflow: hidden; /* [v15.8.7] 불필요한 스크롤 방지 */
+  overflow: hidden; 
 }
 .agent-drawer.open {
   transform: translateX(0);

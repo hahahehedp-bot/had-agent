@@ -2,6 +2,11 @@
 
 이 문서는 HAD-Agent 프로젝트의 버전별 작업 내역과 주요 변경 사항을 기록합니다.
 
+## [v15.9.1] - 2026-05-09
+### Optimized
+- **Floor-to-Ceiling Layout**: 사이드바와 드로어에 `height: 100dvh` 및 `inset` 속성을 적용하여 기기 화면의 바닥부터 천장까지 틈 없이 완벽히 밀착되도록 고도화.
+- **Dynamic Viewport Handling**: 모바일 브라우저의 가변적인 주소창 높이 변화에 대응하여 UI 깨짐 현상 방지.
+
 ## [v15.9.0] - 2026-05-09
 ### Added
 - **Gemini Overlay Style**: 사이드바와 에이전트 드로어가 상단바(Header)를 덮고 화면 전체 높이(`top: 0`, `bottom: 0`)로 나타나는 제미나이 앱 스타일 레이아웃 도입.
