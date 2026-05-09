@@ -1,5 +1,18 @@
 // HAD-Agent — Service Worker (PWA 오프라인 지원)
-const CACHE = 'had-agent-v14.6.0';
+// [v16.0.0] Dynamic Versioning System
+let CACHE = 'had-agent-v16.0.0-alpha.2'; // 초기값
+
+// [v16.0.0] 버전 정보를 동적으로 가져오는 유틸리티
+async function updateCacheVersion() {
+  try {
+    const res = await fetch('./version.json?t=' + Date.now());
+    const data = await res.json();
+    CACHE = 'had-agent-v' + data.version;
+    return CACHE;
+  } catch (e) {
+    return CACHE;
+  }
+}
 const CORE_FILES = [
   './',
   './index.html',
@@ -25,28 +38,32 @@ const CORE_FILES = [
 
 self.addEventListener('install', e => {
   e.waitUntil(
-    caches.open(CACHE).then(c => c.addAll(CORE_FILES)).then(() => self.skipWaiting())
+    updateCacheVersion().then(cacheName => 
+      caches.open(cacheName).then(c => c.addAll(CORE_FILES))
+    ).then(() => self.skipWaiting())
   );
 });
 
 self.addEventListener('activate', e => {
   e.waitUntil(
-    caches.keys().then(keys => Promise.all(
-      keys.filter(k => k !== CACHE).map(k => caches.delete(k))
-    )).then(() => self.clients.claim())
+    updateCacheVersion().then(cacheName =>
+      caches.keys().then(keys => Promise.all(
+        keys.filter(k => k !== cacheName).map(k => caches.delete(k))
+      ))
+    ).then(() => self.clients.claim())
   );
 });
 
 self.addEventListener('fetch', e => {
-  // 외부 API는 캐시 안 함
   if (!e.request.url.startsWith(self.location.origin)) return;
 
   e.respondWith(
     // [해결의 핵심] 네트워크를 먼저 시도 (Network-First)
     fetch(e.request).then(res => {
-      // 네트워크 성공 시: 캐시에 최신 버전 복사 후 반환
       const clone = res.clone();
-      caches.open(CACHE).then(c => c.put(e.request, clone));
+      updateCacheVersion().then(cacheName => 
+        caches.open(cacheName).then(c => c.put(e.request, clone))
+      );
       return res;
     }).catch(() => {
       // 오프라인이거나 네트워크 실패 시: 캐시된 구버전 반환 (쿼리 스트링 무시)

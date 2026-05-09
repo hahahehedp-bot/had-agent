@@ -16,11 +16,43 @@
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-  <!-- Core Styles (v15.3.0 Core Stabilization) -->
-  <link rel="stylesheet" href="core/styles/themes.css?v=15.3.0">
-  <link rel="stylesheet" href="core/styles/layout.css?v=15.3.0">
-  <link rel="stylesheet" href="core/styles/components.css?v=15.3.0">
-  <link rel="stylesheet" href="core/styles/responsive.css?v=15.3.0">
+  <!-- [v16.0.0] Dynamic Version Bootstrapper -->
+  <script>
+    (async () => {
+      try {
+        const res = await fetch('./version.json?t=' + Date.now());
+        const { version } = await res.json();
+        window.HAD_VERSION = version;
+
+        const loadCSS = (href) => {
+          const l = document.createElement('link');
+          l.rel = 'stylesheet';
+          l.href = href + '?v=' + version;
+          document.head.appendChild(l);
+        };
+
+        const loadJS = (src) => {
+          const s = document.createElement('script');
+          s.type = 'module';
+          s.src = src + '?v=' + version;
+          document.body.appendChild(s);
+        };
+
+        // 1. 스타일시트 동적 주입
+        loadCSS('core/styles/themes.css');
+        loadCSS('core/styles/layout.css');
+        loadCSS('core/styles/components.css');
+        loadCSS('core/styles/responsive.css');
+
+        // 2. 코어 엔진 가동
+        loadJS('core/app.js');
+
+        console.log(`[HAD] Bootstrapping v${version} Completed.`);
+      } catch (e) {
+        console.error('[HAD] Bootstrapping Failed. Falling back to local...', e);
+      }
+    })();
+  </script>
 
   <!-- Markdown Parser -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -141,6 +173,5 @@
   <div id="authOverlay" style="display:none;"></div>
 
   <!-- 앱 진입점 (v15.3.0 정화 완료) -->
-  <script type="module" src="core/app.js?v=15.3.0"></script>
 </body>
 </html>
