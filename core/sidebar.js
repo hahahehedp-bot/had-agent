@@ -1,6 +1,6 @@
-// =============================================
+﻿// =============================================
 // HAD-Agent — sidebar.js (Core)
-// [v15.3.0] Core Stabilization & Dynamic Versioning
+// [v16.0.0 Alpha] Obsidian-Style Sliding Reboot
 // =============================================
 
 import { Registry } from './services/registry.js';
@@ -21,139 +21,106 @@ export function initSidebar(activeModules, loadedModules, config, ctx) {
     return;
   }
 
-  /**
-   * ── 패널 상태 동기화 (Attribute Sync) ─────────────────────
-   */
   const updatePanelAttrs = () => {
+    const isMobile = isDrawerMode();
     document.body.setAttribute('data-sidebar-open', sidebar.classList.contains('open'));
     document.body.setAttribute('data-drawer-open', agentDrawer.classList.contains('open'));
-    document.body.setAttribute('data-pc', !isDrawerMode());
+    document.body.setAttribute('data-pc', !isMobile);
+    document.body.setAttribute('data-panel-index', currentPanelIndex);
   };
 
-  /**
-   * ── 지능형 환경 판정 (Identity-based Detection) ──────────
-   * [v15.7.5] OS 기반 단일 판정 체계
-   * 해상도나 종횡비가 아닌, 기기의 '본질(OS)'을 기준으로 기능을 개방합니다.
-   * 사용자가 세로 피씨 모니터를 쓰더라도 전문가용 기능을 온전히 누리게 함이 목적입니다.
-   */
   const isDrawerMode = () => {
     const isDesktop = /Windows|Macintosh|Linux/.test(navigator.userAgent) && !/Android|iPhone|iPad/.test(navigator.userAgent);
     return !isDesktop;
   };
 
-  /**
-   * ── 서랍 제어 핵심 ──────────────────────────
-   */
-  let isMoving = false; // [v15.9.5] 동작 잠금 플래그 (중복 호출 및 푸시-풀 방지)
+  let isMoving = false; 
+  let currentPanelIndex = 1;
 
-  function toggleDrawer(side, force = null) {
-    if (isMoving) return;
+  function setPanel(index, force = false) {
+    if (isMoving && !force) return;
+    if (index < 0 || index > 2) return;
+
+    currentPanelIndex = index;
+    const layout = document.querySelector('.app-layout');
     
-    const target = (side === 'left') ? sidebar : agentDrawer;
-    const other  = (side === 'left') ? agentDrawer : sidebar;
-    
-    const isCurrentlyOpen = target.classList.contains('open');
-    const shouldOpen = (force !== null) ? force : !isCurrentlyOpen;
-
-    if (isCurrentlyOpen === shouldOpen) return; // 상태 변화가 없으면 중단
-
-    isMoving = true;
-    setTimeout(() => { isMoving = false; }, 350); // 트랜지션 완료 후 잠금 해제
-
-    if (shouldOpen) {
-      // [모바일 독점 모드]
-      if (isDrawerMode()) {
-        other.classList.remove('open');
-        other.style.visibility = 'hidden';
-      }
+    if (isDrawerMode()) {
+      const offset = -100 * index;
+      layout.style.transform = "translateX(" + offset + "vw)";
+      sidebar.classList.toggle('open', index === 0);
+      agentDrawer.classList.toggle('open', index === 2);
       
-      target.style.visibility = 'visible';
-      target.style.pointerEvents = 'auto';
-      target.classList.add('open');
-      
-      if (side === 'right') {
-        const slotMap = config.ui?.drawerSlots || {};
-        ServiceContext.events.emit('drawerOpening', { slot: 'agent', moduleId: slotMap['agent'] });
+      if (index !== 1) {
+        globalOverlay.classList.add('active');
+        document.body.classList.add('no-scroll');
+      } else {
+        globalOverlay.classList.remove('active');
+        document.body.classList.remove('no-scroll');
       }
     } else {
-      target.classList.remove('open');
-      if (side === 'right') ServiceContext.events.emit('drawerClosed', { slot: 'agent' });
-      
-      // 닫기 후 가시성 복구 (모바일만)
-      setTimeout(() => {
-        if (!target.classList.contains('open') && isDrawerMode()) {
-          target.style.visibility = 'hidden';
-        }
-      }, 300);
+      layout.style.transform = 'none';
     }
 
     updatePanelAttrs();
-
-  // 글로벌 오버레이 및 바디 스크롤 잠금 처리
-    const anyOpen = sidebar.classList.contains('open') || agentDrawer.classList.contains('open');
-    if (anyOpen && isDrawerMode()) {
-      globalOverlay.classList.add('active');
-      document.body.classList.add('no-scroll');
-    } else {
-      globalOverlay.classList.remove('active');
-      document.body.classList.remove('no-scroll');
+    
+    if (index === 2) {
+      const slotMap = config.ui?.drawerSlots || {};
+      ServiceContext.events.emit('drawerOpening', { slot: 'agent', moduleId: slotMap['agent'] });
+    } else if (index === 1) {
+       ServiceContext.events.emit('drawerClosed', { slot: 'agent' });
     }
   }
 
-  // 초기 상태 반영 (PC면 기본적으로 열어둠)
+  function toggleDrawer(side, force = null) {
+    if (!isDrawerMode()) {
+      const target = (side === 'left') ? sidebar : agentDrawer;
+      const shouldOpen = (force !== null) ? force : !target.classList.contains('open');
+      target.classList.toggle('open', shouldOpen);
+      updatePanelAttrs();
+      return;
+    }
+    if (side === 'left') {
+      const targetIdx = (currentPanelIndex === 0) ? 1 : 0;
+      setPanel(force === true ? 0 : (force === false ? 1 : targetIdx));
+    } else {
+      const targetIdx = (currentPanelIndex === 2) ? 1 : 2;
+      setPanel(force === true ? 2 : (force === false ? 1 : targetIdx));
+    }
+  }
+
   if (!isDrawerMode()) {
     sidebar.classList.add('open');
     agentDrawer.classList.add('open');
     sidebar.style.visibility = 'visible';
     agentDrawer.style.visibility = 'visible';
-    
-    // [v15.8.7] PC 초기 로딩 시 우측 서랍 컨텐츠 즉시 렌더링
     setTimeout(() => renderSlotContent('agent'), 100);
+  } else {
+    setPanel(1, true);
   }
   updatePanelAttrs();
   
-  // [v15.8.7] 상태 표시줄 버전 동적 주입
   const statusVersion = document.getElementById('statusVersion');
-  if (statusVersion) statusVersion.textContent = `v${Registry.getVersion()}`;
+  if (statusVersion) statusVersion.textContent = "v" + Registry.getVersion();
 
-  // [v15.8.7] 서랍 오픈 이벤트 시 컨텐츠 렌더링 바인딩
   ServiceContext.events.on('drawerOpening', ({ slot }) => {
     renderSlotContent(slot);
   });
 
-  // ── 메뉴 항목 생성 ─────────────────────────────
   if (nav) {
-    nav.innerHTML = activeModules.map(mod => `
-      <div class="sidebar-nav-item" data-module="${mod.id}">
-        <span class="nav-icon">${mod.icon}</span>
-        <span class="nav-label">${mod.label}</span>
-      </div>
-    `).join('');
-
+    nav.innerHTML = activeModules.map(mod => "<div class='sidebar-nav-item' data-module='" + mod.id + "'><span class='nav-icon'>" + mod.icon + "</span><span class='nav-label'>" + mod.label + "</span></div>").join('');
     nav.addEventListener('click', (e) => {
       const item = e.target.closest('.sidebar-nav-item');
       if (!item) return;
-      if (isDrawerMode()) toggleDrawer('left', false); 
+      if (isDrawerMode()) setPanel(1);
       ServiceContext.navigate(item.dataset.module);
     });
   }
 
-  // ── 프로필 드롭다운 제어 (Profile Dropdown) ──────────
-  const btnProfile      = document.getElementById('btnProfile');
+  const btnProfile = document.getElementById('btnProfile');
   const profileDropdown = document.getElementById('profileDropdown');
-
-  // [v15.8.5] 사용자 정보 동적 반영
-  const updateProfileUI = () => {
-    const user = window.Registry?.getState('user');
-    const nameEl = document.getElementById('dropUserName');
-    const emailEl = document.getElementById('dropUserEmail');
-    if (user && nameEl) nameEl.textContent = `${user.name} ${user.role || '리더님'}`;
-    if (user && emailEl) emailEl.textContent = user.email || 'guest@owner.com';
-  };
 
   btnProfile?.addEventListener('click', (e) => {
     e.stopPropagation();
-    updateProfileUI();
     profileDropdown?.classList.toggle('open');
   });
 
@@ -161,31 +128,6 @@ export function initSidebar(activeModules, loadedModules, config, ctx) {
     profileDropdown?.classList.remove('open');
   });
 
-  // ── 안티그래비티 스타일 드롭다운 액션 바인딩 ───────────────────────
-  document.getElementById('dropQuickSettings')?.addEventListener('click', () => {
-    ServiceContext.notify('퀵 설정 패널을 준비 중입니다. (Antigravity Style)');
-  });
-
-  document.getElementById('dropTheme')?.addEventListener('click', () => {
-    const current = document.body.getAttribute('data-theme');
-    const next = current === 'glass-dark' ? 'modern-light' : 'glass-dark';
-    document.body.setAttribute('data-theme', next);
-    localStorage.setItem('had_theme', next);
-    ServiceContext.notify(`테마가 ${next}로 변경되었습니다.`);
-  });
-
-  document.getElementById('dropUpdate')?.addEventListener('click', () => {
-    ServiceContext.notify(`최신 버전(v${Registry.getVersion()})입니다.`);
-  });
-
-  document.getElementById('dropLogout')?.addEventListener('click', () => {
-    if (confirm('로그아웃 하시겠습니까?')) {
-      localStorage.removeItem('had_agent_token');
-      window.location.reload();
-    }
-  });
-
-  // ── 버튼 이벤트 (안전 바인딩) ──────────────────
   btnHamburger?.addEventListener('click', (e) => {
     e.stopPropagation();
     toggleDrawer('left');
@@ -194,41 +136,23 @@ export function initSidebar(activeModules, loadedModules, config, ctx) {
   btnToggleLeft?.addEventListener('click', () => toggleDrawer('left'));
   btnToggleRight?.addEventListener('click', () => toggleDrawer('right'));
   
-  const closeAgentBtn = document.getElementById('btnCloseAgent');
-  closeAgentBtn?.addEventListener('click', () => toggleDrawer('right', false));
-
-  // [v15.6.0] 외부 리전 요청 대응 (Router 등에서 호출)
-  ServiceContext.events.on('requestDrawerOpen', ({ side, moduleId }) => {
-    toggleDrawer(side, true);
-  });
-
-  ServiceContext.events.on('requestDrawerClose', ({ side }) => {
-    toggleDrawer(side, false);
-  });
-  
   globalOverlay?.addEventListener('click', () => {
-    toggleDrawer('left', false);
-    toggleDrawer('right', false);
+    setPanel(1);
   });
 
-  // ── 라우터 변경 감지 ────────────────────────────
   ServiceContext.events.on('moduleChanged', (moduleId) => {
     nav?.querySelectorAll('.sidebar-nav-item').forEach(el => {
       el.classList.toggle('active', el.dataset.module === moduleId);
     });
   });
 
-  // ── 슬롯 컨텐츠 렌더링 ──────────────────────────
   async function renderSlotContent(slot) {
     const drawerBody = document.getElementById('agentDrawerBody');
     if (!drawerBody) return;
-    drawerBody.scrollTop = 0; // [v13.2.2] 스크롤 초기화
     drawerBody.innerHTML = '<div class="loading-spinner-wrap"><div class="loading-spinner"></div></div>';
-
     const slotMap = config.ui?.drawerSlots || {};
     const moduleId = slotMap[slot];
     const mod = loadedModules[moduleId];
-
     if (mod) {
       try {
         const html = await mod.render(config, ServiceContext);
@@ -240,45 +164,21 @@ export function initSidebar(activeModules, loadedModules, config, ctx) {
     }
   }
 
-  // ── 스와이프 제스처 ───────────────────────────
   let touchStartX = 0;
   let touchStartY = 0;
-
   window.addEventListener('touchstart', (e) => {
     touchStartX = e.touches[0].clientX;
     touchStartY = e.touches[0].clientY;
   }, { passive: true });
 
   window.addEventListener('touchend', (e) => {
-    if (isMoving) return; // 동작 중일 때는 제스처 무시
-
     const deltaX = e.changedTouches[0].clientX - touchStartX;
     const deltaY = Math.abs(e.changedTouches[0].clientY - touchStartY);
-    
-    // Y축 이동이 크거나 수평 이동이 너무 적으면 무시
-    if (!isDrawerMode() || deltaY > 80 || Math.abs(deltaX) < 60) return; 
-    
-    const isSidebarOpen = sidebar.classList.contains('open');
-    const isDrawerOpen = agentDrawer.classList.contains('open');
-
-    // [v15.9.5] 상호 배제(Mutual Exclusion) 기반 제스처 로직
-    // 1. 현재 열려 있는 패널이 있다면 '닫기'만 수행
-    if (isSidebarOpen) {
-      if (deltaX < -60) toggleDrawer('left', false);
-      return;
-    }
-    if (isDrawerOpen) {
-      if (deltaX > 60) toggleDrawer('right', false);
-      return;
-    }
-
-    // 2. 아무것도 열려 있지 않을 때만 '열기' 수행 (푸시-풀 원천 차단)
-    if (!isSidebarOpen && !isDrawerOpen) {
-      if (touchStartX < 80 && deltaX > 60) {
-        toggleDrawer('left', true);
-      } else if (touchStartX > window.innerWidth - 100 && deltaX < -60) {
-        toggleDrawer('right', true);
-      }
+    if (!isDrawerMode() || deltaY > 100 || Math.abs(deltaX) < 80) return; 
+    if (deltaX > 80) {
+      setPanel(currentPanelIndex - 1);
+    } else if (deltaX < -80) {
+      setPanel(currentPanelIndex + 1);
     }
   }, { passive: true });
 }

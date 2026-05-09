@@ -345,22 +345,48 @@ body.no-scroll {
   touch-action: none;
 }
 
-/* ── 사이드바 (좌) ── */
+/* ── 📱 앱 레이아웃 (Sliding Container) ── */
+.app-layout {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  transition: transform var(--transition);
+}
+
+@media (max-width: 1023px) {
+  .app-layout {
+    width: 300vw; /* [v16.0.0] 3-Panel Panoramic */
+    transform: translateX(-100vw); /* 기본값: 중앙(Viewport) 포커스 */
+  }
+}
+
+/* ── 사이드바 (좌 / 0번 패널) ── */
 .sidebar {
-  position: fixed;
-  inset: 0 auto 0 0; /* [v15.9.1] 천장부터 바닥까지 고정 (Top, Bottom, Left 0) */
   width: var(--sidebar-w);
   height: 100%;
-  height: 100dvh; 
   background: var(--surface);
   border-right: 1px solid var(--border-color);
-  z-index: 1200; 
+  z-index: 100;
   display: flex;
   flex-direction: column;
-  transform: translateX(-100%); 
+  flex-shrink: 0;
   transition: transform var(--transition);
-  padding-top: 0; /* [v15.9.2] floating 현상 제거를 위해 상단 패딩 제거 */
-  margin: 0 !important; /* 외부 간섭 차단 */
+}
+
+@media (max-width: 1023px) {
+  .sidebar {
+    width: 100vw;
+    position: relative; /* Sliding flow */
+    transform: none !important;
+  }
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 0; 
+  overflow-y: auto;
 }
 .sidebar.open {
   transform: translateX(0);
@@ -392,25 +418,44 @@ body.no-scroll {
 
 
 
-/* ── 🤖 에이전트 서랍 (우) ── */
-.agent-drawer {
-  position: fixed;
-  inset: 0 0 0 auto; /* [v15.9.1] 천장부터 바닥까지 고정 (Top, Bottom, Right 0) */
-  width: 380px;
-  height: 100%;
-  height: 100dvh;
-  background: var(--surface);
-  border-left: 1px solid var(--border-color);
-  z-index: 1200; 
+/* ── 뷰포트 (중앙 / 1번 패널) ── */
+.app-viewport {
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  transform: translateX(100%);
+  background: var(--bg);
+  position: relative;
+  z-index: 50;
+  flex-shrink: 0;
+}
+
+@media (max-width: 1023px) {
+  .app-viewport {
+    width: 100vw;
+  }
+}
+
+/* ── 🤖 에이전트 서랍 (우 / 2번 패널) ── */
+.agent-drawer {
+  width: 380px;
+  height: 100%;
+  background: var(--surface);
+  border-left: 1px solid var(--border-color);
+  z-index: 100; 
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
   transition: transform var(--transition);
   overflow: hidden; 
-  margin: 0 !important; /* [v15.9.2] 간섭 차단 */
 }
-.agent-drawer.open {
-  transform: translateX(0);
+
+@media (max-width: 1023px) {
+  .agent-drawer {
+    width: 100vw;
+    position: relative;
+    transform: none !important;
+  }
 }
 
 .agent-drawer-content {
@@ -419,7 +464,7 @@ body.no-scroll {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  height: 100%; /* [v15.8.7] 명시적 높이 확보 */
+  height: 100%; 
 }
 
 /* [v15.8.0] 하단 상태 표시줄 */
@@ -448,24 +493,21 @@ body.no-scroll {
   .header-tool-btn { display: flex; }
   .app-status-bar { display: flex; }
   
-  /* PC 동적 레이아웃 제어 (Pusher) */
-  body[data-pc="true"] .sidebar { transform: translateX(-100%); }
-  body[data-pc="true"] .sidebar.open { transform: translateX(0); }
+  /* PC 워크벤치 레이아웃 */
+  .sidebar { transform: translateX(0) !important; }
+  .agent-drawer { transform: translateX(0) !important; }
 
-  body[data-pc="true"] .agent-drawer { transform: translateX(100%); }
-  body[data-pc="true"] .agent-drawer.open { transform: translateX(0); }
-
-  /* 뷰포트 동적 마진 (Pusher) */
-  body[data-pc="true"] .app-viewport {
-    transition: margin var(--transition);
-    margin-left: 0;
-    margin-right: 0;
+  /* 뷰포트 영역 (헤더 제외) */
+  .app-viewport {
+    flex: 1;
   }
-  body[data-pc="true"][data-sidebar-open="true"] .app-viewport {
-    margin-left: var(--sidebar-w);
+  
+  /* [v16.0.0] 사이드바/드로어 토글에 따른 뷰포트 제어 (Pusher 유지) */
+  body[data-sidebar-open="false"] .sidebar {
+    margin-left: calc(-1 * var(--sidebar-w));
   }
-  body[data-pc="true"][data-drawer-open="true"] .app-viewport {
-    margin-right: 380px;
+  body[data-drawer-open="false"] .agent-drawer {
+    margin-right: -380px;
   }
 }
 

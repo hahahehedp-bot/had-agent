@@ -7,7 +7,7 @@ import staticConfig from '../../client/config.js';
 
 class RegistryService {
   constructor() {
-    this.VERSION = '15.9.6'; // [v15.9.6] Core Purification & Integrity Guard Patch
+    this.VERSION = '16.0.0-alpha.1'; // [v16.0.0 Alpha] Obsidian-Style Sliding Reboot
     this.config = { ...staticConfig };
     this.dynamicConfig = {};
     this.permissions = null; // 등급별 권한 데이터

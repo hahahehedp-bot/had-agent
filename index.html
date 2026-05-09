@@ -30,19 +30,13 @@
   <!-- 글로벌 UI 오버레이 -->
   <div class="global-overlay" id="globalOverlay"></div>
 
-  <!-- 에이전트 비서 드로어 (우) - [DRAWER Region] -->
-  <aside class="agent-drawer" id="agentDrawer">
-    <!-- 모듈에 의해 동적으로 채워지는 영역 -->
-    <div class="agent-drawer-content" id="agentDrawerBody"></div>
-  </aside>
-
   <div class="app-layout">
-    <!-- 사이드바 -->
+    <!-- 사이드바 (0번 패널) -->
     <aside class="sidebar" id="sidebar">
       <nav class="sidebar-nav" id="sidebarNav"></nav>
     </aside>
 
-    <!-- 메인 영역 -->
+    <!-- 메인 영역 (1번 패널) -->
     <div class="app-viewport">
       <header class="app-header" id="appHeader">
         <button class="btn-hamburger" id="btnHamburger" aria-label="메뉴">
@@ -127,6 +121,11 @@
 
       <nav class="tab-bar" id="tabBar"></nav>
     </div>
+
+    <!-- 에이전트 비서 드로어 (2번 패널) -->
+    <aside class="agent-drawer" id="agentDrawer">
+      <div class="agent-drawer-content" id="agentDrawerBody"></div>
+    </aside>
   </div>
 
   <!-- 설정 패널 -->
