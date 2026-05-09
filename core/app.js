@@ -145,9 +145,9 @@ async function init() {
     initTabBar(navModules, loadedModules, config, ServiceContext);
     initRouter(loadedModules, config, ServiceContext);
 
-    const defaultId = config.ui?.defaultModule || (activeModules.length > 0 ? activeModules[0].id : 'home');
+    const defaultId = config.ui?.defaultModule || (activeModules.length > 0 ? activeModules[0].id : null);
     const hash = window.location.hash.replace('#', '') || defaultId;
-    navigateTo(hash);
+    if (hash) navigateTo(hash);
     
     // 초기화 완료 후 로딩 제거 (강제 타이머 추가)
     setTimeout(removeLoading, 300);

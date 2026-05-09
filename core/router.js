@@ -25,8 +25,10 @@ export function initRouter(loadedModules, config, context) {
   // 1. 해시 변경 리스너 (VIEWPORT 전용)
   window.addEventListener('hashchange', () => {
     const activeModules = _config.modules?.filter(m => m.enabled) || [];
-    const defaultId = _config.ui?.defaultModule || (activeModules.length > 0 ? activeModules[0].id : 'home');
+    const defaultId = _config.ui?.defaultModule || (activeModules.length > 0 ? activeModules[0].id : null);
     const id = window.location.hash.replace('#', '') || defaultId;
+    
+    if (!id) return;
     
     // 모듈의 배치가 VIEWPORT인 경우에만 메인 라우팅 수행
     const mod = _modules[id];

@@ -63,7 +63,7 @@ export function initSidebar(activeModules, loadedModules, config, ctx) {
       target.classList.add('open');
       
       if (side === 'right') {
-        const slotMap = config.ui?.drawerSlots || { 'agent': 'chat' };
+        const slotMap = config.ui?.drawerSlots || {};
         ServiceContext.events.emit('drawerOpening', { slot: 'agent', moduleId: slotMap['agent'] });
       }
     } else {
@@ -97,8 +97,20 @@ export function initSidebar(activeModules, loadedModules, config, ctx) {
     agentDrawer.classList.add('open');
     sidebar.style.visibility = 'visible';
     agentDrawer.style.visibility = 'visible';
+    
+    // [v15.8.7] PC 초기 로딩 시 우측 서랍 컨텐츠 즉시 렌더링
+    setTimeout(() => renderSlotContent('agent'), 100);
   }
   updatePanelAttrs();
+  
+  // [v15.8.7] 상태 표시줄 버전 동적 주입
+  const statusVersion = document.getElementById('statusVersion');
+  if (statusVersion) statusVersion.textContent = `v${Registry.getVersion()}`;
+
+  // [v15.8.7] 서랍 오픈 이벤트 시 컨텐츠 렌더링 바인딩
+  ServiceContext.events.on('drawerOpening', ({ slot }) => {
+    renderSlotContent(slot);
+  });
 
   // ── 메뉴 항목 생성 ─────────────────────────────
   if (nav) {
@@ -154,7 +166,7 @@ export function initSidebar(activeModules, loadedModules, config, ctx) {
   });
 
   document.getElementById('dropUpdate')?.addEventListener('click', () => {
-    ServiceContext.notify('최신 버전(v15.8.5)입니다.');
+    ServiceContext.notify(`최신 버전(v${Registry.getVersion()})입니다.`);
   });
 
   document.getElementById('dropLogout')?.addEventListener('click', () => {
@@ -204,7 +216,7 @@ export function initSidebar(activeModules, loadedModules, config, ctx) {
     drawerBody.scrollTop = 0; // [v13.2.2] 스크롤 초기화
     drawerBody.innerHTML = '<div class="loading-spinner-wrap"><div class="loading-spinner"></div></div>';
 
-    const slotMap = config.ui?.drawerSlots || { 'agent': 'chat' };
+    const slotMap = config.ui?.drawerSlots || {};
     const moduleId = slotMap[slot];
     const mod = loadedModules[moduleId];
 

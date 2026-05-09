@@ -381,9 +381,19 @@ body.no-scroll {
   flex-direction: column;
   transform: translateX(100%);
   transition: transform var(--transition);
+  overflow: hidden; /* [v15.8.7] 불필요한 스크롤 방지 */
 }
 .agent-drawer.open {
   transform: translateX(0);
+}
+
+.agent-drawer-content {
+  flex: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 100%; /* [v15.8.7] 명시적 높이 확보 */
 }
 
 /* [v15.8.0] 하단 상태 표시줄 */

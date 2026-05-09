@@ -2,6 +2,13 @@
 
 이 문서는 HAD-Agent 프로젝트의 버전별 작업 내역과 주요 변경 사항을 기록합니다.
 
+## [v15.8.8] - 2026-05-09
+### Added
+- **Core Purification (코어 대정화)**: 코어 엔진 내 잔존하던 모듈 종속성 및 하드코딩을 전면 제거하여 '무결성 헌법' 체계 확립.
+- **Dynamic Versioning**: `index.html` 및 알림 UI에서 하드코딩된 버전을 제거하고 `Registry` 기반 동적 버전 표시 시스템 도입.
+- **CSS Separation**: `components.css`에서 파일(`Resources`) 및 일정(`Schedule`) 관련 스타일을 분리(추출)하여 코어 경량화.
+- **Strict Fallback Removal**: 기본 모듈(`home`) 및 서랍 슬롯(`chat`)의 하드코딩된 기본값을 제거. 설정 부재 시 '빈 슬롯'을 유지하도록 하여 모듈 자치권 강화.
+
 ## [v15.8.7] - 2026-05-09
 ### Fixed
 - **우측 서랍(Agent Drawer) 가시성 버그 해결**: PC 환경 초기 로드 시 채팅창이 보이지 않던 현상을 JS 초기화 트리거(`renderSlotContent`) 및 CSS 구조(Flex/Height) 보강을 통해 완벽 해결.
