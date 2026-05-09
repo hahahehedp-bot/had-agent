@@ -75,7 +75,7 @@ html, body {
 
 /* [v15.8.0] Antigravity 스타일 초슬림 헤더 */
 .app-header {
-  position: fixed;
+  position: sticky; /* [v16.0.0] 패널과 함께 슬라이딩되도록 sticky로 변경 */
   top: 0;
   left: 0;
   width: 100%;
@@ -280,7 +280,7 @@ html, body {
   border-top: 1px solid var(--border-color);
   display: flex;
   align-items: stretch;
-  position: fixed;
+  position: sticky; /* [v16.0.0] 뷰포트 하단 밀착 */
   bottom: 0;
   left: 0;
   right: 0;
@@ -372,7 +372,7 @@ body.no-scroll {
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
-  transition: transform var(--transition);
+  transition: transform var(--transition), margin var(--transition); /* 마진 애니메이션 추가 */
 }
 
 @media (max-width: 1023px) {
@@ -387,9 +387,6 @@ body.no-scroll {
   flex: 1;
   padding: 0; 
   overflow-y: auto;
-}
-.sidebar.open {
-  transform: translateX(0);
 }
 
 .sidebar-nav {
@@ -446,7 +443,7 @@ body.no-scroll {
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
-  transition: transform var(--transition);
+  transition: transform var(--transition), margin var(--transition);
   overflow: hidden; 
 }
 
@@ -469,7 +466,7 @@ body.no-scroll {
 
 /* [v15.8.0] 하단 상태 표시줄 */
 .app-status-bar {
-  position: fixed;
+  position: absolute; /* [v16.0.0] 뷰포트 내부 하단 고정 */
   bottom: 0;
   left: 0;
   width: 100%;
