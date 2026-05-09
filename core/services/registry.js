@@ -7,7 +7,7 @@ import staticConfig from '../../client/config.js';
 
 class RegistryService {
   constructor() {
-    this.VERSION = window.HAD_VERSION || '16.0.0-alpha.4'; 
+    this.VERSION = window.HAD_VERSION || '16.0.0-alpha.5'; 
     const ua = navigator.userAgent;
     this.ENV = (/Android|iPhone|iPad|iPod/i.test(ua)) ? 'mobile' : 'pc';
     this.config = { ...staticConfig };
