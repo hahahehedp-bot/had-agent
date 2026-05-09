@@ -7,7 +7,7 @@ import staticConfig from '../../client/config.js';
 
 class RegistryService {
   constructor() {
-    this.VERSION = '15.9.1'; // [v15.9.1] Floor-to-Ceiling Layout (100dvh)
+    this.VERSION = '15.9.2'; // [v15.9.2] Zero-Gap Ceiling-Flush Layout
     this.config = { ...staticConfig };
     this.dynamicConfig = {};
     this.permissions = null; // 등급별 권한 데이터

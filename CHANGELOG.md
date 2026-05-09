@@ -2,6 +2,11 @@
 
 이 문서는 HAD-Agent 프로젝트의 버전별 작업 내역과 주요 변경 사항을 기록합니다.
 
+## [v15.9.2] - 2026-05-09
+### Optimized
+- **Zero-Gap Layout**: 사이드바 내부의 8px 상단 패딩을 제거하고 `margin: 0 !important`를 강제하여 '떠 있는 느낌'의 원인인 미세 공백을 전면 소거.
+- **Ceiling-Flush Design**: 메뉴 아이템이 화면 최상단(천장)에 즉각 밀착되도록 레이아웃 정화.
+
 ## [v15.9.1] - 2026-05-09
 ### Optimized
 - **Floor-to-Ceiling Layout**: 사이드바와 드로어에 `height: 100dvh` 및 `inset` 속성을 적용하여 기기 화면의 바닥부터 천장까지 틈 없이 완벽히 밀착되도록 고도화.
