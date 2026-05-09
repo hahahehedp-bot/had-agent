@@ -34,13 +34,14 @@
 
   /* PC: 사이드바 항상 펼침 */
   .sidebar {
-    position: relative !important;
+    position: fixed !important; /* [v15.9.3] relative 제거 -> fixed로 천장 밀착 강제 */
     transform: translateX(0) !important;
-    visibility: visible !important; /* PC에선 무조건 보여야 함 */
+    visibility: visible !important; 
     pointer-events: auto !important;
     box-shadow: none;
     border-right: 1px solid var(--border);
     height: 100vh !important;
+    height: 100dvh !important;
     flex-shrink: 0;
   }
 

@@ -2,6 +2,11 @@
 
 이 문서는 HAD-Agent 프로젝트의 버전별 작업 내역과 주요 변경 사항을 기록합니다.
 
+## [v15.9.3] - 2026-05-09
+### Fixed
+- **Symmetry Alignment**: `responsive.css`에서 사이드바의 `position: relative !important` 설정을 제거하여 우측 드로어와 동일한 `fixed` 좌표 체계로 통일.
+- **Sidebar Header Coverage**: 사이드바가 흐름(Flow)에 영향을 받지 않고 상단바를 가리며 천장에 완벽히 밀착되도록 결함 수정.
+
 ## [v15.9.2] - 2026-05-09
 ### Optimized
 - **Zero-Gap Layout**: 사이드바 내부의 8px 상단 패딩을 제거하고 `margin: 0 !important`를 강제하여 '떠 있는 느낌'의 원인인 미세 공백을 전면 소거.
